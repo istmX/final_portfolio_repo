@@ -104,6 +104,101 @@ body {
   opacity: 0.7;
 }
 
+.section-divider {
+  height: 4px;
+  background-image: radial-gradient(circle, var(--muted) 1.15px, transparent 1.3px);
+  background-position: center;
+  background-size: 7px 4px;
+  opacity: 0.7;
+}
+
+.project-radial-glow {
+  position: absolute;
+  inset: -35%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--project-glow-x, 50%) var(--project-glow-y, 50%),
+    rgb(167 139 250 / 22%) 0,
+    rgb(96 165 250 / 12%) 18%,
+    transparent 52%
+  );
+  transform: scale(0.85);
+  transition: opacity 500ms ease, transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.project-card::after {
+  position: absolute;
+  inset: 3px;
+  border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
+  border-radius: 15px;
+  content: "";
+  pointer-events: none;
+}
+
+.group:hover .project-radial-glow,
+.group:focus-visible .project-radial-glow,
+.project-card:focus-within .project-radial-glow {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.project-image-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgb(255 255 255 / 10%), transparent 48%),
+    linear-gradient(120deg, transparent 30%, rgb(255 255 255 / 7%) 50%, transparent 70%);
+  transition: opacity 500ms ease;
+}
+
+.group:hover .project-image-glow,
+.group:focus-visible .project-image-glow,
+.project-card:focus-within .project-image-glow {
+  opacity: 1;
+}
+
+.crew-preview {
+  isolation: isolate;
+  background-image:
+    radial-gradient(ellipse at 12% 15%, rgb(99 102 241 / 16%), transparent 36%),
+    radial-gradient(ellipse at 90% 85%, rgb(16 185 129 / 12%), transparent 34%),
+    linear-gradient(145deg, #09090b, #111116 58%, #08080a);
+}
+
+.crew-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(75vw, 520px);
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  transition: transform 700ms ease, border-color 500ms ease;
+}
+
+.crew-orbit-one {
+  width: min(70vw, 420px);
+}
+
+.crew-orbit-two {
+  width: min(52vw, 310px);
+  border-color: rgb(167 139 250 / 10%);
+}
+
+.group:hover .crew-orbit-one {
+  transform: translate(-50%, -50%) scale(1.08);
+  border-color: rgb(255 255 255 / 10%);
+}
+
+.group:hover .crew-orbit-two {
+  transform: translate(-50%, -50%) scale(1.12);
+  border-color: rgb(167 139 250 / 20%);
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .brand-logo {
     filter: invert(1);
@@ -148,5 +243,12 @@ a:focus-visible .nav-link-label {
     color: inherit;
     background: none;
     animation: none;
+  }
+
+  .project-radial-glow,
+  .project-image-glow,
+  .crew-orbit,
+  .project-media img {
+    transition: none;
   }
 }

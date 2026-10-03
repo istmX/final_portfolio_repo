@@ -16,11 +16,16 @@ This is a personal developer portfolio for Aryan, using the name and logo **istm
 - Replaced the large profile banner direction with a compact hero section using the square `public/hero.png` portrait.
 - Added the hero name, rotating roles, a more direct AI engineering bio, and technology chips for TypeScript, React, Motion, Python, Next.js, Express.js, LangChain, LangGraph, and RAG.
 - Added an India local clock (IST) with a restrained seconds transition and a reusable `ShimmerText` component.
-- Added one social-links section labelled “Elsewhere.” Its square icon buttons have a low-opacity outer border, a 3px gap, and a second border around each icon.
-- Added hover/focus profile cards. GitHub loads public profile fields from GitHub’s user API; X loads an official public-post timeline; LinkedIn shows a local profile preview that links to the account; email opens a new message.
+- Added one compact “Find me” social-links row directly after the hero, matching the supplied profile reference. The square icon buttons have a subtle double border and 3px inset gap.
+- Added horizontal dotted dividers between the navigation, hero/profile, and social links, matching the dotted vertical container edges.
+- Added reusable `components/ui/link-preview.tsx`: GitHub uses a wider, viewport-clamped screenshot preview through Microlink. X, LinkedIn, and email show a profile card using the hero portrait, India location, account handle, and relevant details.
 - Added click-triggered ring and sparkle effects in `ClickSparks.tsx`.
 - Added a fixed frosted-glass blur at the bottom of the viewport in `ScrollBlur.tsx`.
 - Removed duplicate social-section renderings from the home page; it now renders one instance.
+- Added a four-project responsive Bento section in the requested order: Crew, ISTMX Skills, CodeCat, and Noiseless.
+- Added a custom Crew workspace preview, with the other projects using their existing local screenshots. Project screenshots sit inside framed media panels rather than filling the whole card.
+- Added layered card and image borders, a hover radial glow, restrained image motion, and icon-only technology marks with hover/focus tooltips.
+- Updated `AboutMe.md` to reflect the four highlighted projects and their display order.
 
 ## Current profile links
 
@@ -33,11 +38,10 @@ The email was entered as `gamil.com` in chat and interpreted as the common `gmai
 
 ## Current state and limitations
 
-- The home page currently contains the navigation, hero, and social links. The project, writing, experience, and other portfolio sections from the reference are not built yet.
+- The home page currently contains the navigation, hero, social links, and the four-project Bento section. Writing, experience, and other portfolio sections from the reference are not built yet.
 - The `/about` route exists as a placeholder. Projects and Blogs are linked in the navigation but their routes/content are not present yet.
-- GitHub profile data is fetched in the browser when its preview is opened. If GitHub’s API is unavailable or rate-limited, the preview falls back to the local bio text.
-- X’s embedded timeline requires a public X account with public posts. If the timeline cannot load, the profile link remains available.
-- LinkedIn is shown as a styled local preview with a link to the live profile rather than an embedded account page.
+- Microlink renders a remote screenshot preview for GitHub. If its page blocks automated rendering, the direct profile link remains available.
+- X, LinkedIn, and email use local profile cards; social cards link out to the live accounts, while the email card opens a mail client.
 - The profile cards and responsive layout have not been visually reviewed in a running browser during this work.
 - No tests, lint, or production build have been run.
 
@@ -45,6 +49,6 @@ The email was entered as `gamil.com` in chat and interpreted as the common `gmai
 
 1. Verify the exact LinkedIn URL and email address before launch.
 2. Review the hero and social previews at desktop and mobile widths, including both themes.
-3. Build the Projects and Blogs pages and replace the `/about` placeholder with portfolio content.
+3. Build the Blogs page and replace the `/about` placeholder with portfolio content.
 4. Add the remaining portfolio sections from the reference, choosing only the sections that have accurate, ready-to-publish content.
 5. Run the project’s lint/build checks when implementation verification is requested.

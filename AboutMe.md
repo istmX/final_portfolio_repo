@@ -40,10 +40,11 @@ Pathsa AI
 Noiseless
 Civic Plus
 CodeCat
+ISTMX Skills
 Crew
 Asticus Mesh
 
-For the portfolio, the three projects I am currently highlighting are Crew, CodeCat, and Noiseless.
+For the portfolio, I am currently highlighting Crew, ISTMX Skills, CodeCat, and Noiseless, in that order.
 
 CODECAT
 =======
@@ -51,6 +52,20 @@ CODECAT
 CodeCat is an AI-powered code review platform built with Next.js, the Vercel AI SDK, Neon Database, and Prisma ORM.
 
 It reviews code, identifies potential problems, explains issues, and suggests fixes. The system uses multiple AI providers through a multi-provider fallback architecture, allowing the application to continue operating when a primary provider is unavailable.
+
+ISTMX SKILLS
+============
+
+`@istmx/skills` is a deterministic, stack-agnostic orchestration and software-development workflow toolkit for coding agents and AI-enabled editors, including Claude Code, Cursor, Windsurf, Gemini, Cline, and Roo Code.
+
+It gives coding agents reusable architecture and design workflows, over 70 production design presets, and structured tools for planning, implementation, debugging, security review, performance work, and release preparation. Its `/istm` command acts as a general prompt router, selecting a relevant workflow for a task. It also includes automated browser QA workflows.
+
+The package has passed 1,000 npm downloads.
+
+Website: https://istmx.dpdns.org
+Documentation: https://istmx.dpdns.org/docs
+GitHub: https://github.com/istmX/skills
+npm: https://www.npmjs.com/package/@istmx/skills
 
 NOISELESS
 =========
