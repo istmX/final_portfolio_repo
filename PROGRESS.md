@@ -27,8 +27,9 @@ This is a personal developer portfolio for Aryan, using the name and logo **istm
 - Added reusable SVG technology marks in `app/components/icons.tsx`, with an individual tooltip on each icon.
 - Added layered card and image borders, distinct bottom-up radial glows across each full card and behind image letterboxing, and restrained lift, image, and icon hover motion.
 - Added a Crew “Currently building” image badge and expanded its card to the full stack listed in `AboutMe.md`.
-- Added dynamic `/projects/[slug]` detail pages for all four projects, with full descriptions, stack displays, provided external links, and scroll-in-view reveals. Crew has its own warm, custom layout.
-- Changed the Projects navigation item to return to the home page’s project section, including from detail pages.
+- Kept project information in the home page Bento cards; there are no dedicated project detail pages or dynamic project routes.
+- Added direct external project links to the primary live destinations on the ISTMX Skills, CodeCat, and Noiseless cards. Crew is marked as currently building and has no destination link yet.
+- The Projects navigation item points to the Bento section on the home page.
 - Updated project cards and `AboutMe.md` with the technology stacks and URLs provided for Crew, ISTMX Skills, CodeCat, and Noiseless.
 
 ## Current profile links
@@ -43,7 +44,7 @@ The email was entered as `gamil.com` in chat and interpreted as the common `gmai
 ## Current state and limitations
 
 - The home page currently contains the navigation, hero, social links, and the four-project Bento section. Writing, experience, and other portfolio sections from the reference are not built yet.
-- The `/about` route exists as a placeholder. The Projects navigation item returns to the home project section; detail routes are available at `/projects/[slug]`.
+- The `/about` route exists as a placeholder. The Projects navigation item returns to the home project section; project information and external destinations are shown in the Bento cards.
 - Microlink renders a remote screenshot preview for GitHub. If its page blocks automated rendering, the direct profile link remains available.
 - X, LinkedIn, and email use local profile cards; social cards link out to the live accounts, while the email card opens a mail client.
 - The profile cards and responsive layout have not been visually reviewed in a running browser during this work.

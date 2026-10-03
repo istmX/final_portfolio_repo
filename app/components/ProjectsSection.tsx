@@ -55,14 +55,10 @@ function StackIcons({ project }: { project: Project }) {
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const projectUrl = project.links[0]?.href
-  const Card = projectUrl ? 'a' : 'article'
 
   return (
     <ScrollReveal delay={index * 0.07} className={project.wide ? 'md:col-span-2' : undefined}>
-      <Card
-        {...(projectUrl ? { href: projectUrl, target: '_blank', rel: 'noreferrer', 'aria-label': `Open ${project.name}` } : {})}
-        className="project-card group relative flex h-full min-w-0 flex-col overflow-visible rounded-[20px] border border-border/50 bg-surface/15 p-[3px] transition-[transform,border-color,background-color] duration-300 hover:-translate-y-0.5 hover:border-border/90 hover:bg-surface/30 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
-      >
+      <article className="project-card group relative flex h-full min-w-0 flex-col overflow-visible rounded-[20px] border border-border/50 bg-surface/15 p-[3px] transition-[transform,border-color,background-color] duration-300 hover:-translate-y-0.5 hover:border-border/90 hover:bg-surface/30">
         <div aria-hidden="true" className={`project-card-glow project-glow-${project.glow}`} />
 
         <div className="project-media pointer-events-none relative z-10 overflow-hidden rounded-[15px] border border-border/50 bg-surface/30 p-1.5">
@@ -114,10 +110,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           </p>
           <div className="mt-4 flex items-end justify-between gap-4 border-t border-border/30 pt-3">
             <StackIcons project={project} />
-            <span aria-hidden="true" className="shrink-0 pb-1 text-[9px] font-medium uppercase tracking-[0.13em] text-muted/60 transition-colors group-hover:text-muted">{projectUrl ? 'Visit project ↗' : 'In progress'}</span>
+            {projectUrl ? (
+              <a href={projectUrl} target="_blank" rel="noreferrer" className="pointer-events-auto shrink-0 pb-1 text-[9px] font-medium uppercase tracking-[0.13em] text-muted/70 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground">
+                Visit project ↗
+              </a>
+            ) : (
+              <span className="shrink-0 pb-1 text-[9px] font-medium uppercase tracking-[0.13em] text-muted/60">In progress</span>
+            )}
           </div>
         </div>
-      </Card>
+      </article>
     </ScrollReveal>
   )
 }
