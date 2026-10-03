@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --background: #f5f5f5; /* neutral-100 */
+  --foreground: #171717; /* neutral-900 */
+  --surface: #e5e5e5; /* neutral-200 */
+  --muted: #525252; /* neutral-600 */
+  --border: #d4d4d4; /* neutral-300 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: #0a0a0a; /* neutral-950 */
+    --foreground: #f5f5f5; /* neutral-100 */
+    --surface: #171717; /* neutral-900 */
+    --muted: #a3a3a3; /* neutral-400 */
+    --border: #262626; /* neutral-800 */
+  }
+}
+
+/* Explicit theme values take precedence over the system preference. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: #f5f5f5; /* neutral-100 */
+  --foreground: #171717; /* neutral-900 */
+  --surface: #e5e5e5; /* neutral-200 */
+  --muted: #525252; /* neutral-600 */
+  --border: #d4d4d4; /* neutral-300 */
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0a0a0a; /* neutral-950 */
+  --foreground: #f5f5f5; /* neutral-100 */
+  --surface: #171717; /* neutral-900 */
+  --muted: #a3a3a3; /* neutral-400 */
+  --border: #262626; /* neutral-800 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --font-display: var(--font-schibsted-grotesk);
+  --font-secondary: var(--font-inter);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+.nav-link-label {
+  display: inline-block;
+}
+
+.brand-logo {
+  filter: none;
+}
+
+.page-divider {
+  width: 4px;
+  background-image: radial-gradient(circle, var(--muted) 1.15px, transparent 1.3px);
+  background-position: center top;
+  background-size: 4px 7px;
+  opacity: 0.7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-logo {
+    filter: invert(1);
+  }
+}
+
+:root[data-theme="dark"] .brand-logo {
+  filter: invert(1);
+}
+
+.nav-link-label:hover,
+a:hover .nav-link-label,
+a:focus-visible .nav-link-label {
+  color: transparent;
+  background-image: linear-gradient(
+    110deg,
+    var(--muted) 38%,
+    var(--foreground) 50%,
+    var(--muted) 62%
+  );
+  background-position: 100% 0;
+  background-size: 220% 100%;
+  background-clip: text;
+  animation: nav-text-shimmer 750ms ease-out forwards;
+}
+
+@keyframes nav-text-shimmer {
+  to {
+    background-position: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a:hover .nav-link-label,
+  a:focus-visible .nav-link-label {
+    color: inherit;
+    background: none;
+    animation: none;
+  }
+}
