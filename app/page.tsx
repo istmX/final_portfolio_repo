@@ -1,16 +1,20 @@
 import Navbar from "./components/Navbar";
 import Contanier from "./components/Contanier";
-import PortfolioBanner from "./components/PortfolioBanner";
-import ClickFlowers from "./components/ClickFlowers";
+import IntroHero from "./components/IntroHero";
+import SocialLinks from "./components/SocialLinks";
+import ClickSparks from "./components/ClickSparks";
+import ScrollBlur from "./components/ScrollBlur";
 
 export default function Home() {
   return (
     <main className="min-h-dvh">
       <Contanier>
         <Navbar />
-        <PortfolioBanner />
+        <IntroHero />
+        <SocialLinks />
       </Contanier>
-      <ClickFlowers />
+      <ClickSparks />
+      <ScrollBlur />
     </main>
   );
 }
