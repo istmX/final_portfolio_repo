@@ -25,7 +25,7 @@ function ThemeToggle() {
     try {
       window.localStorage.setItem('istmx-theme', nextTheme)
     } catch {
-      // The current page theme still changes if browser storage is unavailable.
+     
     }
 
     setTheme(nextTheme)

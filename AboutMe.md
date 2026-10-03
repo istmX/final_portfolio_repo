@@ -49,14 +49,14 @@ For the portfolio, I am currently highlighting Crew, ISTMX Skills, CodeCat, and 
 CODECAT
 =======
 
-CodeCat is an AI-powered code review platform built with Next.js, the Vercel AI SDK, Neon Database, and Prisma ORM.
+CodeCat is an AI-powered code review platform built with the Vercel AI SDK, Next.js, Neon Database, TypeScript, Tailwind CSS, and Auth.js.
 
 It reviews code, identifies potential problems, explains issues, and suggests fixes. The system uses multiple AI providers through a multi-provider fallback architecture, allowing the application to continue operating when a primary provider is unavailable.
 
 ISTMX SKILLS
 ============
 
-`@istmx/skills` is a deterministic, stack-agnostic orchestration and software-development workflow toolkit for coding agents and AI-enabled editors, including Claude Code, Cursor, Windsurf, Gemini, Cline, and Roo Code.
+`@istmx/skills` is a deterministic, stack-agnostic orchestration and software-development workflow toolkit for coding agents and AI-enabled editors, including Claude Code, Cursor, Windsurf, Gemini, Cline, and Roo Code. The package is implemented in JavaScript.
 
 It gives coding agents reusable architecture and design workflows, over 70 production design presets, and structured tools for planning, implementation, debugging, security review, performance work, and release preparation. Its `/istm` command acts as a general prompt router, selecting a relevant workflow for a task. It also includes automated browser QA workflows.
 
@@ -75,6 +75,8 @@ Noiseless is an autonomous research agent designed to continuously monitor topic
 Instead of requiring the user to repeatedly perform research manually, Noiseless can investigate information, process findings, and produce scheduled digests.
 
 It can connect with services such as Gmail and Slack, allowing research updates and digests to be delivered through the user's existing workflow.
+
+Technology: Next.js · TypeScript · Tailwind CSS · Neon · Python · FastAPI · LangChain · Slack
 
 CREW
 ====
@@ -225,7 +227,7 @@ TECHNOLOGY BEHIND CREW
 ======================
 
 Web:
-Next.js · React · TypeScript · Tailwind CSS
+Next.js · React · TypeScript · Tailwind CSS · Vercel
 
 Mobile:
 React Native · Expo

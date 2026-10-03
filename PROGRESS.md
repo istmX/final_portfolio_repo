@@ -23,9 +23,13 @@ This is a personal developer portfolio for Aryan, using the name and logo **istm
 - Added a fixed frosted-glass blur at the bottom of the viewport in `ScrollBlur.tsx`.
 - Removed duplicate social-section renderings from the home page; it now renders one instance.
 - Added a four-project responsive Bento section in the requested order: Crew, ISTMX Skills, CodeCat, and Noiseless.
-- Added a custom Crew workspace preview, with the other projects using their existing local screenshots. Project screenshots sit inside framed media panels rather than filling the whole card.
-- Added layered card and image borders, a hover radial glow, restrained image motion, and icon-only technology marks with hover/focus tooltips.
-- Updated `AboutMe.md` to reflect the four highlighted projects and their display order.
+- Added the supplied `public/Crew.png` artwork and retained local screenshots for ISTMX Skills, CodeCat, and Noiseless. Images sit inside framed media panels instead of filling the whole card.
+- Added reusable SVG technology marks in `app/components/icons.tsx`, with an individual tooltip on each icon.
+- Added layered card and image borders, distinct bottom-up radial glows across each full card and behind image letterboxing, and restrained lift, image, and icon hover motion.
+- Added a Crew “Currently building” image badge and expanded its card to the full stack listed in `AboutMe.md`.
+- Added dynamic `/projects/[slug]` detail pages for all four projects, with full descriptions, stack displays, provided external links, and scroll-in-view reveals. Crew has its own warm, custom layout.
+- Changed the Projects navigation item to return to the home page’s project section, including from detail pages.
+- Updated project cards and `AboutMe.md` with the technology stacks and URLs provided for Crew, ISTMX Skills, CodeCat, and Noiseless.
 
 ## Current profile links
 
@@ -39,7 +43,7 @@ The email was entered as `gamil.com` in chat and interpreted as the common `gmai
 ## Current state and limitations
 
 - The home page currently contains the navigation, hero, social links, and the four-project Bento section. Writing, experience, and other portfolio sections from the reference are not built yet.
-- The `/about` route exists as a placeholder. Projects and Blogs are linked in the navigation but their routes/content are not present yet.
+- The `/about` route exists as a placeholder. The Projects navigation item returns to the home project section; detail routes are available at `/projects/[slug]`.
 - Microlink renders a remote screenshot preview for GitHub. If its page blocks automated rendering, the direct profile link remains available.
 - X, LinkedIn, and email use local profile cards; social cards link out to the live accounts, while the email card opens a mail client.
 - The profile cards and responsive layout have not been visually reviewed in a running browser during this work.
