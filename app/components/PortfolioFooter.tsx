@@ -1,4 +1,4 @@
-import FooterBotanical from './FooterBotanical'
+import FooterSignature from './FooterSignature'
 
 const FOOTER_LINKS = [
   { label: 'GitHub', href: 'https://github.com/istmX' },
@@ -9,54 +9,44 @@ const FOOTER_LINKS = [
 
 export default function PortfolioFooter() {
   return (
-    <footer className="relative isolate mx-auto min-h-[520px] w-full max-w-5xl overflow-hidden rounded-t-[20px] border-t border-dotted border-border/45 bg-surface/10">
-      {/* Botanical garden illustration – spans the full footer width */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[300px] opacity-95 sm:h-[460px]"
-      >
-        <FooterBotanical />
+    <footer className="relative mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-0">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+        <span className="page-divider absolute inset-y-0 left-4 hidden sm:block sm:left-6 lg:left-0" />
+        <span className="page-divider absolute inset-y-0 right-4 hidden sm:block sm:right-6 lg:right-0" />
       </div>
 
-      {/* Content sits in the central clearing among the flowers */}
-      <div className="relative z-10 flex flex-col items-center px-8 pt-[110px] text-center sm:pt-[160px]">
-        <p className="font-signature text-[4.2rem] font-normal leading-[0.88] text-foreground sm:text-[5.2rem]">
-          Aryan
-        </p>
-        <p className="mt-3 text-xs text-muted sm:text-sm">
-          Thanks for visiting here.
-        </p>
-        <p className="mt-5 font-mono text-[9px] tracking-[0.14em] text-muted/80">
-          flowers for you
-        </p>
-        <p className="mt-2 font-mono text-[8px] tracking-[0.08em] text-muted/55">
-          meow meow meow meow mewww ~
-        </p>
-      </div>
+      <div className="relative z-10 border-t border-dotted border-border/60">
+        <div className="flex min-h-[300px] flex-col items-center justify-center px-7 py-10 text-center sm:py-12">
+          <p className="max-w-[34ch] font-display text-lg font-medium leading-relaxed tracking-tight text-foreground sm:text-xl">
+            Built this when I should&apos;ve been building my main project.
+          </p>
+          <div className="mt-2">
+            <FooterSignature />
+          </div>
+          <p className="mt-1 text-[11px] text-muted sm:text-xs">Thanks for visiting.</p>
+          <p className="mt-3 font-mono text-[8px] tracking-[0.08em] text-muted/55 sm:text-[9px]">
+            meow meow meow mewww ~
+          </p>
+        </div>
 
-      <nav
-        aria-label="Footer social links"
-        className="relative z-10 mt-10 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 text-[10px] text-muted/80"
-      >
-        {FOOTER_LINKS.map((link, index) => (
-          <span key={link.label} className="inline-flex items-center gap-2.5">
-            {index > 0 && (
-              <span aria-hidden="true" className="text-muted/45">
-                ·
+        <div className="flex min-h-14 flex-col items-center justify-between gap-3 border-t border-border/25 py-3 text-[9px] text-muted/70 sm:flex-row sm:px-1">
+          <nav aria-label="Footer social links" className="flex items-center gap-2.5">
+            {FOOTER_LINKS.map((link, index) => (
+              <span key={link.label} className="inline-flex items-center gap-2.5">
+                {index > 0 && <span aria-hidden="true" className="text-muted/35">·</span>}
+                <a href={link.href} className="transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground">{link.label}</a>
               </span>
-            )}
-            <a
-              href={link.href}
-              className="transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground"
-            >
-              {link.label}
+            ))}
+          </nav>
+          <div className="flex w-full items-center justify-between gap-3 sm:w-auto">
+            <span className="tracking-[0.08em]">© 2026 ISTMX</span>
+            <a href="#top" aria-label="Back to top" className="grid size-7 place-items-center rounded-full border border-border/45 text-muted transition-colors hover:border-border hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
+              <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" className="size-3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 13V3M4.5 6.5 8 3l3.5 3.5" />
+              </svg>
             </a>
-          </span>
-        ))}
-      </nav>
-
-      <div className="relative z-10 mt-5 border-t border-border/25 px-8 py-3 text-center text-[9px] tracking-[0.12em] text-muted/65">
-        © 2026 ISTMX
+          </div>
+        </div>
       </div>
     </footer>
   )

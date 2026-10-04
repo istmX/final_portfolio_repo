@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { CatHomeEngine, type Hud } from '@/lib/cat/engine'
-import { VH, VW } from '@/lib/cat/room'
+import { H, W } from '@/lib/cat/room'
 
-const EMPTY_HUD: Hud = { hunger: 70, happiness: 75, energy: 80, food: 1, water: 2, timeOfDay: 'night', lampOn: true, laserOn: false, prompt: null, message: null, state: 'idle', catName: '' }
+const EMPTY_HUD: Hud = { hunger: 70, happiness: 75, energy: 80, food: 1, water: 2, timeOfDay: 'night', lampOn: true, laserOn: false, prompt: null, message: null, state: 'idle', catName: '', carrying: false }
 const MOVE_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'KeyA', 'KeyS', 'KeyD']
 
 function shortPrompt(prompt: string) {
@@ -27,9 +27,15 @@ function DirectionPad({ onChange }: { onChange: (x: number, y: number) => void }
     { key: 'right', x: 1, y: 0, icon: '→', place: 'col-start-3 row-start-2' },
     { key: 'down', x: 0, y: 1, icon: '↓', place: 'col-start-2 row-start-3' },
   ]
-  return <div role="group" aria-label="Move around the room" className="grid grid-cols-3 grid-rows-3 gap-1 touch-none sm:hidden">
-    {directions.map((d) => <button key={d.key} type="button" aria-label={`Move ${d.key}`} className={`grid h-8 w-8 place-items-center rounded border border-dotted border-border/70 bg-background/70 font-mono text-sm text-muted active:text-foreground ${d.place}`} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); onChange(d.x, d.y) }} onPointerUp={() => onChange(0, 0)} onPointerCancel={() => onChange(0, 0)} onLostPointerCapture={() => onChange(0, 0)} onClick={() => { onChange(d.x, d.y); window.setTimeout(() => onChange(0, 0), 140) }}>{d.icon}</button>)}
+  return <div role="group" aria-label="Move around the room" className="grid grid-cols-3 grid-rows-3 gap-1 touch-none">
+    {directions.map((d) => <button key={d.key} type="button" aria-label={`Move ${d.key}`} className={`grid h-10 w-10 place-items-center rounded-xl bg-surface/70 font-mono text-sm text-foreground/80 shadow-sm backdrop-blur-md active:bg-foreground/20 ${d.place}`} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); onChange(d.x, d.y) }} onPointerUp={() => onChange(0, 0)} onPointerCancel={() => onChange(0, 0)} onLostPointerCapture={() => onChange(0, 0)} onClick={() => { onChange(d.x, d.y); window.setTimeout(() => onChange(0, 0), 140) }}>{d.icon}</button>)}
   </div>
+}
+
+function FloatingAction({ icon, label, onClick, active = false }: { icon: string; label: string; onClick: () => void; active?: boolean }) {
+  return <button type="button" onClick={onClick} className={`flex min-h-9 min-w-16 items-center justify-center gap-1.5 rounded-xl px-2 font-mono text-[8px] shadow-sm backdrop-blur-md transition-colors active:scale-[0.97] ${active ? 'bg-foreground/20 text-foreground' : 'bg-surface/70 text-foreground/85'}`}>
+    <span className="text-[11px] leading-none">{icon}</span><span>{label}</span>
+  </button>
 }
 
 function StatusMeter({ label, value }: { label: string; value: number }) {
@@ -57,9 +63,11 @@ export default function CatHomeGame() {
     const fit = () => {
       if (!frame.current) return
       const { width, height } = frame.current.getBoundingClientRect()
-      const scale = Math.min(width / VW, height / VH)
-      el.style.width = `${Math.floor(VW * scale)}px`
-      el.style.height = `${Math.floor(VH * scale)}px`
+      if (width <= 0 || height <= 0) return
+      const pixelScale = Math.max(width / W, height / H)
+      game.resizeViewport(width / pixelScale, height / pixelScale)
+      el.style.width = `${Math.floor(width)}px`
+      el.style.height = `${Math.floor(height)}px`
     }
     fit()
     const ro = new ResizeObserver(fit)
@@ -99,26 +107,38 @@ export default function CatHomeGame() {
       <Link href="/home" className="shrink-0 font-mono text-[8px] tracking-[0.08em] text-muted transition-colors hover:text-foreground sm:text-[9px]">← PORTFOLIO</Link>
     </header>
 
-    <div className="mb-3 grid shrink-0 grid-cols-3 gap-2 border-y border-border/30 py-2 sm:mb-4 sm:flex sm:items-center sm:gap-6">
-      <StatusMeter label="HUNGER" value={hud.hunger} />
-      <StatusMeter label="HAPPY" value={hud.happiness} />
-      <StatusMeter label="ENERGY" value={hud.energy} />
-      <span className="col-span-3 font-mono text-[7px] text-muted/60 sm:ml-auto sm:text-[8px]">food {hud.food}/3 <span className="mx-1 text-border">·</span> water {hud.water}/3</span>
-    </div>
-
-    <div ref={frame} className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-[#0a0a0e]" style={{ touchAction: 'none' }}>
+    <div ref={frame} className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-[#0a0a0e]" style={{ touchAction: 'none' }} onPointerMove={(event) => {
+      if (!hud.laserOn || !frame.current) return
+      const rect = frame.current.getBoundingClientRect()
+      engine.current?.setLaserViewportPosition((event.clientX - rect.left) / rect.width, (event.clientY - rect.top) / rect.height)
+    }}>
       <canvas ref={canvas} className="block max-h-full max-w-full" style={{ imageRendering: 'pixelated' }} aria-label="Walk around and explore the Cat Home room" role="img" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-3 flex flex-col items-center gap-1 sm:bottom-4">
-        {hud.message && <div className="border border-white/10 bg-black/75 px-2 py-1 font-mono text-[8px] text-white/85 shadow-lg sm:text-[9px]">{hud.message}</div>}
-        {hud.prompt && <div className="border border-white/15 bg-black/80 px-2.5 py-1.5 font-mono text-[8px] text-white/90 shadow-lg sm:text-[9px]"><span className="font-[var(--font-pixel)] text-[6px] font-bold text-[#e6c99d]">E</span><span className="text-white/45"> · </span>{shortPrompt(hud.prompt)}</div>}
+      <div className="pointer-events-none absolute right-3 top-3 z-10 grid gap-2 rounded-2xl bg-surface/70 p-3 shadow-sm backdrop-blur-md sm:right-5 sm:top-5 sm:gap-2.5 sm:p-3.5">
+        <StatusMeter label="HUNGER" value={hud.hunger} />
+        <StatusMeter label="HAPPY" value={hud.happiness} />
+        <StatusMeter label="ENERGY" value={hud.energy} />
+        <span className="font-mono text-[7px] text-muted/75 sm:text-[8px]">food {hud.food}/3 <span className="mx-1 text-border">·</span> water {hud.water}/3</span>
       </div>
-    </div>
-    <div className="flex shrink-0 items-center justify-between gap-4 border-t border-border/30 px-1 pt-2.5 sm:pt-3">
-      <div className="sm:hidden"><DirectionPad onChange={(x, y) => engine.current?.setJoystick(x, y)} /></div>
-      <p className="hidden font-mono text-[8px] tracking-wide text-muted/65 sm:block">WASD / arrows move <span className="mx-1 text-border">·</span> E / Enter interact <span className="mx-1 text-border">·</span> C cuddle <span className="mx-1 text-border">·</span> Q call <span className="mx-1 text-border">·</span> F feed</p>
-      <span className="ml-auto font-mono text-[7px] text-muted/50 sm:hidden">move · explore</span>
-      {hud.prompt && <button type="button" onClick={() => engine.current?.interact()} className="rounded border border-foreground/30 px-2.5 py-1.5 font-mono text-[8px] text-foreground sm:hidden"><span className="font-[var(--font-pixel)] text-[6px]">E</span> · {shortPrompt(hud.prompt)}</button>}
-      <span className="hidden font-mono text-[8px] text-muted/55 sm:inline">{hud.timeOfDay}</span>
+      <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex flex-col items-center gap-1 sm:bottom-4">
+        {hud.message && <div className="border border-white/10 bg-black/75 px-2 py-1 font-mono text-[8px] text-white/85 shadow-lg sm:text-[9px]">{hud.message}</div>}
+        {hud.prompt && <div className="border border-white/15 bg-black/80 px-2.5 py-1.5 font-mono text-[8px] text-white/90 shadow-lg sm:text-[9px]"><span className="font-semibold text-[#e6c99d]">E</span><span className="text-white/45"> · </span>{shortPrompt(hud.prompt)}</div>}
+      </div>
+      <div className="absolute bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 z-20 sm:hidden">
+        <DirectionPad onChange={(x, y) => engine.current?.setJoystick(x, y)} />
+      </div>
+      <div className="absolute bottom-[max(0.75rem,env(safe-area-inset-bottom))] right-3 z-20 grid grid-cols-2 gap-1.5 sm:hidden">
+        {hud.prompt && <div className="col-span-2"><FloatingAction icon="E" label={shortPrompt(hud.prompt)} active onClick={() => engine.current?.interact()} /></div>}
+        <FloatingAction icon="♡" label="Cuddle" onClick={() => engine.current?.cuddle()} />
+        <FloatingAction icon={hud.carrying ? '↓' : '↟'} label={hud.carrying ? 'Set down' : 'Carry'} onClick={() => engine.current?.toggleCarryCat()} />
+        <FloatingAction icon="✦" label="Play" onClick={() => engine.current?.playWithCat()} />
+        <FloatingAction icon="Z" label="Nap" onClick={() => engine.current?.sleepCat()} />
+        <FloatingAction icon="⌕" label="Call" onClick={() => engine.current?.callCat()} />
+        <FloatingAction icon="＋" label="Feed" onClick={() => engine.current?.feedCat()} />
+        <FloatingAction icon="◉" label={hud.laserOn ? 'Laser on' : 'Laser'} active={hud.laserOn} onClick={() => engine.current?.toggleLaser()} />
+      </div>
+      <div className="absolute bottom-3 left-1/2 z-10 hidden -translate-x-1/2 font-mono text-[8px] tracking-wide text-white/60 sm:block">
+        WASD / arrows · E interact · C cuddle · H carry · R play · Z nap · Q call · F feed · L laser
+      </div>
     </div>
   </section>
 }

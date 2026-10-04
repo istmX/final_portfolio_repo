@@ -40,6 +40,7 @@ export type Hud = {
   message: string | null
   state: string
   catName: string
+  carrying: boolean
 }
 
 type Mode =
@@ -107,6 +108,8 @@ const STORAGE_KEY = 'cathome_v2_state'
 
 export class CatHomeEngine {
   private ctx: CanvasRenderingContext2D
+  private viewW = VW
+  private viewH = VH
   private bg!: HTMLCanvasElement
   private raf = 0
   private last = 0
@@ -134,6 +137,8 @@ export class CatHomeEngine {
   // Game state & stats
   private stats = { hunger: 70, happiness: 75, energy: 80 }
   private catName = ''
+  private carryingCat = false
+  private carriedCatWasSleeping = false
   private personality: 'playful' | 'lazy' | 'curious' | 'affectionate' | 'independent' = (['playful', 'lazy', 'curious', 'affectionate', 'independent'] as const)[Math.floor(Math.random() * 5)]
   private affection = 0
   private trust = 0
@@ -215,8 +220,8 @@ export class CatHomeEngine {
     this.loadFromStorage()
     this.rebuildBg()
 
-    this.cam.x = clamp(this.player.x - VW / 2, 0, W - VW)
-    this.cam.y = clamp(this.player.y - VH / 2, 0, H - VH)
+    this.cam.x = clamp(this.player.x - this.viewW / 2, 0, Math.max(0, W - this.viewW))
+    this.cam.y = clamp(this.player.y - this.viewH / 2, 0, Math.max(0, H - this.viewH))
   }
 
   private rebuildBg() {
@@ -296,6 +301,16 @@ export class CatHomeEngine {
     this.raf = requestAnimationFrame(loop)
   }
 
+  resizeViewport(width: number, height: number) {
+    this.viewW = Math.max(1, Math.floor(width))
+    this.viewH = Math.max(1, Math.floor(height))
+    this.canvas.width = this.viewW
+    this.canvas.height = this.viewH
+    this.ctx.imageSmoothingEnabled = false
+    this.cam.x = clamp(this.player.x - this.viewW / 2, 0, Math.max(0, W - this.viewW))
+    this.cam.y = clamp(this.player.y - this.viewH / 2, 0, Math.max(0, H - this.viewH))
+  }
+
   stop() {
     this.running = false
     cancelAnimationFrame(this.raf)
@@ -309,6 +324,9 @@ export class CatHomeEngine {
     if (code === 'KeyC' && !repeat) this.cuddle()
     if (code === 'KeyQ' && !repeat) this.callCat()
     if (code === 'KeyF' && !repeat) this.feedCat()
+    if (code === 'KeyH' && !repeat) this.toggleCarryCat()
+    if (code === 'KeyR' && !repeat) this.playWithCat()
+    if (code === 'KeyZ' && !repeat) this.sleepCat()
   }
 
   setCatName(name: string) {
@@ -318,7 +336,18 @@ export class CatHomeEngine {
   }
 
   cuddle() {
-    if (dist(this.player, this.cat) > 48 || ['sleep', 'eat'].includes(this.cat.mode)) return
+    if (this.carryingCat) {
+      this.flash('you are already cuddling the cat')
+      return
+    }
+    if (dist(this.player, this.cat) > 48) {
+      this.flash('come closer to cuddle the cat')
+      return
+    }
+    if (['sleep', 'eat'].includes(this.cat.mode)) {
+      this.flash(this.cat.mode === 'sleep' ? 'the cat is fast asleep' : 'the cat is busy eating')
+      return
+    }
     const c = this.cat
     this.player.facing = c.x >= this.player.x ? 1 : -1
     this.player.action = 'pet'
@@ -335,6 +364,10 @@ export class CatHomeEngine {
 
   callCat() {
     const c = this.cat
+    if (this.carryingCat) {
+      this.flash('the cat is already right here')
+      return
+    }
     if (c.mode === 'sleep') {
       this.flash('a sleepy ear twitches')
       return
@@ -371,9 +404,84 @@ export class CatHomeEngine {
   }
 
   feedCat() {
-    if (dist(this.player, this.cat) > 52) return
+    if (this.carryingCat) {
+      this.flash('set the cat down before offering food')
+      return
+    }
+    if (dist(this.player, this.cat) > 52) {
+      this.flash('come closer to offer food')
+      return
+    }
     if (this.food > 0) this.goEat()
     else this.say('feed me', 1.8)
+  }
+
+  toggleCarryCat() {
+    const c = this.cat
+    if (this.carryingCat) {
+      this.carryingCat = false
+      c.x = clamp(this.player.x + this.player.facing * 17, BOUNDS.minX + 10, BOUNDS.maxX - 10)
+      c.y = this.player.y + 1
+      this.player.action = 'interact'
+      this.player.actionTimer = 0.45
+      if (this.carriedCatWasSleeping) this.setMode('sleep', 'sleep', rand(8, 16))
+      else this.setMode('sit', 'sit', rand(1.5, 3))
+      this.flash(`${this.catName || 'the cat'} settles down softly`)
+      this.saveToStorage()
+      return
+    }
+    if (dist(this.player, c) > 44 || c.jumping || ['eat', 'drink'].includes(c.mode)) {
+      this.flash('come a little closer to pick the cat up')
+      return
+    }
+    this.carriedCatWasSleeping = c.mode === 'sleep'
+    this.carryingCat = true
+    c.mode = 'sit'
+    c.anim = 'sit'
+    c.animT = 0
+    c.jumping = null
+    c.target = null
+    c.then = null
+    this.player.action = 'carry'
+    this.player.actionTimer = 0
+    this.flash(`${this.catName || 'the cat'} lets you carry them`)
+    this.affection = clamp100(this.affection + 1)
+    this.trust = clamp100(this.trust + 2)
+    this.saveToStorage()
+  }
+
+  sleepCat() {
+    if (this.carryingCat) {
+      this.flash('the cat is warm and sleepy in your arms')
+      return
+    }
+    if (this.cat.mode === 'sleep') {
+      this.flash('the cat is already having a nap')
+      return
+    }
+    this.flash('you make the room feel a little quieter')
+    this.goSleep()
+  }
+
+  playWithCat() {
+    if (this.carryingCat) {
+      this.flash('the cat would rather be set down first')
+      return
+    }
+    if (dist(this.player, this.cat) > 100) {
+      this.flash('get a little closer to invite the cat to play')
+      return
+    }
+    const toy = this.toys[Math.floor(Math.random() * this.toys.length)]
+    if (toy.kind === 'wand') {
+      this.player.action = 'wave'
+      this.player.actionTimer = 2.4
+      this.flash('a little feather dance begins')
+      this.react(0.2, () => this.startPlay(toy))
+    } else {
+      this.flash(`you toss the ${toy.kind} for ${this.catName || 'the cat'}`)
+      this.throwToy(toy)
+    }
   }
 
   keyUp(code: string) {
@@ -434,6 +542,14 @@ export class CatHomeEngine {
     }
   }
 
+  setLaserViewportPosition(xRatio: number, yRatio: number) {
+    if (!this.laserOn) return
+    this.setLaserPos(
+      this.cam.x + clamp(xRatio, 0, 1) * this.viewW,
+      this.cam.y + clamp(yRatio, 0, 1) * this.viewH,
+    )
+  }
+
   // -------------------------------------------------------------- Interaction
 
   private target(): Target | null {
@@ -448,7 +564,7 @@ export class CatHomeEngine {
 
     const dc = dist(p, c)
     if (dc < 36) {
-      options.push({ kind: 'cat', label: `pet ${this.catName || 'the cat'}`, dist: dc - 10 })
+      options.push({ kind: 'cat', label: this.carryingCat ? 'put the cat down' : `pet ${this.catName || 'the cat'}`, dist: dc - 10 })
     }
 
     const dFood = dist(p, POI.foodSpot)
@@ -544,7 +660,8 @@ export class CatHomeEngine {
         break
 
       case 'cat':
-        this.pet()
+        if (this.carryingCat) this.toggleCarryCat()
+        else this.pet()
         break
 
       case 'food':
@@ -1195,6 +1312,14 @@ export class CatHomeEngine {
     const c = this.cat
     const p = this.player
     c.animT += dt
+    if (this.carryingCat) {
+      c.x = p.x - p.facing * 4
+      c.y = p.y - 24
+      c.facing = p.facing
+      c.mode = 'sit'
+      c.anim = 'sit'
+      return
+    }
     c.noticeCd -= dt
 
     if (c.pending) {
@@ -1419,8 +1544,8 @@ export class CatHomeEngine {
       if (this.message.t <= 0) this.message = null
     }
 
-    const tx = clamp(this.player.x - VW / 2, 0, W - VW)
-    const ty = clamp(this.player.y - VH / 2 - 12, 0, H - VH)
+    const tx = clamp(this.player.x - this.viewW / 2, 0, Math.max(0, W - this.viewW))
+    const ty = clamp(this.player.y - this.viewH / 2 - 12, 0, Math.max(0, H - this.viewH))
     const k = 1 - Math.exp(-4.5 * dt)
     this.cam.x += (tx - this.cam.x) * k
     this.cam.y += (ty - this.cam.y) * k
@@ -1451,7 +1576,7 @@ export class CatHomeEngine {
     p.moving = len > 0.15
 
     if (p.moving) {
-      p.action = 'walk'
+      p.action = this.carryingCat ? 'carry' : 'walk'
       p.actionTimer = 0
 
       if (len > 1) {
@@ -1474,11 +1599,13 @@ export class CatHomeEngine {
         p.direction = 'side'
         if (Math.abs(ix) > 0.15) p.facing = ix > 0 ? 1 : -1
       }
-    } else {
-      if (p.actionTimer > 0) {
-        p.actionTimer -= dt
       } else {
-        p.action = 'idle'
+        if (p.actionTimer > 0) {
+          p.actionTimer -= dt
+        } else if (this.carryingCat) {
+          p.action = 'carry'
+        } else {
+          p.action = 'idle'
       }
     }
 
@@ -1537,6 +1664,7 @@ export class CatHomeEngine {
       message: this.message?.text ?? null,
       state: c.mode,
       catName: this.catName,
+      carrying: this.carryingCat,
     }
     const key = JSON.stringify(hud)
     if (key === this.lastHud) return
@@ -1550,7 +1678,7 @@ export class CatHomeEngine {
     const ctx = this.ctx
     ctx.imageSmoothingEnabled = false
     ctx.fillStyle = '#0a0a0a'
-    ctx.fillRect(0, 0, VW, VH)
+    ctx.fillRect(0, 0, this.viewW, this.viewH)
 
     ctx.save()
     ctx.translate(-Math.round(this.cam.x), -Math.round(this.cam.y))

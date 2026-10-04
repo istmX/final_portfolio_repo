@@ -40,7 +40,9 @@ This is a personal developer portfolio for Aryan, using the name and logo **istm
 - Pointed the About navigation item to the professional summary on the homepage; the Tech Stack section follows in the same page flow.
 - Added a home Blogs preview after Projects with three compact article rows and related backend, frontend, and mobile images. The `/blogs` listing contains eight original articles; `/blogs/[slug]` pages include metadata, optional lead images, image credits, reading time, and not-found handling. Article topics draw from the project and “What I Build” notes in `AboutMe.md`.
 - Added dotted horizontal dividers after Projects and Blogs. The home ends with a minimal centered quote attributed to “a wise cat,” a quiet meowing detail with a hand-drawn arrow and subtle hint, then a rounded-top transition into a compact footer. The interactive roaming pixel cat remains the Cat Home easter egg elsewhere on the page.
-- Recomposed the home footer as a wider, dense and deliberately asymmetrical botanical garden in SVG, with distinct lilies, roses, wildflowers, lavender, buds, layered foliage, varied gentle motion, and reduced-motion support. A Marck Script handwritten signature anchors the center above the thank-you, “flowers for you,” tiny meowing line, and quiet social/copyright links.
+- Reworked the final footer to continue the portfolio’s dotted grid and minimal dark styling. It uses the exact line “Built this when I should've been building my main project.”, followed by an animated Aryan SVG signature, “Thanks for visiting.”, a quiet meowing line, minimal social links, copyright, and a small back-to-top control. Decorative flowers and a duplicate footer cat were removed; the existing roaming portfolio cat remains the only one.
+- Added `FooterSignature.tsx`, an original cursive SVG signature that draws its strokes once when it enters view, then settles to full opacity. It honors reduced-motion preferences. The signature paths are being refined for clearer “Aryan” letterforms.
+- Refined Cat Home to use the global fonts already loaded in `app/layout.tsx`, fill the viewport with a camera that adapts to screen proportions, and keep stats and actions in compact floating controls. Added mobile movement/action controls and expanded cat interactions, including carrying the cat, cuddling, calling, feeding, play, sleep, and laser play.
 
 ## Current profile links
 
@@ -53,7 +55,7 @@ The email was entered as `gamil.com` in chat and interpreted as the common `gmai
 
 ## Current state and limitations
 
-- The home page currently contains the navigation, hero, social links, Tech Stack, GitHub Contributions, the four-project Bento section, a linked Blogs preview, the closing quote/easter egg hint, and a botanical signature footer. The existing roaming pixel cat links to Cat Home.
+- The home page currently contains the navigation, hero, social links, Tech Stack, GitHub Contributions, the four-project Bento section, a linked Blogs preview, the closing quote/easter egg hint, and the minimal signature footer. The existing roaming pixel cat links to Cat Home.
 - The About navigation item scrolls to the professional summary on the homepage, with Tech Stack and GitHub Contributions following below. The Projects navigation item returns to the home project section; project information and external destinations are shown in the Bento cards.
 - The contribution graph uses the public `github-contributions-api.jogruber.de` service and displays a fallback message if contribution data cannot be loaded.
 - Microlink renders a remote screenshot preview for GitHub. If its page blocks automated rendering, the direct profile link remains available.

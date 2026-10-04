@@ -527,7 +527,7 @@ function myEye(spin: number) {
 
 // ---------------------------------------------------------------- Player
 
-export type PlayerAction = 'idle' | 'walk' | 'pet' | 'pour' | 'wave' | 'sit' | 'throw' | 'interact'
+export type PlayerAction = 'idle' | 'walk' | 'pet' | 'pour' | 'wave' | 'sit' | 'throw' | 'interact' | 'carry'
 
 /**
  * Polished, high-detail retro human player character with expressive animations:
@@ -551,6 +551,30 @@ export function drawPlayer(
 
   // Ground drop shadow
   R(ctx, 'rgba(0, 0, 0, 0.45)', px - 8, py - 1, 16, 3)
+
+  if (action === 'carry') {
+    ctx.save()
+    ctx.translate(px, py)
+    if (facing === -1) ctx.scale(-1, 1)
+    const stride = step % 4 === 1 ? 1 : step % 4 === 3 ? -1 : 0
+    R(ctx, '#1a1a20', -5, -10 + stride, 4, 8)
+    R(ctx, '#1a1a20', 1, -10 - stride, 4, 8)
+    R(ctx, '#f0f0f4', -5, -2 + stride, 4, 2)
+    R(ctx, '#f0f0f4', 1, -2 - stride, 4, 2)
+    RR(ctx, '#282832', -6, -27, 12, 16)
+    R(ctx, '#3a3a46', -5, -26, 10, 2)
+    // Arms curve inward to cradle the cat against the hoodie.
+    R(ctx, '#202028', -9, -20, 4, 8)
+    R(ctx, '#f4ece2', -8, -13, 4, 3)
+    R(ctx, '#202028', 5, -20, 4, 8)
+    R(ctx, '#f4ece2', 4, -13, 4, 3)
+    RR(ctx, '#18181c', -5, -38, 11, 7)
+    RR(ctx, '#f4ece2', -3, -35, 9, 9)
+    R(ctx, '#18181c', 2, -32, 2, 2)
+    R(ctx, '#ffffff', 2, -32, 1, 1)
+    ctx.restore()
+    return
+  }
 
   // 1. PETTING ANIMATION (Human kneels down on one knee and strokes cat)
   if (action === 'pet') {
