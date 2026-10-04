@@ -352,9 +352,14 @@ export function renderBackground(time: TimeOfDay, lampOn: boolean): HTMLCanvasEl
 
   // ---------------- Cat Bed (Padded, Plush)
   RR(ctx, '#483c48', 26, 158, 62, 24)
-  RR(ctx, '#685668', 28, 159, 58, 20)
-  RR(ctx, '#282028', 32, 162, 50, 14)
-  for (let x = 36; x < 80; x += 6) R(ctx, '#382e38', x, 168, 2, 2)
+  RR(ctx, '#706278', 28, 159, 58, 20)
+  RR(ctx, '#d4cbbb', 31, 161, 54, 16)
+  RR(ctx, '#ece4d3', 34, 162, 20, 11)
+  RR(ctx, '#8d9eaa', 53, 163, 27, 12)
+  R(ctx, '#aebbc1', 56, 164, 19, 1)
+  R(ctx, '#aebbc1', 56, 172, 19, 1)
+  R(ctx, '#b8aa9a', 37, 164, 12, 1)
+  R(ctx, '#b8aa9a', 37, 169, 12, 1)
   R(ctx, '#1e181e', 30, 179, 54, 2)
 
   // ---------------- Bowl Mat
@@ -527,7 +532,7 @@ function myEye(spin: number) {
 
 // ---------------------------------------------------------------- Player
 
-export type PlayerAction = 'idle' | 'walk' | 'pet' | 'pour' | 'wave' | 'sit' | 'throw' | 'interact' | 'carry'
+export type PlayerAction = 'idle' | 'walk' | 'pet' | 'pour' | 'wave' | 'sit' | 'throw' | 'interact' | 'carry' | 'pickup' | 'place'
 
 /**
  * Polished, high-detail retro human player character with expressive animations:
@@ -572,6 +577,29 @@ export function drawPlayer(
     RR(ctx, '#f4ece2', -3, -35, 9, 9)
     R(ctx, '#18181c', 2, -32, 2, 2)
     R(ctx, '#ffffff', 2, -32, 1, 1)
+    ctx.restore()
+    return
+  }
+
+  if (action === 'pickup' || action === 'place') {
+    ctx.save()
+    ctx.translate(px, py)
+    if (facing === -1) ctx.scale(-1, 1)
+    const lower = action === 'place' ? step % 2 : 0
+    R(ctx, '#141418', -7, -7, 6, 5)
+    R(ctx, '#1a1a20', 1, -7, 6, 5)
+    R(ctx, '#f0f0f4', -8, -2, 6, 2)
+    R(ctx, '#f0f0f4', 1, -2, 6, 2)
+    RR(ctx, '#282832', -7, -19 + lower, 14, 12)
+    R(ctx, '#3a3a46', -6, -18 + lower, 12, 2)
+    RR(ctx, '#18181c', -6, -29 + lower, 12, 7)
+    RR(ctx, '#f4ece2', -4, -26 + lower, 10, 9)
+    R(ctx, '#18181c', 2, -23 + lower, 2, 2)
+    const reach = action === 'pickup' ? (step % 4 < 2 ? -7 : -9) : -5
+    R(ctx, '#202028', -9, -17 + lower, 5, 3)
+    R(ctx, '#f4ece2', -11, -14 + reach + lower, 4, 3)
+    R(ctx, '#202028', 4, -17 + lower, 5, 3)
+    R(ctx, '#f4ece2', 7, -14 + reach + lower, 4, 3)
     ctx.restore()
     return
   }

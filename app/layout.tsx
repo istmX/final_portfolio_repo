@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Schibsted_Grotesk, Inter } from "next/font/google";
+import PortfolioPreloader from "../components/PortfolioPreloader";
 import "./globals.css";
 
 const Grotesk = Schibsted_Grotesk({
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <PortfolioPreloader />
         {children}
         <Script id="theme-init" strategy="beforeInteractive">
           {`try { var savedTheme = localStorage.getItem('istmx-theme'); if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.dataset.theme = savedTheme; } catch (_) {}`}

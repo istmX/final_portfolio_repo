@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
-import { motion } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import ThemeToggle from './ThemeToggle'
 import { IstmxLogo } from './LogoSvg'
 
@@ -17,6 +17,23 @@ const NAV_ITEMS = [
 function Navbar() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLUListElement>(null)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Node && !menuRef.current?.parentElement?.contains(event.target)) setMenuOpen(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [menuOpen])
 
   return (
     <header className="relative z-30 mx-auto w-full max-w-3xl px-8 pt-6 sm:px-8 sm:pt-8">
@@ -88,8 +105,10 @@ function Navbar() {
           </motion.button>
         </div>
 
+        <AnimatePresence>
         {menuOpen && (
-          <ul id="mobile-navigation" className="absolute left-0 right-0 top-full z-50 mt-2 flex flex-col gap-1 rounded-xl border border-border/70 bg-background/95 p-2 shadow-xl backdrop-blur-md sm:hidden">
+          <motion.ul ref={menuRef} id="mobile-navigation" className="mobile-nav-panel absolute left-0 right-0 top-full z-50 mt-2 flex flex-col gap-1 rounded-xl border bg-background/95 p-2 shadow-xl backdrop-blur-md sm:hidden"
+            initial={{ opacity: 0, y: -7, scale: 0.985 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -5, scale: 0.99 }} transition={{ duration: 0.18, ease: 'easeOut' }}>
             {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href
 
@@ -114,8 +133,9 @@ function Navbar() {
                 </motion.li>
               )
             })}
-          </ul>
+          </motion.ul>
         )}
+        </AnimatePresence>
       </nav>
     </header>
   )

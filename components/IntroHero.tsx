@@ -14,6 +14,7 @@ const FULL_STACK_TECH: { name: string; icon: TechIconName }[] = [
 
 const AI_TECH: { name: string; icon: TechIconName }[] = [
   { name: 'Python', icon: 'Python' },
+  { name: 'FastAPI', icon: 'FastAPI' },
   { name: 'LangChain', icon: 'LangChain' },
   { name: 'LangGraph', icon: 'LangGraph' },
   { name: 'RAG', icon: 'RAG' },

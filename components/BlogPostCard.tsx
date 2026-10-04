@@ -2,9 +2,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { BlogPost } from '../app/blogs/blogData'
 import PremiumLink from './PremiumLink'
+import ScrollReveal from './ScrollReveal'
 
 export default function BlogPostCard({ post, index = 0 }: { post: BlogPost; index?: number }) {
   return (
+    <ScrollReveal delay={Math.min(index * 0.045, 0.22)} className="h-full">
     <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-[18px] border border-border/50 bg-surface/15 transition-colors hover:border-border/80 hover:bg-surface/25">
       <Link href={`/blogs/${post.slug}`} className="focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-foreground">
         {post.image ? (
@@ -28,5 +30,6 @@ export default function BlogPostCard({ post, index = 0 }: { post: BlogPost; inde
         <PremiumLink href={`/blogs/${post.slug}`} className="mt-4 w-fit">Read article</PremiumLink>
       </div>
     </article>
+    </ScrollReveal>
   )
 }
