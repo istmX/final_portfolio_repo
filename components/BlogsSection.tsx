@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { BLOG_POSTS } from '../blogs/blogData'
+import { BLOG_POSTS } from '../app/blogs/blogData'
 import PremiumLink from './PremiumLink'
 
 export default function BlogsSection() {

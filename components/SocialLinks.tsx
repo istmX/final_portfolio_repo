@@ -1,4 +1,5 @@
-import { LinkPreview } from '../../components/ui/link-preview'
+import { LinkPreview } from './ui/link-preview'
+import { GlowingEffect } from './ui/glowing-effect'
 import SocialProfileCard from './SocialProfileCard'
 
 const LINKS = [
@@ -55,15 +56,16 @@ export default function SocialLinks() {
           {LINKS.map((link) => (
             <span
               key={link.name}
-              className="rounded-[15px] border border-border/40 p-[3px] transition-colors hover:border-border/80"
+              className="relative isolate block rounded-[15px] border border-border/40 p-[3px] transition-colors hover:border-border/80"
             >
+              <GlowingEffect spread={34} proximity={46} inactiveZone={0.45} disabled={false} />
               {link.name === 'GitHub' ? (
                 <LinkPreview
                   url={link.href}
                   label={`Open ${link.name} profile`}
                   width={320}
                   height={200}
-                  className="flex size-10 items-center justify-center rounded-[11px] border border-border/70 bg-surface/40 text-muted transition-colors hover:border-foreground/60 hover:bg-surface hover:text-foreground focus-visible:border-foreground/60 focus-visible:text-foreground focus-visible:outline-none"
+                  className="relative z-10 flex size-10 items-center justify-center rounded-[11px] border border-border/70 bg-surface/40 text-muted transition-colors hover:border-foreground/60 hover:bg-surface hover:text-foreground focus-visible:border-foreground/60 focus-visible:text-foreground focus-visible:outline-none"
                 >
                   {link.icon}
                 </LinkPreview>
@@ -73,7 +75,7 @@ export default function SocialLinks() {
                   href={link.href}
                   handle={link.handle}
                   detail={link.detail}
-                  className="flex size-10 items-center justify-center rounded-[11px] border border-border/70 bg-surface/40 text-muted transition-colors hover:border-foreground/60 hover:bg-surface hover:text-foreground focus-visible:border-foreground/60 focus-visible:text-foreground focus-visible:outline-none"
+                  className="relative z-10 flex size-10 items-center justify-center rounded-[11px] border border-border/70 bg-surface/40 text-muted transition-colors hover:border-foreground/60 hover:bg-surface hover:text-foreground focus-visible:border-foreground/60 focus-visible:text-foreground focus-visible:outline-none"
                 >
                   {link.icon}
                 </SocialProfileCard>
@@ -81,14 +83,15 @@ export default function SocialLinks() {
             </span>
           ))}
 
-          <span className="rounded-[15px] border border-border/40 p-[3px] transition-colors hover:border-border/80">
+          <span className="relative isolate block rounded-[15px] border border-border/40 p-[3px] transition-colors hover:border-border/80">
+            <GlowingEffect spread={34} proximity={46} inactiveZone={0.45} disabled={false} />
             <SocialProfileCard
               name="Email"
               href="mailto:xparyan68@gmail.com"
               handle="xparyan68@gmail.com"
               detail="Have a project or a question? Send me a note."
               isEmail
-              className="flex size-10 items-center justify-center rounded-[11px] border border-border/70 bg-surface/40 text-muted transition-colors hover:border-foreground/60 hover:bg-surface hover:text-foreground focus-visible:border-foreground/60 focus-visible:text-foreground focus-visible:outline-none"
+              className="relative z-10 flex size-10 items-center justify-center rounded-[11px] border border-border/70 bg-surface/40 text-muted transition-colors hover:border-foreground/60 hover:bg-surface hover:text-foreground focus-visible:border-foreground/60 focus-visible:text-foreground focus-visible:outline-none"
             >
               <EmailIcon />
             </SocialProfileCard>

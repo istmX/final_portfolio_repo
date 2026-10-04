@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Marck_Script, Schibsted_Grotesk, Inter } from "next/font/google";
+import { Schibsted_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 
 const Grotesk = Schibsted_Grotesk({
@@ -12,14 +12,6 @@ const InterFont = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
-
-const SignatureFont = Marck_Script({
-  variable: "--font-marck-script",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-
 
 export const metadata: Metadata = {
   title: "Aryan | AI Developer & Full-Stack Builder",
@@ -42,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${Grotesk.variable} ${InterFont.variable} ${SignatureFont.variable} h-full antialiased`}
+      className={`${Grotesk.variable} ${InterFont.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">

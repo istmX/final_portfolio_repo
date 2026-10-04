@@ -2,8 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Contanier from '../../components/Contanier'
-import Navbar from '../../components/Navbar'
+import Contanier from '../../../components/Contanier'
+import Navbar from '../../../components/Navbar'
 import { BLOG_POSTS, getBlogPost } from '../blogData'
 
 type BlogPageProps = {

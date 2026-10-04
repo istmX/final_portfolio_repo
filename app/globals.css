@@ -67,7 +67,6 @@
   --color-border: var(--border);
   --font-display: var(--font-schibsted-grotesk);
   --font-secondary: var(--font-inter);
-  --font-signature: var(--font-marck-script);
 }
 
 body {
@@ -111,10 +110,6 @@ body {
   to {
     background-position: -120% 0;
   }
-}
-
-.brand-logo {
-  filter: none;
 }
 
 .page-divider {
@@ -177,16 +172,6 @@ body {
   transform: scale(1.08);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .brand-logo {
-    filter: invert(1);
-  }
-}
-
-:root[data-theme="dark"] .brand-logo {
-  filter: invert(1);
-}
-
 .nav-link-label:hover,
 a:hover .nav-link-label,
 a:focus-visible .nav-link-label {
@@ -209,150 +194,6 @@ a:focus-visible .nav-link-label {
   }
 }
 
-/* ── Botanical keyframes ── */
-
-@keyframes botanical-sway {
-  0%, 100% { transform: rotate(-0.7deg) translateX(-0.3px); }
-  33% { transform: rotate(0.5deg) translateX(0.2px); }
-  66% { transform: rotate(-0.3deg) translateX(-0.1px); }
-}
-
-@keyframes botanical-sway-alt {
-  0%, 100% { transform: rotate(0.6deg) translateX(0.2px); }
-  40% { transform: rotate(-0.8deg) translateX(-0.3px); }
-  70% { transform: rotate(0.3deg) translateX(0.1px); }
-}
-
-@keyframes botanical-leaf-breeze {
-  0%, 100% { transform: rotate(-1.2deg) translateY(0); }
-  35% { transform: rotate(0.8deg) translateY(-0.4px); }
-  65% { transform: rotate(-0.4deg) translateY(0.2px); }
-}
-
-@keyframes botanical-leaf-breeze-alt {
-  0%, 100% { transform: rotate(0.9deg) translateY(0.2px); }
-  45% { transform: rotate(-1.4deg) translateY(-0.3px); }
-  75% { transform: rotate(0.5deg) translateY(0); }
-}
-
-@keyframes botanical-bob {
-  0%, 100% { transform: translateY(0) scale(0.98) rotate(0deg); }
-  30% { transform: translateY(-1.2px) scale(0.99) rotate(0.3deg); }
-  60% { transform: translateY(-0.5px) scale(1) rotate(-0.2deg); }
-}
-
-@keyframes botanical-bob-alt {
-  0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
-  25% { transform: translateY(-0.8px) scale(0.99) rotate(-0.4deg); }
-  55% { transform: translateY(-1.5px) scale(0.98) rotate(0.2deg); }
-  80% { transform: translateY(-0.3px) scale(1) rotate(-0.1deg); }
-}
-
-@keyframes botanical-bloom {
-  0%, 85%, 100% { transform: scale(1) rotate(0deg); }
-  92% { transform: scale(1.03) rotate(0.5deg); }
-}
-
-@keyframes botanical-petal-drift {
-  0%, 50% { opacity: 0; transform: translate(0, -6px) rotate(0); }
-  58% { opacity: 0.65; }
-  78% { opacity: 0.5; }
-  100% { opacity: 0; transform: translate(8px, 32px) rotate(28deg); }
-}
-
-@keyframes botanical-petal-drift-alt {
-  0%, 45% { opacity: 0; transform: translate(0, -4px) rotate(0); }
-  54% { opacity: 0.6; }
-  75% { opacity: 0.4; }
-  100% { opacity: 0; transform: translate(-6px, 30px) rotate(-20deg); }
-}
-
-@keyframes botanical-petal-drift-slow {
-  0%, 60% { opacity: 0; transform: translate(0, -3px) rotate(0); }
-  68% { opacity: 0.55; }
-  88% { opacity: 0.35; }
-  100% { opacity: 0; transform: translate(4px, 28px) rotate(15deg); }
-}
-
-/* ── Botanical animation classes ── */
-
-.botanical-stem {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: botanical-sway 18s ease-in-out infinite;
-}
-
-.botanical-stem:nth-of-type(2n) {
-  animation-name: botanical-sway-alt;
-  animation-duration: 20s;
-}
-.botanical-stem:nth-of-type(3n) { animation-duration: 22s; }
-.botanical-stem:nth-of-type(5n) { animation-duration: 16s; }
-
-.botanical-leaf {
-  transform-box: fill-box;
-  transform-origin: 0% 100%;
-  animation: botanical-leaf-breeze 13s ease-in-out infinite;
-}
-
-.botanical-leaf:nth-of-type(2n) {
-  animation-name: botanical-leaf-breeze-alt;
-  animation-duration: 15s;
-}
-.botanical-leaf:nth-of-type(3n) { animation-duration: 17s; }
-.botanical-leaf:nth-of-type(4n) { animation-duration: 11s; animation-delay: -2s; }
-.botanical-leaf:nth-of-type(5n) { animation-duration: 19s; animation-delay: -5s; }
-.botanical-leaf:nth-of-type(7n) { animation-duration: 14s; animation-delay: -8s; }
-
-.botanical-blossom {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: botanical-bob 12s ease-in-out infinite, botanical-bloom 28s ease-in-out infinite;
-}
-
-.botanical-blossom:nth-of-type(2n) {
-  animation-name: botanical-bob-alt, botanical-bloom;
-  animation-duration: 14s, 32s;
-}
-.botanical-blossom:nth-of-type(3n) { animation-duration: 16s, 26s; animation-delay: -3s, -12s; }
-.botanical-blossom:nth-of-type(4n) { animation-delay: -5s, -8s; }
-.botanical-blossom:nth-of-type(5n) { animation-duration: 11s, 35s; animation-delay: -7s, -18s; }
-.botanical-blossom:nth-of-type(7n) { animation-duration: 18s, 30s; animation-delay: -2s, -22s; }
-
-.botanical-bud {
-  transform-box: fill-box;
-  transform-origin: center bottom;
-  animation: botanical-bob 15s ease-in-out infinite;
-}
-
-.botanical-bud:nth-of-type(2n) {
-  animation-name: botanical-bob-alt;
-  animation-duration: 17s;
-}
-.botanical-bud:nth-of-type(3n) { animation-duration: 13s; animation-delay: -4s; }
-.botanical-bud:nth-of-type(5n) { animation-duration: 19s; animation-delay: -9s; }
-
-.botanical-falling-petal {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: botanical-petal-drift 16s ease-in-out infinite;
-}
-
-/* ── Delay utilities ── */
-
-.botanical-delay-one { animation-delay: -2.1s; }
-.botanical-delay-two { animation-delay: -5.4s; }
-.botanical-delay-three { animation-delay: -9.0s; }
-
-/* ── Individual petal timings ── */
-
-.petal-one { animation-delay: -4s; animation-duration: 18s; }
-.petal-two { animation-name: botanical-petal-drift-alt; animation-delay: -10s; animation-duration: 20s; }
-.petal-three { animation-delay: -7s; animation-duration: 22s; }
-.petal-four { animation-name: botanical-petal-drift-slow; animation-delay: -14s; animation-duration: 24s; }
-.petal-five { animation-name: botanical-petal-drift-alt; animation-delay: -2s; animation-duration: 19s; }
-.petal-six { animation-delay: -16s; animation-duration: 26s; }
-
 @media (prefers-reduced-motion: reduce) {
   .text-shimmer {
     color: var(--foreground);
@@ -370,12 +211,7 @@ a:focus-visible .nav-link-label {
   .project-card,
   .project-image,
   .project-image-glow,
-  .project-tech,
-  .botanical-stem,
-  .botanical-leaf,
-  .botanical-blossom,
-  .botanical-bud,
-  .botanical-falling-petal {
+  .project-tech {
     transition: none;
     animation: none;
   }

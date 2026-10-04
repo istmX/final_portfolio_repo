@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import type { BlogPost } from '../blogs/blogData'
+import type { BlogPost } from '../app/blogs/blogData'
 import PremiumLink from './PremiumLink'
 
 export default function BlogPostCard({ post, index = 0 }: { post: BlogPost; index?: number }) {

@@ -19,7 +19,9 @@ This is a personal developer portfolio for Aryan, using the name and logo **istm
 - Added one compact “Find me” social-links row directly after the hero, matching the supplied profile reference. The square icon buttons have a subtle double border and 3px inset gap.
 - Added horizontal dotted dividers between the navigation, hero/profile, and social links, matching the dotted vertical container edges. Vertical rails are hidden on mobile, where content has extra side padding.
 - Made the mobile navigation menu overlay page content instead of pushing it down.
+- Consolidated the portfolio components under `components/`, with reusable UI components under `components/ui/` and the global styles in `app/globals.css`.
 - Added reusable `components/ui/link-preview.tsx`: GitHub uses a wider, viewport-clamped screenshot preview through Microlink. X, LinkedIn, and email show a profile card using the hero portrait, India location, account handle, and relevant details.
+- Added a metallic, lightly iridescent pointer-tracking glow to the double-bordered social buttons and project image frames through `components/ui/glowing-effect.tsx`.
 - Added click-triggered ring and sparkle effects in `ClickSparks.tsx`.
 - Added a fixed frosted-glass blur at the bottom of the viewport in `ScrollBlur.tsx`.
 - Removed duplicate social-section renderings from the home page; it now renders one instance.
@@ -34,14 +36,12 @@ This is a personal developer portfolio for Aryan, using the name and logo **istm
 - The Projects navigation item points to the Bento section on the home page.
 - Updated project cards with the requested descriptions and full per-project build stacks from `AboutMe.md` and the supplied project details: Crew includes its web, mobile, backend, agent, database, and infrastructure tools; Noiseless includes its documented application, backend, AI, and Slack stack; CodeCat includes its framework, UI, AI SDK, database, Prisma, and Auth.js stack; ISTMX Skills lists JavaScript and npm. Each stack is shown through the existing icon tooltips.
 - Lowered the global bottom blur behind the main page content so it no longer overlays and softens project cards.
-- Added `components/index.ts` as a barrel export for the reusable components and project data.
 - Added a compact Tech Stack section after Find Me and before GitHub Contributions. The 30 selected technologies appear as icon capsules inside one bordered container, centered on mobile and left-aligned on wider screens. Capsules can be selected to highlight a technology, with keyboard-accessible button controls.
 - Added a neutral, responsive contribution heatmap for the `istmX` GitHub profile after Tech Stack, with a left-aligned “GitHub Contributions” heading. It fetches only the current calendar year, shows dynamically aligned month labels above the graph, and offers day-level hover details and a profile link. Each page load requests fresh data; the upstream service caches results for up to one hour.
 - Pointed the About navigation item to the professional summary on the homepage; the Tech Stack section follows in the same page flow.
 - Added a home Blogs preview after Projects with three compact article rows and related backend, frontend, and mobile images. The `/blogs` listing contains eight original articles; `/blogs/[slug]` pages include metadata, optional lead images, image credits, reading time, and not-found handling. Article topics draw from the project and “What I Build” notes in `AboutMe.md`.
 - Added dotted horizontal dividers after Projects and Blogs. The home ends with a minimal centered quote attributed to “a wise cat,” a quiet meowing detail with a hand-drawn arrow and subtle hint, then a rounded-top transition into a compact footer. The interactive roaming pixel cat remains the Cat Home easter egg elsewhere on the page.
-- Reworked the final footer to continue the portfolio’s dotted grid and minimal dark styling. It uses the exact line “Built this when I should've been building my main project.”, followed by an animated Aryan SVG signature, “Thanks for visiting.”, a quiet meowing line, minimal social links, copyright, and a small back-to-top control. Decorative flowers and a duplicate footer cat were removed; the existing roaming portfolio cat remains the only one.
-- Added `FooterSignature.tsx`, an original cursive SVG signature that draws its strokes once when it enters view, then settles to full opacity. It honors reduced-motion preferences. The signature paths are being refined for clearer “Aryan” letterforms.
+- Simplified the final footer to a full-width, low-opacity ARYAN wordmark that draws when it enters view and reveals a cursor-following RGB stroke on hover, framed by the portfolio's dotted grid.
 - Refined Cat Home to use the global fonts already loaded in `app/layout.tsx`, fill the viewport with a camera that adapts to screen proportions, and keep stats and actions in compact floating controls. Added mobile movement/action controls and expanded cat interactions, including carrying the cat, cuddling, calling, feeding, play, sleep, and laser play.
 
 ## Current profile links

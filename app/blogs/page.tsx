@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import Contanier from '../components/Contanier'
-import Navbar from '../components/Navbar'
-import BlogPostCard from '../components/BlogPostCard'
+import Contanier from '../../components/Contanier'
+import Navbar from '../../components/Navbar'
+import BlogPostCard from '../../components/BlogPostCard'
 import { BLOG_POSTS } from './blogData'
 
 export const metadata: Metadata = {
