@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { PROJECTS, type Project } from '../data/projects'
+import { PROJECTS, type Project } from './projectData'
 import ScrollReveal from './ScrollReveal'
 import { TechIcon } from './icons'
 import { IstmxLogo } from './LogoSvg'
@@ -112,7 +112,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             <StackIcons project={project} />
             {projectUrl ? (
               <a href={projectUrl} target="_blank" rel="noreferrer" className="pointer-events-auto shrink-0 pb-1 text-[9px] font-medium uppercase tracking-[0.13em] text-muted/70 transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground">
-                Visit project ↗
+                {project.links[0].label === 'Website' ? 'Explore toolkit' : 'View project'} ↗
               </a>
             ) : (
               <span className="shrink-0 pb-1 text-[9px] font-medium uppercase tracking-[0.13em] text-muted/60">In progress</span>
@@ -126,13 +126,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 export default function ProjectsSection() {
   return (
-    <section id="projects" aria-labelledby="projects-heading" className="px-4 pb-12 pt-2 sm:px-6 sm:pb-16">
+    <section id="projects" aria-labelledby="projects-heading" className="px-8 pb-12 pt-2 sm:px-8 sm:pb-16">
       <div className="mb-5 flex items-end justify-between gap-4">
-        <div>
+        <div className="max-w-xl">
           <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">Selected work</p>
           <h2 id="projects-heading" className="mt-1 font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-            Things I&apos;m building
+            Products, tools &amp; experiments
           </h2>
+          <p className="mt-2 text-xs leading-5 text-muted sm:text-sm">
+            A few things I&apos;ve built around AI, developer workflows, and getting useful work done.
+          </p>
         </div>
         <span className="pb-1 text-xs text-muted">01 — 04</span>
       </div>

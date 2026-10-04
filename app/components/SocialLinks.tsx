@@ -46,7 +46,7 @@ function EmailIcon() {
 
 export default function SocialLinks() {
   return (
-    <section aria-label="Social links" className="px-4 pb-10 pt-1 sm:px-6">
+    <section aria-label="Social links" className="px-8 pb-10 pt-1 sm:px-8">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
         <h2 className="shrink-0 text-xs font-medium uppercase tracking-[0.16em] text-muted">
           Find me

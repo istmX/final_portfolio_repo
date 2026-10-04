@@ -19,10 +19,10 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <header className="mx-auto w-full max-w-3xl px-4 pt-6 sm:px-6 sm:pt-8">
+    <header className="relative z-30 mx-auto w-full max-w-3xl px-8 pt-6 sm:px-8 sm:pt-8">
       <nav
         aria-label="Main navigation"
-        className="flex flex-wrap items-center justify-between gap-y-2 px-1 sm:px-2.5"
+        className="relative flex flex-wrap items-center justify-between gap-y-2 px-1 sm:px-2.5"
       >
         <Link
           href="/"
@@ -89,7 +89,7 @@ function Navbar() {
         </div>
 
         {menuOpen && (
-          <ul id="mobile-navigation" className="flex w-full flex-col gap-1 pb-2 pt-3 sm:hidden">
+          <ul id="mobile-navigation" className="absolute left-0 right-0 top-full z-50 mt-2 flex flex-col gap-1 rounded-xl border border-border/70 bg-background/95 p-2 shadow-xl backdrop-blur-md sm:hidden">
             {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href
 
