@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import AnimatedRole from './AnimatedRole'
 import IndiaClock from './IndiaClock'
+import InteractiveDotField from './InteractiveDotField'
 import { TechIcon, type TechIconName } from './icons'
 
 const FULL_STACK_TECH: { name: string; icon: TechIconName }[] = [
@@ -35,7 +36,7 @@ function InlineTechCapsules({ technologies }: { technologies: typeof FULL_STACK_
 export default function IntroHero() {
   return (
     <section aria-labelledby="hero-name" className="relative isolate px-8 pb-10 pt-8 sm:px-8 sm:pb-12 sm:pt-12">
-      <div aria-hidden="true" className="hero-dot-texture pointer-events-none absolute inset-x-8 top-0 h-40 sm:inset-x-8" />
+      <InteractiveDotField className="hero-dot-texture pointer-events-none absolute inset-x-8 top-0 h-40 sm:inset-x-8" />
 
       <div className="relative z-10">
         <div className="flex flex-wrap items-center justify-between gap-3 sm:flex-nowrap">

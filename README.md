@@ -1,44 +1,106 @@
 # Developer Portfolio Template
 
-A free, open-source portfolio template for developers. It includes a responsive portfolio, project showcase, writing section, interactive details, and a small pixel-art Cat Home experience. Built with Next.js, React, TypeScript, Tailwind CSS, and Motion.
+A free, open-source portfolio template for developers, built with **Next.js, React, TypeScript, Tailwind CSS, and Motion**.
 
-## Preview
+Designed as a complete starting point for a modern developer portfolio, with everything you need to showcase your work, writing, skills, projects, and online presence — plus a few interactive details to make it feel personal.
 
-See the live template at **[aryanonai.vercel.app](https://aryanonai.vercel.app/)**.
+**Live Demo:** [aryanonai.vercel.app](https://aryanonai.vercel.app/)
 
-## Features
+**Repository:** [github.com/istmX/final_portfolio_repo](https://github.com/istmX/final_portfolio_repo)
 
-- Responsive homepage with profile, social links, technology stack, and projects
-- Blog index and article pages with per-post metadata and social previews
+> Clean, responsive, customizable, and free to make your own.
+
+## What's Included
+
+### Portfolio
+
+- Responsive homepage
+- Profile and introduction section
+- Social links
+- Technology stack with programming language and technology icons
+- Selected projects showcase
+- Reusable project cards
+- Project descriptions, technologies, visuals, and external links
+- About section
+- Writing / blog section
+- Responsive navigation
+- Custom footer
+- Custom 404 page
+
+### Blog
+
+- Dedicated blog index
+- Individual article pages
+- Reusable article layout
+- Per-post metadata
+- Open Graph metadata
+- Social sharing previews
+- Article descriptions and publishing details
+- Easy-to-edit blog content
+
+### Design & Interaction
+
+- Minimal, developer-focused editorial design
 - Light and dark themes
-- Motion effects with reduced-motion support
-- Search metadata, structured data, `robots.txt`, `sitemap.xml`, and `llms.txt`
-- Custom 404 page and animated first-visit preloader
-- Optional pixel-art Cat Home experience
+- Responsive layouts
+- Motion-powered animations
+- Subtle micro-interactions
+- Reduced-motion support
+- Animated first-visit preloader
+- Reusable UI components
+- Keyboard-friendly interactions
+- Mobile-friendly controls
 
-## Run locally
+### SEO & Discoverability
+
+- Page metadata
+- Canonical URLs
+- Open Graph metadata
+- Social metadata
+- Structured data
+- `robots.txt`
+- `sitemap.xml`
+- `llms.txt`
+- Search-engine verification support
+
+### Cat Home
+
+The template also includes an optional hidden **Cat Home** experience — a small pixel-art world where visitors can explore a room and interact with a virtual cat.
+
+It includes:
+
+- Autonomous cat behavior
+- Cat interactions
+- Feeding
+- Cuddling
+- Playing
+- Toys
+- Laser interaction
+- Food and water
+- Fish tank
+- Cat tower
+- Contextual interactions
+- Keyboard controls
+- Mobile controls
+- Day/night behavior
+- Persistent cat state
+- Small discoveries and Easter eggs
+
+Cat Home is optional and can be removed if you prefer a traditional portfolio.
+
+## Tech Stack
+
+- **Next.js**
+- **React**
+- **TypeScript**
+- **Tailwind CSS**
+- **Motion**
+- **Vercel**
+
+## Getting Started
 
 ```bash
+git clone https://github.com/istmX/final_portfolio_repo.git
+cd final_portfolio_repo
 npm install
 npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-## Make it yours
-
-- Edit the profile and technology capsules in `components/IntroHero.tsx`.
-- Update project details in `components/projectData.ts`.
-- Add or edit articles in `app/blogs/blogData.ts`.
-- Change social links in `components/SocialLinks.tsx`.
-- Adjust colors, typography, and global styles in `app/globals.css`.
-- Set your canonical site URL in `lib/site.ts` and update page metadata in `app/layout.tsx`.
-- Replace or remove `public/googlebcdf164ce86ae3d1.html` and add your own site verification file if you use Google Search Console.
-
-## Deploy
-
-Deploy with [Vercel](https://vercel.com/new) or another platform that supports Next.js. Update `lib/site.ts` before publishing so canonical URLs and the sitemap use your domain.
-
-## License
-
-Released under the [MIT License](LICENSE).

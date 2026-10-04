@@ -111,12 +111,32 @@ html { scroll-behavior: smooth; }
   display: inline-block;
 }
 
-.hero-dot-texture {
+.interactive-dot-field {
+  --dot-cursor-x: -100px;
+  --dot-cursor-y: -100px;
+  --dot-cursor-mask:
+    radial-gradient(ellipse 35px 22px at calc(var(--dot-cursor-x) - 15px) calc(var(--dot-cursor-y) - 4px), transparent 0 18px, #000 35px),
+    radial-gradient(ellipse 29px 26px at calc(var(--dot-cursor-x) + 12px) calc(var(--dot-cursor-y) - 12px), transparent 0 14px, #000 29px),
+    radial-gradient(ellipse 32px 20px at calc(var(--dot-cursor-x) + 13px) calc(var(--dot-cursor-y) + 13px), transparent 0 16px, #000 32px),
+    radial-gradient(ellipse 24px 27px at calc(var(--dot-cursor-x) - 13px) calc(var(--dot-cursor-y) + 15px), transparent 0 12px, #000 27px);
   background-image: radial-gradient(circle, var(--muted) 0.7px, transparent 0.9px);
   background-size: 6px 6px;
-  mask-image: linear-gradient(to bottom, black, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, black, transparent);
-  opacity: 0.18;
+  -webkit-mask-image: var(--dot-cursor-mask);
+  mask-image: var(--dot-cursor-mask);
+  -webkit-mask-composite: source-in, source-in, source-in;
+  mask-composite: intersect;
+  opacity: 0.16;
+}
+
+.hero-dot-texture {
+  -webkit-mask-image:
+    var(--dot-cursor-mask),
+    linear-gradient(to bottom, #000, transparent);
+  mask-image:
+    var(--dot-cursor-mask),
+    linear-gradient(to bottom, #000, transparent);
+  -webkit-mask-composite: source-in, source-in, source-in, source-in;
+  mask-composite: intersect;
 }
 
 .text-shimmer {
