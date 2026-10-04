@@ -12,10 +12,28 @@ export type BlogPost = {
   readTime: string
   image?: string
   imageAlt?: string
-  imageCredit?: { label: string; href: string }
   featuredOnHome?: boolean
   sections: BlogSection[]
 }
+
+const EXTRA_POST_COVERS = [
+  ['photo-1558494949-ef010cbdcc31', 'A softly lit row of servers in a data center'],
+  ['photo-1515879218367-8466d910aaa4', 'Source code displayed on a developer laptop'],
+  ['photo-1485827404703-89b55fcc595e', 'A small robot representing an automated background task'],
+  ['photo-1677442136019-21780ecad995', 'Abstract artificial intelligence network visualization'],
+  ['photo-1551288049-bebda4e38f71', 'Analytics charts on a computer screen'],
+  ['photo-1518770660439-4636190af475', 'A close-up of a computer circuit board'],
+  ['photo-1555949963-ff9fe0c870eb', 'A developer workstation showing code and security tooling'],
+  ['photo-1559028012-481c04fa702d', 'A modern product design workspace'],
+  ['photo-1512941937669-90a1b58e7e9', 'A smartphone displaying a mobile app'],
+  ['photo-1511707171634-5f897ff02aa9', 'A smartphone held in one hand'],
+  ['photo-1563013544-824ae1b704d3', 'A secure digital payment and account interface'],
+  ['photo-1544383835-bda2bc66a55d', 'A database server and storage infrastructure'],
+  ['photo-1555066931-4365d14bab8c', 'A code editor open on a developer display'],
+  ['photo-1516321318423-f06f85e504b3', 'A person using a phone while working at a laptop'],
+  ['photo-1451187580459-43490279c0fa', 'A global data network viewed from space'],
+  ['photo-1531482615713-2afd69097998', 'A team working together at a shared desk'],
+] as const
 
 export const BLOG_POSTS: BlogPost[] = [
   {
@@ -24,9 +42,8 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'A useful agent needs more than a good answer. It needs a plan, tools, a place to work, and a way to know what happened next.',
     category: 'AI & agent systems',
     readTime: '5 min read',
-    image: 'https://images.unsplash.com/photo-1506399309177-3b43e99fead2?auto=format&fit=crop&w=1600&q=85',
-    imageAlt: 'Rows of server cabinets and network cables inside a data center',
-    imageCredit: { label: 'Unsplash', href: 'https://unsplash.com/de/fotos/schwarzes-imgix-serversystem-pgdaAwf6IJg' },
+    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1600&q=85',
+    imageAlt: 'A small robot representing software agents that perform tasks',
     featuredOnHome: true,
     sections: [
       {
@@ -65,9 +82,8 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'Notes from building ISTMX Skills: making practical software workflows reusable across coding agents without tying them to one stack.',
     category: 'Developer tools',
     readTime: '4 min read',
-    image: 'https://images.unsplash.com/photo-1698919585695-546e4a31fc8f?auto=format&fit=crop&w=1600&q=85',
-    imageAlt: 'A developer workstation with a laptop and monitor showing code and terminal output',
-    imageCredit: { label: 'Unsplash · Boitumelo', href: 'https://unsplash.com/photos/a-computer-desk-with-two-monitors-and-a-laptop-A2g9OiXTW6k' },
+    image: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&q=85',
+    imageAlt: 'Source code on a developer’s laptop screen',
     featuredOnHome: true,
     sections: [
       {
@@ -106,6 +122,8 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'A browser, terminal, files, and applications give an agent a place to act. Treating that environment as its own layer makes the system easier to extend.',
     category: 'AI & agent systems',
     readTime: '4 min read',
+    image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1600&q=85',
+    imageAlt: 'A close-up view of a computer screen with lines of code',
     sections: [
       {
         heading: 'Tools need somewhere to work',
@@ -136,6 +154,8 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'Keep task state structured, retrieve relevant context when needed, and let an agent find the right memory without stuffing every document into every request.',
     category: 'AI & agent systems',
     readTime: '4 min read',
+    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=85',
+    imageAlt: 'A digital network visualization representing searchable knowledge',
     sections: [
       {
         heading: 'More context is not always better',
@@ -166,6 +186,8 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'A multi-agent system works best when specialist roles serve one clear goal and a main agent stays accountable for bringing the result together.',
     category: 'AI & agent systems',
     readTime: '4 min read',
+    image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1600&q=85',
+    imageAlt: 'A small team collaborating around a table',
     sections: [
       {
         heading: 'Specialization should solve a real problem',
@@ -196,6 +218,8 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'Noiseless explores a simple idea: monitor a topic on the schedule you choose, prepare a useful digest, and deliver it where you already work.',
     category: 'Product notes',
     readTime: '3 min read',
+    image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1600&q=85',
+    imageAlt: 'People reviewing research and ideas together at a table',
     sections: [
       {
         heading: 'Move beyond one-off searches',
@@ -226,9 +250,8 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'CodeCat uses a multi-provider fallback approach so a temporary issue with one AI provider does not have to stop a code review.',
     category: 'Product notes',
     readTime: '3 min read',
-    image: 'https://images.unsplash.com/photo-1634836023845-eddbfe9937da?auto=format&fit=crop&w=1600&q=85',
-    imageAlt: 'A software workspace showing code and application panels on two screens',
-    imageCredit: { label: 'Unsplash', href: 'https://unsplash.com/s/photos/software-demo' },
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1600&q=85',
+    imageAlt: 'A close view of a code editor on a computer display',
     sections: [
       {
         heading: 'A review depends on more than the prompt',
@@ -259,9 +282,8 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'An AI feature lives inside a whole product. Web and mobile interfaces, backend services, and persistent state all shape how people use it.',
     category: 'Building products',
     readTime: '4 min read',
-    image: 'https://images.unsplash.com/photo-1664316006808-c0ac894facc5?auto=format&fit=crop&w=1600&q=85',
-    imageAlt: 'A person holding a smartphone and using a mobile application',
-    imageCredit: { label: 'Unsplash · Mark Bishop', href: 'https://unsplash.com/photos/a-hand-holding-a-cell-phone-zYpxh60n13A' },
+    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9?auto=format&fit=crop&w=1600&q=85',
+    imageAlt: 'A smartphone displaying a mobile app interface',
     featuredOnHome: true,
     sections: [
       {
@@ -305,8 +327,10 @@ export const BLOG_POSTS: BlogPost[] = [
     ['streaming-ai-responses','Stream AI responses without faking progress','AI product design','Streaming can make waiting feel responsive, but the interface should distinguish generated text from completed work.','Stream when partial output is useful, such as a conversational answer. For tool-heavy tasks, early text may be misleading.','Track completion separately from the text connection. A closed stream does not necessarily mean the task succeeded.','Handle network loss, cancellation, and provider errors deliberately. Persist enough state to resume or explain why work stopped.'],
     ['agent-workflow-observability','Observability for agent workflows starts with a trace','AI systems','A useful trace links the request, model calls, tools, and final outcome without exposing secrets.','Use request identifiers across orchestration and tool events, recording timing and outcomes at each boundary.','Prompts and tool inputs may contain private data. Redact sensitive fields and restrict access to detailed traces.','A trace should help explain what the agent tried and where the task diverged, without claiming to expose model reasoning perfectly.'],
     ['accessible-ai-interfaces','Build accessible interfaces for AI features','Frontend development','Changing AI output makes status announcements, keyboard access, and reduced-motion behavior especially important.','Announce meaningful state changes without reading every streamed token aloud. Structure long results with headings and navigable regions.','Make every action operable by keyboard and touch, with visible focus and status that does not rely on color alone.','Let people stop work, review sources, and approve consequential actions. Accessible interfaces make choices understandable.'],
-  ] as const).map(([slug, title, category, excerpt, first, second, third]) => ({
+  ] as const).map(([slug, title, category, excerpt, first, second, third], index) => ({
     slug, title, category, excerpt, readTime: '3 min read',
+    image: `https://images.unsplash.com/${(EXTRA_POST_COVERS[index] ?? EXTRA_POST_COVERS[0])[0]}?auto=format&fit=crop&w=1600&q=85`,
+    imageAlt: (EXTRA_POST_COVERS[index] ?? EXTRA_POST_COVERS[0])[1],
     sections: [
       { heading: 'Start with a clear boundary', paragraphs: [first] },
       { heading: 'Handle failure deliberately', paragraphs: [second] },

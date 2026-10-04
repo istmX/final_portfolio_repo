@@ -1,10 +1,49 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import CatSprite from './CatSprite'
 
 const FULL_DURATION = 1850
+const START_KEY = 'istmx-preloader-started-at'
+const FINISHED_KEY = 'istmx-preloader-finished'
+const listeners = new Set<() => void>()
+let fallbackVisible = true
+let checkedReload = false
+
+function subscribe(listener: () => void) {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
+}
+
+function notifyListeners() {
+  listeners.forEach((listener) => listener())
+}
+
+function getVisibilitySnapshot() {
+  if (typeof window === 'undefined') return true
+
+  try {
+    if (!checkedReload) {
+      checkedReload = true
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+      if (navigation?.type === 'reload') {
+        sessionStorage.removeItem(START_KEY)
+        sessionStorage.removeItem(FINISHED_KEY)
+      }
+    }
+
+    if (sessionStorage.getItem(FINISHED_KEY) === '1') return false
+    const startedAt = Number(sessionStorage.getItem(START_KEY))
+    return !startedAt || Date.now() - startedAt < FULL_DURATION
+  } catch {
+    return fallbackVisible
+  }
+}
+
+function getServerVisibilitySnapshot() {
+  return true
+}
 
 function SittingCat({ reducedMotion }: { reducedMotion: boolean }) {
   return (
@@ -22,15 +61,42 @@ function SittingCat({ reducedMotion }: { reducedMotion: boolean }) {
 
 export default function PortfolioPreloader() {
   const prefersReducedMotion = useReducedMotion()
-  const [visible, setVisible] = useState(true)
+  const visible = useSyncExternalStore(subscribe, getVisibilitySnapshot, getServerVisibilitySnapshot)
 
   useEffect(() => {
-    const timeout = window.setTimeout(
-      () => setVisible(false),
-      prefersReducedMotion ? 350 : FULL_DURATION,
-    )
+    if (!visible) return
+
+    let startedAt = Date.now()
+    try {
+      const savedStart = Number(sessionStorage.getItem(START_KEY))
+      if (savedStart) startedAt = savedStart
+      else sessionStorage.setItem(START_KEY, String(startedAt))
+
+      if (sessionStorage.getItem(FINISHED_KEY) === '1') return
+    } catch {
+      // The in-memory fallback still handles environments that block storage.
+    }
+
+    const duration = prefersReducedMotion ? 350 : FULL_DURATION
+    const remaining = Math.max(0, duration - (Date.now() - startedAt))
+    const finish = () => {
+      fallbackVisible = false
+      try {
+        sessionStorage.setItem(FINISHED_KEY, '1')
+      } catch {
+        // The in-memory fallback is enough until the page is unloaded.
+      }
+      notifyListeners()
+    }
+
+    if (remaining === 0) {
+      finish()
+      return
+    }
+
+    const timeout = window.setTimeout(finish, remaining)
     return () => window.clearTimeout(timeout)
-  }, [prefersReducedMotion])
+  }, [visible, prefersReducedMotion])
 
   return (
     <AnimatePresence>

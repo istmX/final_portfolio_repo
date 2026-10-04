@@ -90,11 +90,6 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
                 <div className="relative aspect-[16/8] overflow-hidden rounded-[18px] border border-border/50 bg-surface/25 sm:aspect-[16/7]">
                   <Image src={post.image} alt={post.imageAlt ?? ''} fill priority sizes="(max-width: 768px) 100vw, 768px" unoptimized className="object-cover" />
                 </div>
-                {post.imageCredit && (
-                  <figcaption className="mt-2 text-right text-[10px] text-muted">
-                    Photo via <a href={post.imageCredit.href} target="_blank" rel="noreferrer" className="underline decoration-border underline-offset-2 transition-colors hover:text-foreground">{post.imageCredit.label}</a>
-                  </figcaption>
-                )}
               </figure>
             )}
 
