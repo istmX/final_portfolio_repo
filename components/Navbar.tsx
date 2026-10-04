@@ -43,6 +43,11 @@ function Navbar() {
       >
         <Link
           href="/"
+          scroll={true}
+          onClick={() => {
+            setMenuOpen(false)
+            if (pathname === '/') window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
           aria-label="istmX home"
           className="flex shrink-0 flex-col items-center gap-0.5"
         >
@@ -122,7 +127,7 @@ function Navbar() {
                     href={item.href}
                     aria-current={isActive ? 'page' : undefined}
                     onClick={() => setMenuOpen(false)}
-                    className={`block rounded-md px-3 py-2.5 text-center text-sm font-medium transition-colors ${
+                    className={`block rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors ${
                       isActive
                         ? 'text-foreground'
                         : 'text-muted hover:text-foreground'

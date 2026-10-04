@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Schibsted_Grotesk, Inter } from "next/font/google";
 import PortfolioPreloader from "../components/PortfolioPreloader";
+import ScrollToHome from "../components/ScrollToHome";
 import { SITE_URL } from "../lib/site";
 import "./globals.css";
 
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <ScrollToHome />
         <PortfolioPreloader />
         {children}
         <Script id="theme-init" strategy="beforeInteractive">

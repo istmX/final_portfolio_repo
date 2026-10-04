@@ -79,7 +79,7 @@ body {
 html { scroll-behavior: smooth; }
 
 .mobile-nav-panel {
-  position: relative;
+  position: absolute;
   isolation: isolate;
   border-color: transparent;
 }
