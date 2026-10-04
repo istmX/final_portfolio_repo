@@ -4,61 +4,64 @@ export type Project = {
   slug: string
   name: string
   eyebrow: string
+  qualifier?: string
   description: string
   image: string
   imageAlt: string
-  stamp: string
-  stack: TechIconName[]
+  metadata: string
+  technologies: TechIconName[]
   links: { label: string; href: string }[]
-  glow: 'crew' | 'skills' | 'codecat' | 'noiseless'
   wide?: boolean
   status?: string
+  glow: 'crew' | 'skills' | 'codecat' | 'noiseless'
 }
 
 export const PROJECTS: Project[] = [
   {
     slug: 'crew',
     name: 'Crew',
-    eyebrow: 'Autonomous AI workforce',
+    eyebrow: 'Autonomous AI agent platform',
+    qualifier: '(web and mobile app)',
     description:
-      'Give one agent a goal and it can plan the work, delegate to specialists, use tools and a remote computer, then bring the result back.',
+      'An independent AI agent platform for creating and running multiple agents that work on their own cloud computers. Assign them tasks and let them use tools, browse the web, work with files, and collaborate to get the work done.',
     image: '/Crew.png',
-    imageAlt: 'Crew autonomous AI workforce coordinating specialist agents and connected services',
-    stamp: 'Give a goal. Get work done.',
-    stack: ['Next.js', 'TypeScript', 'Python', 'LangGraph', 'PostgreSQL', 'Qdrant', 'AWS'],
+    imageAlt: 'Crew autonomous AI workforce coordinating agents and connected services',
+    metadata: 'Next.js · React · TypeScript · Tailwind CSS · Vercel · React Native · Expo · Python · FastAPI · LangChain · LangGraph · RAG · Multi-agent execution · PostgreSQL · Neon · Qdrant · Docker · AWS EC2',
+    technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Vercel', 'React Native', 'Expo', 'Python', 'FastAPI', 'LangChain', 'LangGraph', 'RAG', 'Multi-agent execution', 'PostgreSQL', 'Neon', 'Qdrant', 'Docker', 'AWS EC2'],
     links: [],
-    status: 'Currently building',
+    status: 'In development',
     wide: true,
     glow: 'crew',
   },
   {
     slug: 'istmx-skills',
     name: 'ISTMX Skills',
-    eyebrow: '@istmx/skills · 1,000+ npm downloads',
+    eyebrow: 'Developer workflow toolkit',
     description:
-      'A reusable workflow toolkit that helps coding agents plan, build, review, and ship software with structured engineering practices.',
+      'A collection of reusable skills and structured workflows for AI coding agents, helping them understand projects, follow engineering practices, and produce more consistent results.',
     image: '/istm.png',
-    imageAlt: 'ISTMX Skills website showing the agentic development toolkit',
-    stamp: 'A system for your coding agents',
-    stack: ['JavaScript'],
+    imageAlt: 'ISTMX Skills website showing reusable workflows for AI coding agents',
+    metadata: 'JavaScript · NPM',
+    technologies: ['JavaScript', 'NPM'],
     links: [
       { label: 'Website', href: 'https://istmx.dpdns.org/' },
       { label: 'Documentation', href: 'https://istmx.dpdns.org/docs' },
       { label: 'GitHub', href: 'https://github.com/istmX/skills' },
       { label: 'npm package', href: 'https://www.npmjs.com/package/@istmx/skills' },
     ],
+    status: 'Open source',
     glow: 'skills',
   },
   {
     slug: 'codecat',
     name: 'CodeCat',
-    eyebrow: 'AI code review',
+    eyebrow: 'AI code review platform',
     description:
-      'Get clear explanations of potential code issues and practical fixes, with provider fallback to keep reviews available.',
+      'An AI-powered code review platform that analyzes your code, finds potential issues, explains what went wrong, and helps you understand and improve your implementation.',
     image: '/codecat.png',
-    imageAlt: 'CodeCat AI code review interface and specialist review agents',
-    stamp: 'Review · Explain · Improve',
-    stack: ['Vercel AI SDK', 'Next.js', 'Neon', 'TypeScript', 'Auth.js'],
+    imageAlt: 'CodeCat AI code review interface',
+    metadata: 'Next.js · TypeScript · Tailwind CSS · Vercel AI SDK · Neon · Prisma · Auth.js',
+    technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Vercel AI SDK', 'Neon', 'Prisma', 'Auth.js'],
     links: [
       { label: 'Live project', href: 'https://codecat-ten.vercel.app/' },
       { label: 'GitHub', href: 'https://github.com/istmX/codecat' },
@@ -68,13 +71,13 @@ export const PROJECTS: Project[] = [
   {
     slug: 'noiseless',
     name: 'Noiseless',
-    eyebrow: 'Autonomous research',
+    eyebrow: 'Autonomous research agent',
     description:
-      'Follow topics on a schedule and get focused digests of meaningful updates, delivered through tools like Slack and Gmail.',
+      'An autonomous research agent that follows topics you care about, searches for new information, filters out the noise, and delivers useful updates through scheduled digests, Slack, and Gmail.',
     image: '/noiseless.png',
-    imageAlt: 'Noiseless research product showing its signal-focused interface',
-    stamp: 'Less noise. More signal.',
-    stack: ['Next.js', 'TypeScript', 'Python', 'FastAPI', 'LangChain', 'Slack'],
+    imageAlt: 'Noiseless research product interface',
+    metadata: 'Next.js · TypeScript · Tailwind CSS · Neon · Python · FastAPI · LangChain · Slack',
+    technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Neon', 'Python', 'FastAPI', 'LangChain', 'Slack'],
     links: [
       { label: 'Live project', href: 'https://noiseless-gold.vercel.app/' },
       { label: 'GitHub', href: 'https://github.com/istmX/Noiseless' },

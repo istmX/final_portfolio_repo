@@ -5,6 +5,8 @@ import SocialLinks from "./components/SocialLinks";
 import ClickSparks from "./components/ClickSparks";
 import ScrollBlur from "./components/ScrollBlur";
 import ProjectsSection from "./components/ProjectsSection";
+import TechStackSection from "./components/TechStackSection";
+import GitHubContributions from "./components/GitHubContributions";
 
 export default function Home() {
   return (
@@ -13,6 +15,8 @@ export default function Home() {
         <Navbar />
         <IntroHero />
         <SocialLinks />
+        <TechStackSection />
+        <GitHubContributions />
         <ProjectsSection />
       </Contanier>
       <ClickSparks />

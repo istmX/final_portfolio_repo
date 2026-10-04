@@ -3,18 +3,29 @@ import {
   siExpo,
   siExpress,
   siFastapi,
+  siGit,
+  siGithub,
+  siGsap,
   siJavascript,
   siLangchain,
   siLanggraph,
+  siNodedotjs,
+  siNpm,
+  siMongodb,
   siNeon,
   siNextdotjs,
   siPostgresql,
+  siPydantic,
+  siPrisma,
+  siSqlalchemy,
   siPython,
   siQdrant,
   siReact,
   siTailwindcss,
   siTypescript,
   siVercel,
+  siGmail,
+  siFirebase,
   type SimpleIcon,
 } from 'simple-icons'
 import Image from 'next/image'
@@ -44,6 +55,26 @@ const TECH_ICONS = {
   Slack: null,
   Motion: null,
   'Express.js': siExpress,
+  NPM: siNpm,
+  Prisma: siPrisma,
+  Gmail: siGmail,
+  'AI Agents': null,
+  'AI Agent': null,
+  'Node.js': siNodedotjs,
+  MongoDB: siMongodb,
+  Firebase: siFirebase,
+  'Multi-agent systems': null,
+  'Multi-agent execution': null,
+  'AWS EC2': null,
+  Pydantic: siPydantic,
+  GSAP: siGsap,
+  Lenis: null,
+  SQLAlchemy: siSqlalchemy,
+  Playwright: null,
+  Git: siGit,
+  GitHub: siGithub,
+  Express: siExpress,
+  Research: null,
 } satisfies Record<string, SimpleIcon | null>
 
 export type TechIconName = keyof typeof TECH_ICONS
@@ -51,6 +82,50 @@ export type TechIconName = keyof typeof TECH_ICONS
 type TechIconProps = SVGProps<SVGSVGElement> & { name: TechIconName }
 
 function UtilityIcon({ name, ...props }: TechIconProps) {
+  if (name === 'Lenis') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+        <path d="M4 7h16M6 12h12M8 17h8" />
+      </svg>
+    )
+  }
+
+  if (name === 'Playwright') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+        <rect x="3.5" y="4" width="17" height="16" rx="2.5" />
+        <path d="M3.5 8h17m-12 5 2.2 2.2 4.8-4.8" />
+      </svg>
+    )
+  }
+
+  if (name === 'Multi-agent systems' || name === 'Multi-agent execution') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+        <circle cx="12" cy="5" r="2.25" /><circle cx="5" cy="18" r="2.25" /><circle cx="19" cy="18" r="2.25" />
+        <path d="m10.9 7-4.8 8.8M13.1 7l4.8 8.8M7.5 18h9" />
+      </svg>
+    )
+  }
+
+  if (name === 'AI Agents' || name === 'AI Agent') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+        <path d="M12 2.8 14.5 9.5 21.2 12l-6.7 2.5L12 21.2l-2.5-6.7L2.8 12l6.7-2.5L12 2.8Z" />
+        <circle cx="18.5" cy="5.5" r="1" fill="currentColor" />
+      </svg>
+    )
+  }
+
+  if (name === 'Research') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+        <circle cx="10.8" cy="10.8" r="6.8" />
+        <path d="m16 16 4.5 4.5M8 11h5.5M10.75 8.25v5.5" />
+      </svg>
+    )
+  }
+
   if (name === 'RAG') {
     return (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
@@ -98,7 +173,7 @@ function UtilityIcon({ name, ...props }: TechIconProps) {
 }
 
 export function TechIcon({ name, className, style, ...props }: TechIconProps) {
-  if (name === 'AWS') {
+  if (name === 'AWS' || name === 'AWS EC2') {
     return (
       <Image
         src="/tech-icons/aws.svg"
@@ -119,7 +194,7 @@ export function TechIcon({ name, className, style, ...props }: TechIconProps) {
   }
 
   const vercel = name === 'Vercel' || name === 'Vercel AI SDK'
-  const monochrome = name === 'Next.js' || name === 'Express.js'
+  const monochrome = name === 'Next.js' || name === 'Express.js' || name === 'Express' || name === 'GitHub'
 
   return (
     <svg

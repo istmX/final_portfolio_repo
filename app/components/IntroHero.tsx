@@ -8,6 +8,8 @@ const FULL_STACK_TECH: { name: string; icon: TechIconName }[] = [
   { name: 'React', icon: 'React' },
   { name: 'Next.js', icon: 'Next.js' },
   { name: 'Express', icon: 'Express.js' },
+  { name: 'React Native', icon: 'React Native' },
+  { name: 'Expo', icon: 'Expo' },
 ]
 
 const AI_TECH: { name: string; icon: TechIconName }[] = [
@@ -71,11 +73,11 @@ export default function IntroHero() {
           </div>
         </div>
 
-        <div className="mt-6 max-w-2xl text-sm leading-6 text-muted sm:mt-7 sm:text-[15px]">
+        <div id="about" className="mt-6 max-w-2xl scroll-mt-6 text-sm leading-6 text-muted sm:mt-7 sm:text-[15px]">
           <p>
-            I build AI agents, full-stack products, and platforms. I build full-stack applications with{' '}
-            <InlineTechCapsules technologies={FULL_STACK_TECH} />, and build AI agents and intelligent systems with{' '}
-            <InlineTechCapsules technologies={AI_TECH} />. I&apos;m interested in taking ideas from simple applications to systems that can actually reason, use tools, and get work done. Right now, I&apos;m building Crew, an autonomous AI workforce that turns goals into completed work.
+            I&apos;m an 18-year-old developer and student building AI-powered applications, autonomous AI agents, and full-stack platforms for web and mobile. I build across{' '}
+            <InlineTechCapsules technologies={FULL_STACK_TECH} />, and use{' '}
+            <InlineTechCapsules technologies={AI_TECH} /> to build AI agents and intelligent systems. I&apos;m interested in taking ideas from simple applications to systems that can actually reason, use tools, and get work done. Right now, I&apos;m building Crew, an autonomous AI workforce that turns goals into completed work.
           </p>
         </div>
       </div>

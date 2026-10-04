@@ -9,7 +9,7 @@ import { IstmxLogo } from './LogoSvg'
 
 const NAV_ITEMS = [
   { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
+  { label: 'About', href: '/#about' },
   { label: 'Projects', href: '/#projects' },
   { label: 'Blogs', href: '/blogs' },
 ]

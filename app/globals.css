@@ -7,6 +7,11 @@
   --surface: #e5e5e5; /* neutral-200 */
   --muted: #525252; /* neutral-600 */
   --border: #d4d4d4; /* neutral-300 */
+  --contribution-level-0: #e5e5e5;
+  --contribution-level-1: #d4d4d4;
+  --contribution-level-2: #a3a3a3;
+  --contribution-level-3: #737373;
+  --contribution-level-4: #404040;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,6 +22,11 @@
     --surface: #171717; /* neutral-900 */
     --muted: #a3a3a3; /* neutral-400 */
     --border: #262626; /* neutral-800 */
+    --contribution-level-0: #262626;
+    --contribution-level-1: #404040;
+    --contribution-level-2: #525252;
+    --contribution-level-3: #a3a3a3;
+    --contribution-level-4: #f5f5f5;
   }
 }
 
@@ -28,6 +38,11 @@
   --surface: #e5e5e5; /* neutral-200 */
   --muted: #525252; /* neutral-600 */
   --border: #d4d4d4; /* neutral-300 */
+  --contribution-level-0: #e5e5e5;
+  --contribution-level-1: #d4d4d4;
+  --contribution-level-2: #a3a3a3;
+  --contribution-level-3: #737373;
+  --contribution-level-4: #404040;
 }
 
 :root[data-theme="dark"] {
@@ -37,6 +52,11 @@
   --surface: #171717; /* neutral-900 */
   --muted: #a3a3a3; /* neutral-400 */
   --border: #262626; /* neutral-800 */
+  --contribution-level-0: #262626;
+  --contribution-level-1: #404040;
+  --contribution-level-2: #525252;
+  --contribution-level-3: #a3a3a3;
+  --contribution-level-4: #f5f5f5;
 }
 
 @theme inline {
@@ -104,177 +124,56 @@ body {
   opacity: 0.7;
 }
 
-.project-card-glow {
+.contribution-level-0 { background-color: var(--contribution-level-0); }
+.contribution-level-1 { background-color: var(--contribution-level-1); }
+.contribution-level-2 { background-color: var(--contribution-level-2); }
+.contribution-level-3 { background-color: var(--contribution-level-3); }
+.contribution-level-4 { background-color: var(--contribution-level-4); }
+
+.project-image-glow {
   position: absolute;
   z-index: 0;
-  inset: 3px;
-  overflow: hidden;
-  border-radius: 15px;
-  pointer-events: none;
+  inset: 8%;
+  border-radius: 9999px;
   opacity: 0;
-  transform: translateY(12%) scale(0.94);
-  transition: opacity 600ms ease, transform 800ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  filter: blur(24px);
+  transform: scale(0.88);
+  transition: opacity 350ms ease, transform 450ms ease;
+  pointer-events: none;
 }
 
 .project-glow-crew {
   background:
-    radial-gradient(ellipse 120% 90% at 48% 110%, rgb(249 115 22 / 25%), transparent 76%),
-    radial-gradient(ellipse 60% 48% at 12% 100%, rgb(251 146 60 / 14%), transparent 80%);
+    radial-gradient(ellipse at 32% 42%, rgb(249 115 22 / 34%), transparent 55%),
+    radial-gradient(ellipse at 72% 58%, rgb(99 102 241 / 27%), transparent 58%),
+    radial-gradient(ellipse at center, rgb(56 189 248 / 12%), transparent 72%);
 }
 
 .project-glow-skills {
   background:
-    radial-gradient(ellipse 120% 90% at 50% 110%, rgb(56 189 248 / 22%), transparent 76%),
-    radial-gradient(ellipse 55% 48% at 95% 100%, rgb(99 102 241 / 14%), transparent 80%);
+    radial-gradient(ellipse at 34% 48%, rgb(56 189 248 / 32%), transparent 54%),
+    radial-gradient(ellipse at 70% 52%, rgb(99 102 241 / 27%), transparent 58%),
+    radial-gradient(ellipse at center, rgb(45 212 191 / 12%), transparent 72%);
 }
 
 .project-glow-codecat {
   background:
-    radial-gradient(ellipse 120% 90% at 50% 110%, rgb(139 92 246 / 23%), transparent 76%),
-    radial-gradient(ellipse 58% 48% at 5% 100%, rgb(59 130 246 / 15%), transparent 80%);
+    radial-gradient(ellipse at 34% 44%, rgb(139 92 246 / 34%), transparent 55%),
+    radial-gradient(ellipse at 70% 56%, rgb(59 130 246 / 28%), transparent 58%),
+    radial-gradient(ellipse at center, rgb(236 72 153 / 12%), transparent 72%);
 }
 
 .project-glow-noiseless {
   background:
-    radial-gradient(ellipse 120% 90% at 52% 110%, rgb(16 185 129 / 21%), transparent 76%),
-    radial-gradient(ellipse 60% 48% at 95% 100%, rgb(163 230 53 / 12%), transparent 80%);
+    radial-gradient(ellipse at 32% 46%, rgb(16 185 129 / 30%), transparent 54%),
+    radial-gradient(ellipse at 70% 56%, rgb(56 189 248 / 27%), transparent 58%),
+    radial-gradient(ellipse at center, rgb(163 230 53 / 10%), transparent 72%);
 }
 
-.project-card:hover > .project-card-glow,
-.project-card:focus-within > .project-card-glow {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-.project-card::after {
-  position: absolute;
-  inset: 3px;
-  border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
-  border-radius: 15px;
-  content: "";
-  pointer-events: none;
-}
-
-.project-media {
-  box-shadow: inset 0 1px rgb(255 255 255 / 3%);
-}
-
-.project-image-fade {
-  position: absolute;
-  z-index: 15;
-  inset: 48% 0 0;
-  background: linear-gradient(to bottom, transparent, rgb(5 5 5 / 56%));
-  opacity: 0.7;
-  pointer-events: none;
-  transition: opacity 400ms ease;
-}
-
-.project-card:hover .project-image-fade {
-  opacity: 1;
-}
-
-.project-image-stamp {
-  opacity: 0.63;
-  transform: translateY(3px);
-  transition: opacity 400ms ease, transform 400ms ease;
-}
-
-.project-card:hover .project-image-stamp {
-  opacity: 0.95;
-  transform: translateY(0);
-}
-
-.project-image-index {
-  opacity: 0.7;
-  transition: opacity 400ms ease;
-}
-
-.project-card:hover .project-image-index {
-  opacity: 1;
-}
-
-.project-mark {
-  color: var(--foreground);
-  background: color-mix(in srgb, var(--surface) 72%, transparent);
-  transition: transform 350ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 350ms ease, background-color 350ms ease;
-}
-
-.project-card:hover .project-mark {
-  transform: rotate(-4deg) scale(1.06);
-}
-
-.project-mark-crew {
-  color: #fdba74;
-  border-color: rgb(249 115 22 / 20%);
-  background: rgb(249 115 22 / 7%);
-}
-
-.project-mark-skills {
-  color: #38bdf8;
-  border-color: rgb(56 189 248 / 20%);
-  background: rgb(56 189 248 / 7%);
-}
-
-.project-mark-codecat {
-  color: #a78bfa;
-  border-color: rgb(139 92 246 / 22%);
-  background: rgb(139 92 246 / 8%);
-}
-
-.project-mark-noiseless {
-  color: #6ee7b7;
-  border-color: rgb(16 185 129 / 22%);
-  background: rgb(16 185 129 / 8%);
-}
-
-.project-open-mark {
-  box-shadow: 0 0 0 rgb(255 255 255 / 0%);
-}
-
-.project-card:hover .project-open-mark {
-  box-shadow: 0 0 20px color-mix(in srgb, var(--foreground) 12%, transparent);
-}
-
-.project-image-glow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background:
-    radial-gradient(ellipse at 50% 100%, rgb(255 255 255 / 10%), transparent 55%),
-    linear-gradient(120deg, transparent 30%, rgb(255 255 255 / 9%) 50%, transparent 70%);
-  background-size: 100% 100%, 220% 100%;
-  background-position: center, 130% center;
-  transition: opacity 500ms ease, background-position 900ms ease;
-}
-
-.project-image-ambient {
-  position: absolute;
-  z-index: 0;
-  inset: -12%;
-  opacity: 0.72;
-  filter: blur(18px);
-  transform: translateY(10%) scale(0.9);
-  transition: opacity 600ms ease, transform 850ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.project-card:hover .project-image-ambient,
-.project-card:focus-within .project-image-ambient {
-  opacity: 1;
-  transform: translateY(0) scale(1.08);
-}
-
-.group:hover .project-image-glow,
-.group:focus-visible .project-image-glow,
+.project-card:hover .project-image-glow,
 .project-card:focus-within .project-image-glow {
   opacity: 1;
-  background-position: center, -30% center;
-}
-
-.crew-status-badge {
-  border: 1px solid rgb(253 186 116 / 23%);
-  background: linear-gradient(135deg, rgb(34 20 12 / 94%), rgb(16 13 12 / 88%));
-  box-shadow: 0 0 26px rgb(249 115 22 / 12%), inset 0 1px rgb(255 255 255 / 6%);
+  transform: scale(1.08);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -323,17 +222,10 @@ a:focus-visible .nav-link-label {
     animation: none;
   }
 
-  .project-card-glow,
-  .project-image-ambient,
-  .project-image-glow,
-  .project-image-fade,
-  .project-image-stamp,
-  .project-image-index,
-  .project-mark,
-  .project-open-mark,
   .project-card,
   .project-image,
-  .project-status-dot {
+  .project-image-glow,
+  .project-tech {
     transition: none;
     animation: none;
   }
