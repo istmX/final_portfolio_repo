@@ -36,8 +36,10 @@ This is a personal developer portfolio for Aryan, using the name and logo **istm
 - Lowered the global bottom blur behind the main page content so it no longer overlays and softens project cards.
 - Added `components/index.ts` as a barrel export for the reusable components and project data.
 - Added a compact Tech Stack section after Find Me and before GitHub Contributions. The 30 selected technologies appear as icon capsules inside one bordered container, centered on mobile and left-aligned on wider screens. Capsules can be selected to highlight a technology, with keyboard-accessible button controls.
-- Added a neutral, responsive contribution heatmap for the `istmX` GitHub profile after Tech Stack, with day-level hover details and a link to the profile.
+- Added a neutral, responsive contribution heatmap for the `istmX` GitHub profile after Tech Stack, with a left-aligned “GitHub Contributions” heading. It fetches only the current calendar year, shows dynamically aligned month labels above the graph, and offers day-level hover details and a profile link. Each page load requests fresh data; the upstream service caches results for up to one hour.
 - Pointed the About navigation item to the professional summary on the homepage; the Tech Stack section follows in the same page flow.
+- Added a home Blogs preview after Projects with three compact article rows and related backend, frontend, and mobile images. The `/blogs` listing contains eight original articles; `/blogs/[slug]` pages include metadata, optional lead images, image credits, reading time, and not-found handling. Article topics draw from the project and “What I Build” notes in `AboutMe.md`.
+- Added dotted horizontal dividers after Projects and Blogs. The home ends with a minimal centered quote attributed to “a wise cat,” a quiet meowing detail with a hand-drawn arrow and subtle hint, then a rounded-top transition into a compact footer. The interactive roaming pixel cat remains the Cat Home easter egg elsewhere on the page.
 
 ## Current profile links
 
@@ -50,7 +52,7 @@ The email was entered as `gamil.com` in chat and interpreted as the common `gmai
 
 ## Current state and limitations
 
-- The home page currently contains the navigation, hero, social links, Tech Stack, GitHub Contributions, and the four-project Bento section. Writing and other portfolio sections from the reference are not built yet.
+- The home page currently contains the navigation, hero, social links, Tech Stack, GitHub Contributions, the four-project Bento section, a linked Blogs preview, and the closing quote/easter egg hint above the footer. The existing roaming pixel cat links to Cat Home.
 - The About navigation item scrolls to the professional summary on the homepage, with Tech Stack and GitHub Contributions following below. The Projects navigation item returns to the home project section; project information and external destinations are shown in the Bento cards.
 - The contribution graph uses the public `github-contributions-api.jogruber.de` service and displays a fallback message if contribution data cannot be loaded.
 - Microlink renders a remote screenshot preview for GitHub. If its page blocks automated rendering, the direct profile link remains available.
@@ -62,6 +64,6 @@ The email was entered as `gamil.com` in chat and interpreted as the common `gmai
 
 1. Verify the exact LinkedIn URL and email address before launch.
 2. Review the hero and social previews at desktop and mobile widths, including both themes.
-3. Build the Blogs page and replace the `/about` placeholder with portfolio content.
+3. Replace the `/about` placeholder with portfolio content.
 4. Add the remaining portfolio sections from the reference, choosing only the sections that have accurate, ready-to-publish content.
 5. Run the project’s lint/build checks when implementation verification is requested.

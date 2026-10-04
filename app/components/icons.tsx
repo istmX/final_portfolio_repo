@@ -65,7 +65,7 @@ const TECH_ICONS = {
   Firebase: siFirebase,
   'Multi-agent systems': null,
   'Multi-agent execution': null,
-  'AWS EC2': null,
+  'AWS ': null,
   Pydantic: siPydantic,
   GSAP: siGsap,
   Lenis: null,
@@ -173,7 +173,7 @@ function UtilityIcon({ name, ...props }: TechIconProps) {
 }
 
 export function TechIcon({ name, className, style, ...props }: TechIconProps) {
-  if (name === 'AWS' || name === 'AWS EC2') {
+  if (name === 'AWS' || name === 'AWS ') {
     return (
       <Image
         src="/tech-icons/aws.svg"

@@ -93,7 +93,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 export default function ProjectsSection() {
   return (
-    <section id="projects" aria-labelledby="projects-heading" className="px-8 pb-12 pt-2 sm:px-8 sm:pb-16">
+    <section id="projects" aria-labelledby="projects-heading" className="border-b border-dotted border-border/50 px-8 pb-12 pt-2 sm:px-8 sm:pb-16">
       <div className="mb-5 flex items-end justify-between gap-4">
         <div className="max-w-xl">
           <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted">Selected work</p>
