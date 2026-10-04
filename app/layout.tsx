@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Schibsted_Grotesk, Inter } from "next/font/google";
 import PortfolioPreloader from "../components/PortfolioPreloader";
+import { SITE_URL } from "../lib/site";
 import "./globals.css";
 
 const Grotesk = Schibsted_Grotesk({
@@ -15,10 +16,28 @@ const InterFont = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Aryan | AI Developer & Full-Stack Builder",
   description:
-    "I’m Aryan, an AI developer from India building full-stack products and agent systems that can reason, use tools, and get real work done.",
+    "Aryan is an AI developer and full-stack builder from India creating AI agents, Python and FastAPI backends, web products, and mobile apps.",
   applicationName: "Aryan’s Portfolio",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Aryan’s Portfolio",
+    title: "Aryan | AI Developer & Full-Stack Builder",
+    description: "AI developer and full-stack builder from India working across agents, Python backends, web, and mobile.",
+    locale: "en_IN",
+    images: [{ url: "/hero.png", width: 1536, height: 1536, alt: "Aryan, AI developer and full-stack builder" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Aryan | AI Developer & Full-Stack Builder",
+    description: "AI developer and full-stack builder from India working across agents, Python backends, web, and mobile.",
+    images: ["/hero.png"],
+  },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   keywords: [
     "Aryan",
     "AI developer",
@@ -28,6 +47,11 @@ export const metadata: Metadata = {
     "Crew",
     "CodeCat",
     "Noiseless",
+    "Python developer",
+    "FastAPI developer",
+    "React Native developer",
+    "mobile app development",
+    "India",
   ],
 };
 

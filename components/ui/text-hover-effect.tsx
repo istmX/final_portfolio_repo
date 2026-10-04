@@ -112,17 +112,6 @@ export function TextHoverEffect({ text, duration = 0, automatic = true }: TextHo
       >
         {text}
       </text>
-      <motion.circle
-        cx="548"
-        cy="52"
-        r="6"
-        fill="none"
-        stroke="#60a5fa"
-        strokeWidth="2.5"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 0.9 } : undefined}
-        transition={{ duration: reduceMotion ? 0 : 0.45, delay: reduceMotion ? 0 : 2.8, ease: 'easeOut' }}
-      />
     </svg>
   )
 }

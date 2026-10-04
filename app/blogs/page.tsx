@@ -3,15 +3,54 @@ import Contanier from '../../components/Contanier'
 import Navbar from '../../components/Navbar'
 import BlogPostCard from '../../components/BlogPostCard'
 import { BLOG_POSTS } from './blogData'
+import { SITE_URL } from '../../lib/site'
 
 export const metadata: Metadata = {
   title: 'Writing | Aryan',
-  description: 'Articles and notes on AI agents, developer tools, and building useful software.',
+  description: 'Practical articles by Aryan on AI agents, Python, FastAPI, backend engineering, full-stack development, and mobile apps.',
+  alternates: { canonical: '/blogs' },
+  keywords: ['AI engineering', 'AI agents', 'Python', 'FastAPI', 'backend development', 'full-stack development', 'mobile development'],
+  openGraph: {
+    type: 'website',
+    url: `${SITE_URL}/blogs`,
+    title: 'Writing on AI and software engineering | Aryan',
+    description: 'Practical notes on AI agents, Python, FastAPI, backend systems, and product development.',
+    siteName: 'Aryan’s Portfolio',
+    locale: 'en_IN',
+    images: ['/hero.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Writing on AI and software engineering | Aryan',
+    description: 'Practical notes on AI agents, Python, FastAPI, backend systems, and product development.',
+    images: ['/hero.png'],
+  },
 }
 
 export default function BlogsPage() {
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Writing on AI and software engineering | Aryan',
+    description: 'Practical articles on AI agents, Python, FastAPI, backend systems, full-stack development, and mobile apps.',
+    url: `${SITE_URL}/blogs`,
+    inLanguage: 'en',
+    author: { '@type': 'Person', name: 'Aryan', url: SITE_URL },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: BLOG_POSTS.map((post, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: post.title,
+        url: `${SITE_URL}/blogs/${post.slug}`,
+      })),
+    },
+  }
+  const safeCollectionSchema = JSON.stringify(collectionSchema).replace(/</g, '\\u003c')
+
   return (
     <main className="min-h-dvh">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeCollectionSchema }} />
       <Contanier>
         <Navbar />
         <section aria-labelledby="all-blogs-heading" className="px-8 pb-16 pt-10 sm:pb-20 sm:pt-14">

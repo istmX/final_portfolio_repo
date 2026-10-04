@@ -1,0 +1,20 @@
+# Aryan — AI Developer & Full-Stack Builder
+
+Aryan is an AI developer and full-stack builder based in India. He builds AI agents, Python and FastAPI backends, web products, and mobile apps.
+
+## Main pages
+
+- [Portfolio](/): Profile, technical focus, projects, and contact links.
+- [Writing](/blogs): Articles about AI agents, Python, FastAPI, backend systems, full-stack development, and mobile apps.
+- [GitHub](https://github.com/istmX): Open-source projects and code.
+- [LinkedIn](https://www.linkedin.com/in/aryan-xf/): Professional profile.
+- [X](https://x.com/Istm_x): Social profile.
+
+## Selected projects
+
+- Crew: An autonomous AI workforce project.
+- CodeCat: An AI code review tool.
+- Noiseless: An AI research workflow project.
+- ISTMX Skills: Developer skills and tooling.
+
+For crawlable public pages, see [/sitemap.xml](/sitemap.xml). The Cat Home experience is intentionally excluded from indexing.
