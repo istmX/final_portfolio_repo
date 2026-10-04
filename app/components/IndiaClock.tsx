@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'motion/react'
-import ShimmerText from './ShimmerText'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 
 type ClockParts = {
   hours: string
@@ -30,6 +29,7 @@ function getIndiaTime(): ClockParts {
 
 export default function IndiaClock() {
   const [time, setTime] = useState(EMPTY_CLOCK)
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     setTime(getIndiaTime())
@@ -43,15 +43,21 @@ export default function IndiaClock() {
       className="inline-flex items-center gap-1 font-mono text-[11px] tabular-nums text-muted sm:text-xs"
     >
       <span>{time.hours}:{time.minutes}:</span>
-      <motion.span
-        key={time.seconds}
-        initial={{ opacity: 0.72, y: 0.5 }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 0.14, ease: 'easeOut' }}
-        className="inline-block min-w-[1.25em]"
-      >
-        <ShimmerText>{time.seconds}</ShimmerText>
-      </motion.span>
+      <span className="relative inline-block h-[1.2em] w-[1.35em] align-middle [perspective:100px]">
+        <AnimatePresence initial={false} mode="sync">
+          <motion.span
+            key={time.seconds}
+            initial={{ rotateX: shouldReduceMotion ? 0 : -90, opacity: shouldReduceMotion ? 0 : 1 }}
+            animate={{ rotateX: 0, opacity: 1 }}
+            exit={{ rotateX: shouldReduceMotion ? 0 : 90, opacity: shouldReduceMotion ? 0 : 1 }}
+            transition={{ duration: shouldReduceMotion ? 0.12 : 0.45, ease: [0.22, 0.68, 0, 1] }}
+            style={{ transformOrigin: '50% 50%', backfaceVisibility: 'hidden' }}
+            className="absolute inset-0 inline-flex items-center justify-center leading-none"
+          >
+            {time.seconds}
+          </motion.span>
+        </AnimatePresence>
+      </span>
       <span className="font-sans text-[10px] tracking-wide">IST</span>
     </span>
   )

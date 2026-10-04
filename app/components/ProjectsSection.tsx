@@ -37,7 +37,7 @@ function StackIcons({ project }: { project: Project }) {
         <li key={name} aria-label={name} className="group/tech relative rounded-lg outline-none">
           <span
             aria-hidden="true"
-            className="flex size-[26px] items-center justify-center rounded-lg border border-border/50 bg-background/75 p-1.5 transition-[transform,border-color,background-color] duration-200 group-hover/tech:scale-110 group-hover/tech:border-border group-hover/tech:bg-background sm:size-7"
+            className={`flex size-[26px] items-center justify-center rounded-lg border border-border/50 ${name === 'AWS' ? 'bg-white p-0.5 group-hover/tech:bg-white' : name === 'Vercel' || name === 'Vercel AI SDK' ? 'bg-white p-1.5 group-hover/tech:bg-white' : 'bg-background/75 p-1.5 group-hover/tech:bg-background'} transition-[transform,border-color,background-color] duration-200 group-hover/tech:scale-110 group-hover/tech:border-border sm:size-7`}
           >
             <TechIcon name={name} className="size-full" />
           </span>

@@ -25,7 +25,7 @@ export const PROJECTS: Project[] = [
     image: '/Crew.png',
     imageAlt: 'Crew autonomous AI workforce coordinating specialist agents and connected services',
     stamp: 'Give a goal. Get work done.',
-    stack: ['Next.js', 'TypeScript', 'Python', 'LangGraph', 'PostgreSQL', 'Qdrant', 'AWS EC2'],
+    stack: ['Next.js', 'TypeScript', 'Python', 'LangGraph', 'PostgreSQL', 'Qdrant', 'AWS'],
     links: [],
     status: 'Currently building',
     wide: true,

@@ -5,10 +5,10 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import ShimmerText from './ShimmerText'
 
 const ROLES = [
-  'AI Engineer',
-  'Full-Stack Developer',
-  'Student',
-  'Mobile Developer',
+  'an AI Engineer',
+  'a Full-Stack Developer',
+  'a Student',
+  'a Mobile Developer',
 ]
 
 export default function AnimatedRole() {

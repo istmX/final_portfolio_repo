@@ -1,6 +1,6 @@
 # Portfolio progress
 
-Last updated: 2026-10-03
+Last updated: 2026-10-04
 
 ## Project direction
 
@@ -14,23 +14,26 @@ This is a personal developer portfolio for Aryan, using the name and logo **istm
 - Added light and dark color values using neutral shades from 100 through 950.
 - Built a responsive navigation bar with the istmX logo, Home/About/Projects/Blogs links, a small-screen menu, and a separate theme toggle.
 - Replaced the large profile banner direction with a compact hero section using the square `public/hero.png` portrait.
-- Added the hero name, rotating roles, a more direct AI engineering bio, and technology chips for TypeScript, React, Motion, Python, Next.js, Express.js, LangChain, LangGraph, and RAG.
-- Added an India local clock (IST) with a restrained seconds transition and a reusable `ShimmerText` component.
+- Added the hero name and rotating roles with matching articles, plus an updated professional summary with inline capsules for the listed full-stack and AI technologies.
+- Added an India local clock (IST) whose seconds flip in a fixed-size slot, with reduced-motion support.
 - Added one compact “Find me” social-links row directly after the hero, matching the supplied profile reference. The square icon buttons have a subtle double border and 3px inset gap.
-- Added horizontal dotted dividers between the navigation, hero/profile, and social links, matching the dotted vertical container edges.
+- Added horizontal dotted dividers between the navigation, hero/profile, and social links, matching the dotted vertical container edges. Vertical rails are hidden on mobile, where content has extra side padding.
+- Made the mobile navigation menu overlay page content instead of pushing it down.
 - Added reusable `components/ui/link-preview.tsx`: GitHub uses a wider, viewport-clamped screenshot preview through Microlink. X, LinkedIn, and email show a profile card using the hero portrait, India location, account handle, and relevant details.
 - Added click-triggered ring and sparkle effects in `ClickSparks.tsx`.
 - Added a fixed frosted-glass blur at the bottom of the viewport in `ScrollBlur.tsx`.
 - Removed duplicate social-section renderings from the home page; it now renders one instance.
 - Added a four-project responsive Bento section in the requested order: Crew, ISTMX Skills, CodeCat, and Noiseless.
 - Added the supplied `public/Crew.png` artwork and retained local screenshots for ISTMX Skills, CodeCat, and Noiseless. Images sit inside framed media panels instead of filling the whole card.
-- Added reusable SVG technology marks in `app/components/icons.tsx`, with an individual tooltip on each icon.
+- Replaced most hand-drawn technology marks with Simple Icons brand SVGs, added a local AWS logo asset, and created a custom Motion mark. Project technology icons retain individual tooltips and use visible light tiles for AWS and Vercel in dark mode.
 - Added layered card and image borders, distinct bottom-up radial glows across each full card and behind image letterboxing, and restrained lift, image, and icon hover motion.
 - Added a Crew “Currently building” image badge and expanded its card to the full stack listed in `AboutMe.md`.
 - Kept project information in the home page Bento cards; there are no dedicated project detail pages or dynamic project routes.
 - Added direct external project links to the primary live destinations on the ISTMX Skills, CodeCat, and Noiseless cards. Crew is marked as currently building and has no destination link yet.
 - The Projects navigation item points to the Bento section on the home page.
 - Updated project cards and `AboutMe.md` with the technology stacks and URLs provided for Crew, ISTMX Skills, CodeCat, and Noiseless.
+- Refined the project section introduction and outcome-focused card descriptions while keeping the requested order and Bento layout. Crew’s displayed stack labels AWS; its detailed deployment notes still specify EC2.
+- Added `components/index.ts` as a barrel export for the reusable components and project data.
 
 ## Current profile links
 
