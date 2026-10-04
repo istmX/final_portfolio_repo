@@ -1,85 +1,770 @@
-function Leaf({ d, fill, className = '' }: { d: string; fill: string; className?: string }) {
-  return <g className={`botanical-leaf ${className}`}><path d={d} fill={fill} stroke="#6f8b61" strokeWidth=".8"/></g>
+/* ===================================================================
+   FooterBotanical – dense, lush botanical garden SVG
+   Inspired by the reference image: thick lilies, layered roses,
+   packed foliage, organic asymmetry, rich depth.
+   =================================================================== */
+
+/* ---------- tiny sub-components for each botanical element ---------- */
+
+function Leaf({
+  d,
+  fill,
+  stroke = '#4a6e42',
+  className = '',
+}: {
+  d: string
+  fill: string
+  stroke?: string
+  className?: string
+}) {
+  return (
+    <g className={`botanical-leaf ${className}`}>
+      <path d={d} fill={fill} stroke={stroke} strokeWidth=".9" />
+    </g>
+  )
 }
 
-function Lily({ x, y, scale = 1, rotate = 0, tone = '#ded0ed' }: { x: number; y: number; scale?: number; rotate?: number; tone?: string }) {
-  return <g transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}><g className="botanical-blossom">
-    <path d="M0 2 C-18-5-22-25-9-29 C-3-26 0-15 0 2 M0 2 C-4-17 3-34 10-30 C17-24 11-7 0 2 M0 2 C11-14 27-18 28-9 C28-1 12 5 0 2 M0 2 C16 5 22 18 15 22 C8 25 1 14 0 2 M0 2 C-10 17-25 19-26 10 C-27 3-13-2 0 2" fill={tone} stroke="#b9a9ca" strokeWidth="1.2"/>
-    <path d="M0 2 C-3-8-1-14 1-20 M1 2 C7-5 11-7 17-8" fill="none" stroke="#f4e8ce" strokeWidth="1"/>
-    <circle cy="2" r="3.3" fill="#e5b86d"/><path d="M2 2 13-4 M2 3 15 2 M1 3 10 10" stroke="#e9cf91" strokeWidth="1"/>
-  </g></g>
+function RoundLeaf({
+  x,
+  y,
+  scale = 1,
+  rotate = 0,
+  fill = '#5a7d4e',
+  className = '',
+}: {
+  x: number
+  y: number
+  scale?: number
+  rotate?: number
+  fill?: string
+  className?: string
+}) {
+  return (
+    <g
+      className={`botanical-leaf ${className}`}
+      transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}
+    >
+      <path
+        d="M0 0C-8-3-14-12-12-22C-10-30-2-34 4-30C10-26 14-16 10-6C7 1 2 2 0 0Z"
+        fill={fill}
+        stroke="#3d5e36"
+        strokeWidth=".8"
+      />
+      <path d="M0 0C-2-8-4-18-3-28" fill="none" stroke="#6b9460" strokeWidth=".6" opacity=".6" />
+    </g>
+  )
 }
 
-function Rose({ x, y, scale = 1, rotate = 0, tone = '#c96f65' }: { x: number; y: number; scale?: number; rotate?: number; tone?: string }) {
-  return <g transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}><g className="botanical-blossom">
-    <path d="M0 0 C-13-2-17-14-8-20 C-2-24 7-19 8-13 C18-12 18-1 10 3 C8 13-3 16-10 9 C-17 4-13-5-7-7 C-2-10 4-7 3-2 C2 2-3 3-4 0 C-5-3 0-5 2-2" fill={tone} stroke="#9c554d" strokeWidth="1.2"/>
-    <path d="M-7-14C-2-17 3-14 4-10 M10-8C14-4 11 0 8 1 M-9 5C-5 12 1 11 4 8" fill="none" stroke="#f0b3a0" strokeOpacity=".75" strokeWidth="1"/>
-    <path d="M-10 10 0 14 10 9 7 17 0 20-7 16Z" fill="#66845d" stroke="#8fa274" strokeWidth="1"/>
-  </g></g>
+function Lily({
+  x,
+  y,
+  scale = 1,
+  rotate = 0,
+  tone = '#c9aede',
+  inner = '#e5d4f0',
+  className = '',
+}: {
+  x: number
+  y: number
+  scale?: number
+  rotate?: number
+  tone?: string
+  inner?: string
+  className?: string
+}) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}>
+      <g className={`botanical-blossom ${className}`}>
+        {/* Six thick, curved petals like the reference lilies */}
+        <path
+          d="M0-2C-6-8-18-20-22-30C-24-38-16-42-8-36C-2-32 0-20 0-2Z"
+          fill={tone}
+          stroke="#a88ec0"
+          strokeWidth="1"
+        />
+        <path
+          d="M0-2C6-10 14-24 12-36C10-44 2-44-4-38C-8-32-4-18 0-2Z"
+          fill={inner}
+          stroke="#a88ec0"
+          strokeWidth="1"
+        />
+        <path
+          d="M0-2C-10-4-24-8-32-4C-38 0-34 8-26 10C-18 12-8 6 0-2Z"
+          fill={tone}
+          stroke="#a88ec0"
+          strokeWidth="1"
+        />
+        <path
+          d="M0-2C10-6 26-12 34-6C40 0 34 10 24 12C16 13 6 6 0-2Z"
+          fill={inner}
+          stroke="#a88ec0"
+          strokeWidth="1"
+        />
+        <path
+          d="M0-2C-8 6-16 18-12 28C-8 36 0 38 6 32C10 26 6 12 0-2Z"
+          fill={tone}
+          stroke="#a88ec0"
+          strokeWidth="1"
+        />
+        <path
+          d="M0-2C8 4 20 14 22 26C24 34 16 38 10 32C4 26 2 10 0-2Z"
+          fill={inner}
+          stroke="#a88ec0"
+          strokeWidth="1"
+        />
+        {/* Petal veins */}
+        <path
+          d="M0-2C-4-12-10-24-14-32M0-2C4-14 8-26 8-34M0-2C-12-2-22-4-28 0M0-2C14-4 24-6 30 0M0-2C-6 8-10 18-8 26M0-2C6 6 14 16 16 24"
+          fill="none"
+          stroke="#d4c0e8"
+          strokeWidth=".5"
+          opacity=".5"
+        />
+        {/* Center with stamens */}
+        <circle r="5" fill="#e8c84d" />
+        <circle r="2.5" fill="#f0d86a" />
+        <path
+          d="M0 0L-3-7M0 0L3-6M0 0L-6 2M0 0L6 1M0 0L-2 6M0 0L3 5"
+          stroke="#d4a830"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+        />
+        <circle cx="-3" cy="-7" r="1.3" fill="#c47a20" />
+        <circle cx="3" cy="-6" r="1.2" fill="#c47a20" />
+        <circle cx="-6" cy="2" r="1.1" fill="#c47a20" />
+        <circle cx="6" cy="1" r="1.3" fill="#c47a20" />
+        <circle cx="-2" cy="6" r="1.0" fill="#c47a20" />
+        <circle cx="3" cy="5" r="1.2" fill="#c47a20" />
+      </g>
+    </g>
+  )
 }
 
-function Wildflower({ x, y, scale = 1, tone = '#f0e7d4', petals = 6 }: { x: number; y: number; scale?: number; tone?: string; petals?: number }) {
-  return <g transform={`translate(${x} ${y}) scale(${scale})`}><g className="botanical-blossom">
-    {Array.from({ length: petals }, (_, i) => <ellipse key={i} cx="0" cy="-5.5" rx="2.6" ry="5" fill={tone} stroke="#d8c9ba" strokeWidth=".55" transform={`rotate(${i * (360 / petals)})`} />)}
-    <circle r="2.7" fill="#dcb46d"/><circle r="1" fill="#f3ddaa"/>
-  </g></g>
+function Rose({
+  x,
+  y,
+  scale = 1,
+  rotate = 0,
+  tone = '#d4734e',
+  highlight = '#e8a070',
+  className = '',
+}: {
+  x: number
+  y: number
+  scale?: number
+  rotate?: number
+  tone?: string
+  highlight?: string
+  className?: string
+}) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}>
+      <g className={`botanical-blossom ${className}`}>
+        {/* Outer petals – thick, rounded like reference roses */}
+        <path
+          d="M0 4C-10 10-22 8-26 0C-28-6-22-14-14-16C-6-17 0-10 0 4Z"
+          fill={tone}
+          stroke="#a05838"
+          strokeWidth="1"
+        />
+        <path
+          d="M0 4C10 12 24 10 28 2C30-4 24-14 14-16C6-18-2-8 0 4Z"
+          fill={tone}
+          stroke="#a05838"
+          strokeWidth="1"
+        />
+        <path
+          d="M0 4C-4 14-2 24 6 28C12 30 20 24 20 16C18 8 8 2 0 4Z"
+          fill={highlight}
+          stroke="#a05838"
+          strokeWidth="1"
+        />
+        <path
+          d="M0 4C4 16 0 26-8 28C-14 30-22 22-20 14C-18 6-6 2 0 4Z"
+          fill={highlight}
+          stroke="#a05838"
+          strokeWidth="1"
+        />
+        {/* Middle petals */}
+        <path
+          d="M0 2C-6 0-14-4-14-10C-14-16-8-18-2-14C4-10 4-2 0 2Z"
+          fill={highlight}
+          stroke="#b5624a"
+          strokeWidth=".8"
+        />
+        <path
+          d="M0 2C6 0 14-2 16-8C18-14 10-18 4-14C-2-10-2-2 0 2Z"
+          fill={tone}
+          stroke="#b5624a"
+          strokeWidth=".8"
+        />
+        <path
+          d="M0 2C-2 8-8 12-4 16C0 20 6 16 6 10C6 6 2 2 0 2Z"
+          fill={highlight}
+          stroke="#b5624a"
+          strokeWidth=".8"
+        />
+        {/* Center spiral */}
+        <path
+          d="M0 0C-2-2-4-1-4 1C-4 3-2 4 0 4C3 4 5 2 5 0C5-3 2-5 0-5"
+          fill="none"
+          stroke={tone}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+        <circle r="2.5" fill={tone} />
+        {/* Sepals peeking from bottom */}
+        <path
+          d="M-8 18C-10 24-6 28-2 24M8 18C10 24 6 28 2 24M0 20C0 26-2 28 0 30"
+          fill="none"
+          stroke="#5a7e4a"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+        />
+      </g>
+    </g>
+  )
 }
 
-function Lavender({ x, y, scale = 1, rotate = 0 }: { x: number; y: number; scale?: number; rotate?: number }) {
-  return <g transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}><g className="botanical-bud" fill="#ad91c7">
-    <path d="M0 24 Q-2 10 1-2" fill="none" stroke="#80966a" strokeWidth="1.4"/>
-    <ellipse cx="-3" cy="1" rx="2.4" ry="4"/><ellipse cx="3" cy="-4" rx="2.4" ry="4"/><ellipse cx="-3" cy="-8" rx="2.4" ry="4"/><ellipse cx="3" cy="-13" rx="2.4" ry="4"/><ellipse cx="-1" cy="-18" rx="2.5" ry="4" fill="#c3a9d5"/>
-  </g></g>
+function Rosebud({
+  x,
+  y,
+  scale = 1,
+  rotate = 0,
+  tone = '#d4734e',
+  className = '',
+}: {
+  x: number
+  y: number
+  scale?: number
+  rotate?: number
+  tone?: string
+  className?: string
+}) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}>
+      <g className={`botanical-bud ${className}`}>
+        <path
+          d="M0 0C-4-4-6-12-4-18C-2-22 2-22 4-18C6-12 4-4 0 0Z"
+          fill={tone}
+          stroke="#a05838"
+          strokeWidth=".8"
+        />
+        <path
+          d="M-2-8C-6-10-8-16-4-20M2-8C6-10 8-16 4-20"
+          fill="none"
+          stroke="#5a7e4a"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+        />
+        <path d="M0 0Q-1 8-2 20" fill="none" stroke="#5a7e4a" strokeWidth="1.4" />
+      </g>
+    </g>
+  )
 }
+
+function SmallFlower({
+  x,
+  y,
+  scale = 1,
+  tone = '#f0e6d6',
+  petals = 5,
+  className = '',
+}: {
+  x: number
+  y: number
+  scale?: number
+  tone?: string
+  petals?: number
+  className?: string
+}) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${scale})`}>
+      <g className={`botanical-blossom ${className}`}>
+        {Array.from({ length: petals }, (_, i) => (
+          <ellipse
+            key={i}
+            cx="0"
+            cy="-6"
+            rx="3.5"
+            ry="6.5"
+            fill={tone}
+            stroke="#c8b8a0"
+            strokeWidth=".5"
+            transform={`rotate(${i * (360 / petals)})`}
+          />
+        ))}
+        <circle r="3" fill="#e0c060" />
+        <circle r="1.5" fill="#ecd880" />
+      </g>
+    </g>
+  )
+}
+
+function Lavender({
+  x,
+  y,
+  scale = 1,
+  rotate = 0,
+  className = '',
+}: {
+  x: number
+  y: number
+  scale?: number
+  rotate?: number
+  className?: string
+}) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rotate}) scale(${scale})`}>
+      <g className={`botanical-bud ${className}`}>
+        <path
+          d="M0 30Q-1 14 1-6"
+          fill="none"
+          stroke="#6b8a56"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+        <ellipse cx="-3" cy="2" rx="3" ry="4.5" fill="#b89dd4" />
+        <ellipse cx="3" cy="-4" rx="3" ry="4.5" fill="#c4a8d8" />
+        <ellipse cx="-2" cy="-10" rx="3" ry="4.5" fill="#b89dd4" />
+        <ellipse cx="3" cy="-16" rx="2.8" ry="4" fill="#c4a8d8" />
+        <ellipse cx="-1" cy="-22" rx="2.5" ry="3.5" fill="#d0bce0" />
+        <ellipse cx="1" cy="-27" rx="2" ry="3" fill="#d8c8e8" />
+      </g>
+    </g>
+  )
+}
+
+function FallingPetal({
+  d,
+  fill,
+  className,
+}: {
+  d: string
+  fill: string
+  className: string
+}) {
+  return (
+    <g className={`botanical-falling-petal ${className}`}>
+      <path d={d} fill={fill} opacity=".7" />
+    </g>
+  )
+}
+
+/* ===================================================================
+   MAIN BOTANICAL SVG
+   =================================================================== */
 
 export default function FooterBotanical() {
-  return <svg className="h-full w-full" viewBox="0 0 900 390" preserveAspectRatio="xMidYMax meet" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <linearGradient id="stem" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#9baa70"/><stop offset="1" stopColor="#4c6b52"/></linearGradient>
-    </defs>
-    {/* Curving stems form uneven garden edges, leaving a quiet center for the signature. */}
-    <g stroke="url(#stem)" strokeWidth="2" strokeLinecap="round" opacity=".9">
-      <path className="botanical-stem" d="M8 388C39 329 53 278 43 211 38 169 63 128 99 91"/><path className="botanical-stem botanical-delay-one" d="M28 388C83 336 105 286 100 236 96 192 124 148 173 123"/>
-      <path className="botanical-stem botanical-delay-two" d="M78 388C112 337 149 310 161 258 174 206 192 162 233 143"/><path className="botanical-stem botanical-delay-three" d="M171 389C196 346 207 309 198 275 189 239 211 213 245 193"/>
-      <path className="botanical-stem botanical-delay-two" d="M892 389C852 333 845 282 860 228 873 184 844 143 802 112"/><path className="botanical-stem botanical-delay-three" d="M864 389C822 348 793 302 798 252 802 207 766 167 719 151"/>
-      <path className="botanical-stem botanical-delay-one" d="M811 389C773 340 750 302 753 263 758 215 728 180 686 164"/><path className="botanical-stem" d="M740 389C716 349 700 316 709 282 719 246 695 219 664 201"/>
-      <path className="botanical-stem botanical-delay-one" d="M58 387C73 350 68 322 47 294"/><path className="botanical-stem botanical-delay-two" d="M837 388C820 352 827 320 850 294"/>
-    </g>
-    {/* Layered foliage; hand-varied shapes and angles keep the clusters irregular. */}
-    <g>
-      <Leaf d="M45 315 Q12 284 15 263 Q46 269 54 301Z" fill="#66875f"/><Leaf d="M54 302 Q71 265 99 258 Q95 289 61 314Z" fill="#829766"/>
-      <Leaf d="M46 251 Q13 238 9 213 Q37 217 55 240Z" fill="#819765"/><Leaf d="M49 238 Q55 203 82 188 Q82 219 57 247Z" fill="#547658"/>
-      <Leaf d="M91 351 Q50 342 39 319 Q72 317 100 341Z" fill="#8ba06e"/><Leaf d="M101 338 Q114 303 146 293 Q137 325 107 349Z" fill="#5f8059"/>
-      <Leaf d="M103 274 Q72 254 75 232 Q101 238 115 262Z" fill="#a0a777"/><Leaf d="M110 259 Q127 223 153 218 Q146 246 115 271Z" fill="#6d895e"/>
-      <Leaf d="M157 335 Q125 317 126 296 Q153 301 168 325Z" fill="#a0aa72"/><Leaf d="M167 321 Q177 285 207 272 Q201 307 173 332Z" fill="#64825a"/>
-      <Leaf d="M200 293 Q171 276 173 253 Q198 261 211 282Z" fill="#819565"/><Leaf d="M205 277 Q223 245 246 240 Q241 265 211 288Z" fill="#557451"/>
-      <Leaf d="M30 373 Q5 361 1 342 Q27 343 42 364Z" fill="#6d8b5e"/><Leaf d="M80 386 Q48 376 42 356 Q69 354 91 377Z" fill="#99a775"/>
-      <Leaf d="M137 384 Q106 371 103 350 Q131 352 149 374Z" fill="#66845b"/><Leaf d="M221 386 Q191 367 193 346 Q219 352 232 374Z" fill="#91a06e"/>
-      <Leaf d="M854 309 Q884 279 887 256 Q857 266 845 295Z" fill="#64845c"/><Leaf d="M847 294 Q825 261 799 253 Q806 283 840 306Z" fill="#91a06d"/>
-      <Leaf d="M848 244 Q879 222 874 199 Q850 207 837 234Z" fill="#a0aa72"/><Leaf d="M838 232 Q826 198 801 184 Q802 215 832 244Z" fill="#66865d"/>
-      <Leaf d="M798 349 Q835 335 844 310 Q815 310 790 339Z" fill="#819765"/><Leaf d="M788 337 Q770 303 740 292 Q749 326 781 350Z" fill="#5c7c56"/>
-      <Leaf d="M753 314 Q784 289 777 266 Q751 275 740 303Z" fill="#9aa673"/><Leaf d="M742 301 Q726 270 699 260 Q705 291 735 317Z" fill="#66855c"/>
-      <Leaf d="M869 371 Q895 357 899 338 Q873 342 857 363Z" fill="#93a16d"/><Leaf d="M814 384 Q847 373 851 352 Q824 354 804 376Z" fill="#65845c"/>
-      <Leaf d="M762 386 Q791 369 790 348 Q764 356 751 376Z" fill="#a0aa72"/><Leaf d="M681 385 Q711 366 707 345 Q683 354 670 375Z" fill="#5d7c56"/>
-      <Leaf d="M72 190 Q48 170 54 151 Q76 160 84 181Z" fill="#6e8b5d"/><Leaf d="M122 221 Q94 204 98 184 Q121 192 133 213Z" fill="#9aa875"/>
-      <Leaf d="M826 184 Q849 162 840 143 Q819 155 814 176Z" fill="#829866"/><Leaf d="M773 219 Q801 198 795 179 Q772 190 762 211Z" fill="#a2aa78"/>
-    </g>
-    {/* Fine side branches and tiny buds add a softer background layer. */}
-    <g stroke="#81956c" strokeWidth="1.25" strokeLinecap="round" fill="none">
-      <path d="M42 221Q19 201 23 184M44 208Q68 186 72 165M98 244Q75 225 72 207M160 286Q184 267 190 244M861 244Q886 224 888 203M801 224Q778 202 773 184M750 276Q727 256 726 238M840 270Q861 250 872 231"/>
-    </g>
-    <g className="botanical-bud" fill="#dba27e"><circle cx="22" cy="182" r="3.2"/><circle cx="72" cy="162" r="2.7"/><circle cx="70" cy="204" r="3"/><circle cx="188" cy="241" r="2.7"/><circle cx="887" cy="200" r="3"/><circle cx="772" cy="181" r="2.8"/><circle cx="724" cy="235" r="3"/><circle cx="873" cy="228" r="2.5"/></g>
-    {/* Tall, differently scaled blooms sit above dense lower foliage. */}
-    <Lily x={97} y={93} scale={1.12} rotate={-12}/><Lily x={169} y={123} scale={.79} rotate={15} tone="#ead4e7"/>
-    <Lily x={802} y={111} scale={.92} rotate={14} tone="#e9d9ed"/><Lily x={722} y={151} scale={.72} rotate={-18} tone="#d9c7e5"/>
-    <Rose x={48} y={292} scale={1.04} rotate={-12} tone="#ce765f"/><Rose x={104} y={337} scale={.84} rotate={11} tone="#b9554d"/><Rose x={168} y={322} scale={.7} rotate={-8} tone="#d8926f"/>
-    <Rose x={851} y={293} scale={.92} rotate={9} tone="#cb755b"/><Rose x={790} y={340} scale={1.04} rotate={-8} tone="#ba5e53"/><Rose x={738} y={310} scale={.69} rotate={15} tone="#d98a68"/>
-    <Wildflower x={39} y={235} scale={1.1} tone="#f0e8d9" petals={7}/><Wildflower x={142} y={276} scale={.78} tone="#e8d9ef" petals={5}/><Wildflower x={207} y={265} scale={.7} tone="#f1e8d6" petals={6}/>
-    <Wildflower x={868} y={220} scale={.86} tone="#f3e7d2" petals={7}/><Wildflower x={781} y={255} scale={1.05} tone="#e6d7ee" petals={6}/><Wildflower x={690} y={255} scale={.67} tone="#f3e9dc" petals={5}/>
-    <Lavender x={24} y={187} scale={.9} rotate={-8}/><Lavender x={190} y={244} scale={.73} rotate={11}/><Lavender x={885} y={207} scale={.9} rotate={10}/><Lavender x={729} y={236} scale={.78} rotate={-10}/>
-    {/* Smaller side blooms and foreground leaves enrich the garden without crossing the copy. */}
-    <Wildflower x={62} y={329} scale={.48} tone="#e4d4e8" petals={5}/><Wildflower x={126} y={302} scale={.52} tone="#f0e7dc" petals={6}/><Wildflower x={831} y={326} scale={.5} tone="#e9d9ee" petals={6}/><Wildflower x={768} y={290} scale={.48} tone="#f0e5d5" petals={5}/>
-    <g className="botanical-falling-petal petal-one"><path d="M270 339 Q276 333 281 341 Q276 350 270 339Z" fill="#d7a2a7"/></g>
-    <g className="botanical-falling-petal petal-two"><path d="M652 345 Q657 338 662 345 Q658 354 652 345Z" fill="#d8c2e5"/></g>
-  </svg>
+  return (
+    <svg
+      className="h-full w-full"
+      viewBox="0 0 1000 520"
+      preserveAspectRatio="xMidYMax meet"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="stem-g" x1="0" y1="0" x2=".4" y2="1">
+          <stop stopColor="#8aa06a" />
+          <stop offset="1" stopColor="#3e5c38" />
+        </linearGradient>
+      </defs>
+
+      {/* ============================================================
+          LAYER 0 – background: thin stems, tiny leaves, subtle depth
+          ============================================================ */}
+      <g opacity=".55">
+        {/* Fine background stems */}
+        <g stroke="#6b8a56" strokeWidth="1.2" strokeLinecap="round" fill="none">
+          <path className="botanical-stem" d="M60 518C50 460 30 400 45 340C55 290 40 250 20 200" />
+          <path className="botanical-stem botanical-delay-one" d="M120 518C100 450 85 390 95 330C105 280 85 230 60 180" />
+          <path className="botanical-stem botanical-delay-two" d="M200 518C180 460 170 400 190 340C200 290 175 240 140 190" />
+          <path className="botanical-stem botanical-delay-three" d="M280 518C265 470 250 420 260 370C270 320 245 280 210 240" />
+          <path className="botanical-stem botanical-delay-two" d="M350 518C340 470 320 420 335 370C345 330 325 290 290 260" />
+
+          <path className="botanical-stem botanical-delay-one" d="M940 518C950 460 970 400 955 340C945 290 960 250 980 200" />
+          <path className="botanical-stem botanical-delay-three" d="M880 518C900 450 910 390 900 330C890 280 910 230 940 180" />
+          <path className="botanical-stem botanical-delay-two" d="M800 518C820 460 830 400 810 340C800 290 825 240 860 190" />
+          <path className="botanical-stem" d="M720 518C735 470 750 420 740 370C730 320 755 280 790 240" />
+          <path className="botanical-stem botanical-delay-one" d="M650 518C660 470 680 420 665 370C655 330 675 290 710 260" />
+
+          {/* Central background stems */}
+          <path className="botanical-stem botanical-delay-two" d="M420 518C410 475 400 430 415 385C425 350 405 310 380 280" />
+          <path className="botanical-stem botanical-delay-three" d="M500 518C500 470 495 420 505 375C510 340 500 300 485 270" />
+          <path className="botanical-stem botanical-delay-one" d="M580 518C590 475 600 430 585 385C575 350 595 310 620 280" />
+        </g>
+
+        {/* Tiny background leaves */}
+        <RoundLeaf x={30} y={240} scale={0.5} rotate={-15} fill="#4a6840" className="botanical-delay-one" />
+        <RoundLeaf x={75} y={210} scale={0.45} rotate={20} fill="#506a44" className="botanical-delay-two" />
+        <RoundLeaf x={150} y={220} scale={0.5} rotate={-25} fill="#4a6840" className="botanical-delay-three" />
+        <RoundLeaf x={220} y={270} scale={0.4} rotate={15} fill="#5a7850" className="botanical-delay-one" />
+        <RoundLeaf x={960} y={230} scale={0.5} rotate={15} fill="#4a6840" className="botanical-delay-two" />
+        <RoundLeaf x={920} y={210} scale={0.45} rotate={-20} fill="#506a44" className="botanical-delay-one" />
+        <RoundLeaf x={840} y={225} scale={0.5} rotate={25} fill="#4a6840" className="botanical-delay-three" />
+        <RoundLeaf x={770} y={268} scale={0.4} rotate={-15} fill="#5a7850" className="botanical-delay-two" />
+
+        {/* Tiny background flowers */}
+        <SmallFlower x={55} y={235} scale={0.35} tone="#e8dce8" petals={5} className="botanical-delay-two" />
+        <SmallFlower x={160} y={215} scale={0.3} tone="#f0e8d4" petals={5} className="botanical-delay-one" />
+        <SmallFlower x={270} y={290} scale={0.3} tone="#ddd0e8" petals={6} className="botanical-delay-three" />
+        <SmallFlower x={935} y={228} scale={0.35} tone="#e8dce8" petals={5} className="botanical-delay-one" />
+        <SmallFlower x={830} y={218} scale={0.3} tone="#f0e8d4" petals={5} className="botanical-delay-two" />
+        <SmallFlower x={730} y={285} scale={0.3} tone="#ddd0e8" petals={6} className="botanical-delay-three" />
+      </g>
+
+      {/* ============================================================
+          LAYER 1 – main stems (thicker, structural)
+          ============================================================ */}
+      <g stroke="url(#stem-g)" strokeWidth="2.4" strokeLinecap="round" fill="none">
+        {/* Left cluster stems */}
+        <path className="botanical-stem" d="M20 518C30 440 15 370 40 300C55 260 35 210 10 160" />
+        <path className="botanical-stem botanical-delay-one" d="M80 518C60 430 55 360 75 290C90 240 65 190 40 140" />
+        <path className="botanical-stem botanical-delay-two" d="M160 518C140 440 125 370 145 300C160 250 135 200 100 155" />
+        <path className="botanical-stem botanical-delay-three" d="M240 518C225 450 210 390 225 330C240 280 215 230 180 190" />
+        <path className="botanical-stem botanical-delay-one" d="M320 518C305 460 290 400 305 350C320 310 295 270 260 240" />
+        <path className="botanical-stem botanical-delay-two" d="M380 518C370 470 355 420 370 375C380 340 360 305 335 275" />
+
+        {/* Right cluster stems */}
+        <path className="botanical-stem botanical-delay-one" d="M980 518C970 440 985 370 960 300C945 260 965 210 990 160" />
+        <path className="botanical-stem botanical-delay-two" d="M920 518C940 430 945 360 925 290C910 240 935 190 960 140" />
+        <path className="botanical-stem botanical-delay-three" d="M840 518C860 440 875 370 855 300C840 250 865 200 900 155" />
+        <path className="botanical-stem" d="M760 518C775 450 790 390 775 330C760 280 785 230 820 190" />
+        <path className="botanical-stem botanical-delay-two" d="M680 518C695 460 710 400 695 350C680 310 705 270 740 240" />
+        <path className="botanical-stem botanical-delay-one" d="M620 518C630 470 645 420 630 375C620 340 640 305 665 275" />
+
+        {/* Crossing center stems */}
+        <path className="botanical-stem botanical-delay-three" d="M440 518C430 465 425 415 440 370C450 340 435 305 410 278" />
+        <path className="botanical-stem botanical-delay-two" d="M500 518C500 460 495 410 510 365C518 335 505 300 490 270" />
+        <path className="botanical-stem botanical-delay-one" d="M560 518C570 465 575 415 560 370C550 340 565 305 590 278" />
+      </g>
+
+      {/* ============================================================
+          LAYER 2 – dense foliage (middle layer)
+          ============================================================ */}
+      <g>
+        {/* == LEFT FOLIAGE == */}
+        <Leaf d="M15 350Q-15 320-10 290Q20 295 28 330Z" fill="#5a7d4e" className="botanical-delay-one" />
+        <Leaf d="M30 330Q50 290 80 280Q75 315 38 340Z" fill="#6b8a5a" className="botanical-delay-two" />
+        <Leaf d="M45 290Q15 260 20 235Q48 245 58 275Z" fill="#4e6e42" className="botanical-delay-three" />
+        <Leaf d="M55 275Q72 240 100 230Q95 265 62 285Z" fill="#7a9468" className="botanical-delay-one" />
+        <Leaf d="M80 320Q48 300 50 275Q78 280 92 310Z" fill="#5c7e4e" />
+        <Leaf d="M95 305Q110 270 140 260Q132 295 100 318Z" fill="#6a8858" className="botanical-delay-two" />
+        <Leaf d="M130 340Q98 318 102 293Q130 300 142 330Z" fill="#4a6e3e" className="botanical-delay-three" />
+        <Leaf d="M145 328Q158 292 188 278Q180 315 150 340Z" fill="#7c9668" className="botanical-delay-one" />
+        <Leaf d="M170 295Q140 275 145 250Q170 258 182 285Z" fill="#5a7c4c" className="botanical-delay-two" />
+        <Leaf d="M185 278Q200 244 228 235Q220 268 190 290Z" fill="#688a56" className="botanical-delay-three" />
+        <Leaf d="M220 310Q190 292 195 268Q220 275 232 300Z" fill="#4c704a" className="botanical-delay-one" />
+        <Leaf d="M235 295Q248 260 278 252Q270 285 240 308Z" fill="#7a9660" className="botanical-delay-two" />
+        <Leaf d="M270 335Q240 315 245 290Q270 298 282 325Z" fill="#5e8050" />
+        <Leaf d="M285 320Q298 288 328 278Q320 310 290 332Z" fill="#648856" className="botanical-delay-three" />
+        <Leaf d="M310 290Q280 272 285 248Q310 256 322 280Z" fill="#4e7244" className="botanical-delay-one" />
+        <Leaf d="M340 340Q310 320 318 298Q342 305 352 332Z" fill="#6c8c5a" className="botanical-delay-two" />
+        <Leaf d="M365 310Q338 295 342 272Q365 278 378 302Z" fill="#5a7e4c" className="botanical-delay-three" />
+        <Leaf d="M395 340Q368 322 375 300Q396 308 408 332Z" fill="#728e62" className="botanical-delay-one" />
+
+        {/* Bottom-left fill leaves */}
+        <Leaf d="M10 400Q-18 380-12 355Q15 360 24 390Z" fill="#5c7e50" className="botanical-delay-two" />
+        <Leaf d="M28 385Q45 352 72 345Q66 378 34 398Z" fill="#6d8c5e" className="botanical-delay-three" />
+        <Leaf d="M60 410Q32 395 36 370Q62 376 74 400Z" fill="#4c6e42" className="botanical-delay-one" />
+        <Leaf d="M75 395Q90 365 118 355Q112 388 80 408Z" fill="#7e9868" className="botanical-delay-two" />
+        <Leaf d="M110 420Q82 400 88 378Q112 384 124 410Z" fill="#5a7c4e" className="botanical-delay-three" />
+        <Leaf d="M140 400Q155 368 185 358Q178 392 146 412Z" fill="#688a58" className="botanical-delay-one" />
+        <Leaf d="M180 415Q152 398 158 375Q182 380 194 408Z" fill="#4e7044" />
+        <Leaf d="M210 395Q225 365 255 358Q248 390 215 408Z" fill="#789464" className="botanical-delay-two" />
+        <Leaf d="M250 420Q222 402 228 380Q252 385 264 412Z" fill="#5c7e4e" className="botanical-delay-three" />
+        <Leaf d="M290 405Q305 375 335 368Q328 398 295 416Z" fill="#6a8a5a" className="botanical-delay-one" />
+        <Leaf d="M340 420Q315 405 320 382Q342 388 354 412Z" fill="#4c6e40" className="botanical-delay-two" />
+        <Leaf d="M380 410Q395 380 425 375Q418 405 385 422Z" fill="#7c9664" className="botanical-delay-three" />
+
+        {/* == RIGHT FOLIAGE == */}
+        <Leaf d="M985 350Q1015 320 1010 290Q980 295 972 330Z" fill="#5a7d4e" className="botanical-delay-two" />
+        <Leaf d="M970 330Q950 290 920 280Q925 315 962 340Z" fill="#6b8a5a" className="botanical-delay-one" />
+        <Leaf d="M955 290Q985 260 980 235Q952 245 942 275Z" fill="#4e6e42" className="botanical-delay-three" />
+        <Leaf d="M945 275Q928 240 900 230Q905 265 938 285Z" fill="#7a9468" className="botanical-delay-two" />
+        <Leaf d="M920 320Q952 300 950 275Q922 280 908 310Z" fill="#5c7e4e" className="botanical-delay-one" />
+        <Leaf d="M905 305Q890 270 860 260Q868 295 900 318Z" fill="#6a8858" />
+        <Leaf d="M870 340Q902 318 898 293Q870 300 858 330Z" fill="#4a6e3e" className="botanical-delay-three" />
+        <Leaf d="M855 328Q842 292 812 278Q820 315 850 340Z" fill="#7c9668" className="botanical-delay-one" />
+        <Leaf d="M830 295Q860 275 855 250Q830 258 818 285Z" fill="#5a7c4c" className="botanical-delay-two" />
+        <Leaf d="M815 278Q800 244 772 235Q780 268 810 290Z" fill="#688a56" className="botanical-delay-one" />
+        <Leaf d="M780 310Q810 292 805 268Q780 275 768 300Z" fill="#4c704a" className="botanical-delay-three" />
+        <Leaf d="M765 295Q752 260 722 252Q730 285 760 308Z" fill="#7a9660" />
+        <Leaf d="M730 335Q760 315 755 290Q730 298 718 325Z" fill="#5e8050" className="botanical-delay-two" />
+        <Leaf d="M715 320Q702 288 672 278Q680 310 710 332Z" fill="#648856" className="botanical-delay-one" />
+        <Leaf d="M690 290Q720 272 715 248Q690 256 678 280Z" fill="#4e7244" className="botanical-delay-three" />
+        <Leaf d="M660 340Q690 320 682 298Q658 305 648 332Z" fill="#6c8c5a" />
+        <Leaf d="M635 310Q662 295 658 272Q635 278 622 302Z" fill="#5a7e4c" className="botanical-delay-one" />
+        <Leaf d="M605 340Q632 322 625 300Q604 308 592 332Z" fill="#728e62" className="botanical-delay-two" />
+
+        {/* Bottom-right fill leaves */}
+        <Leaf d="M990 400Q1018 380 1012 355Q985 360 976 390Z" fill="#5c7e50" className="botanical-delay-one" />
+        <Leaf d="M972 385Q955 352 928 345Q934 378 966 398Z" fill="#6d8c5e" className="botanical-delay-two" />
+        <Leaf d="M940 410Q968 395 964 370Q938 376 926 400Z" fill="#4c6e42" className="botanical-delay-three" />
+        <Leaf d="M925 395Q910 365 882 355Q888 388 920 408Z" fill="#7e9868" className="botanical-delay-one" />
+        <Leaf d="M890 420Q918 400 912 378Q888 384 876 410Z" fill="#5a7c4e" />
+        <Leaf d="M860 400Q845 368 815 358Q822 392 854 412Z" fill="#688a58" className="botanical-delay-two" />
+        <Leaf d="M820 415Q848 398 842 375Q818 380 806 408Z" fill="#4e7044" className="botanical-delay-three" />
+        <Leaf d="M790 395Q775 365 745 358Q752 390 785 408Z" fill="#789464" className="botanical-delay-one" />
+        <Leaf d="M750 420Q778 402 772 380Q748 385 736 412Z" fill="#5c7e4e" />
+        <Leaf d="M710 405Q695 375 665 368Q672 398 705 416Z" fill="#6a8a5a" className="botanical-delay-two" />
+        <Leaf d="M660 420Q685 405 680 382Q658 388 646 412Z" fill="#4c6e40" className="botanical-delay-three" />
+        <Leaf d="M620 410Q605 380 575 375Q582 405 615 422Z" fill="#7c9664" className="botanical-delay-one" />
+
+        {/* Center bottom leaves that creep behind signature area */}
+        <Leaf d="M430 395Q410 372 418 350Q438 358 445 385Z" fill="#5a7c4e" className="botanical-delay-two" />
+        <Leaf d="M465 405Q480 375 508 370Q500 400 470 418Z" fill="#6c8c5a" className="botanical-delay-one" />
+        <Leaf d="M535 405Q520 375 492 370Q500 400 530 418Z" fill="#5e8050" className="botanical-delay-three" />
+        <Leaf d="M570 395Q590 372 582 350Q562 358 555 385Z" fill="#728e62" className="botanical-delay-two" />
+
+        {/* Round leaves scattered throughout */}
+        <RoundLeaf x={35} y={300} scale={0.75} rotate={-20} fill="#5a7d4e" className="botanical-delay-one" />
+        <RoundLeaf x={100} y={270} scale={0.7} rotate={15} fill="#6b8a5a" className="botanical-delay-two" />
+        <RoundLeaf x={175} y={245} scale={0.65} rotate={-10} fill="#4e6e42" className="botanical-delay-three" />
+        <RoundLeaf x={250} y={260} scale={0.7} rotate={25} fill="#7a9468" className="botanical-delay-one" />
+        <RoundLeaf x={310} y={275} scale={0.6} rotate={-30} fill="#5c7e4e" className="botanical-delay-two" />
+        <RoundLeaf x={355} y={300} scale={0.65} rotate={18} fill="#688a58" className="botanical-delay-three" />
+        <RoundLeaf x={965} y={300} scale={0.75} rotate={20} fill="#5a7d4e" className="botanical-delay-two" />
+        <RoundLeaf x={900} y={270} scale={0.7} rotate={-15} fill="#6b8a5a" className="botanical-delay-one" />
+        <RoundLeaf x={825} y={245} scale={0.65} rotate={10} fill="#4e6e42" className="botanical-delay-three" />
+        <RoundLeaf x={750} y={260} scale={0.7} rotate={-25} fill="#7a9468" className="botanical-delay-two" />
+        <RoundLeaf x={690} y={275} scale={0.6} rotate={30} fill="#5c7e4e" className="botanical-delay-one" />
+        <RoundLeaf x={645} y={300} scale={0.65} rotate={-18} fill="#688a58" className="botanical-delay-three" />
+      </g>
+
+      {/* ============================================================
+          LAYER 3 – LILIES (major flowers, thick petals)
+          ============================================================ */}
+      <g>
+        {/* Left lilies */}
+        <Lily x={35} y={195} scale={1.15} rotate={-8} tone="#c4a0d8" inner="#dcc4e8" className="botanical-delay-one" />
+        <Lily x={110} y={165} scale={1.3} rotate={12} tone="#b890cc" inner="#d4b8e0" className="botanical-delay-three" />
+        <Lily x={185} y={200} scale={1.0} rotate={-18} tone="#d0b4e0" inner="#e4d0f0" className="botanical-delay-two" />
+        <Lily x={275} y={250} scale={0.85} rotate={22} tone="#c8a8d8" inner="#dcc0e8" className="botanical-delay-one" />
+
+        {/* Right lilies */}
+        <Lily x={965} y={195} scale={1.15} rotate={8} tone="#c4a0d8" inner="#dcc4e8" className="botanical-delay-two" />
+        <Lily x={890} y={165} scale={1.3} rotate={-12} tone="#b890cc" inner="#d4b8e0" className="botanical-delay-one" />
+        <Lily x={815} y={200} scale={1.0} rotate={18} tone="#d0b4e0" inner="#e4d0f0" className="botanical-delay-three" />
+        <Lily x={725} y={250} scale={0.85} rotate={-22} tone="#c8a8d8" inner="#dcc0e8" className="botanical-delay-two" />
+
+        {/* Center-left and center-right lilies (closer to signature) */}
+        <Lily x={355} y={275} scale={0.75} rotate={15} tone="#d4b8e4" inner="#e8d4f0" className="botanical-delay-three" />
+        <Lily x={645} y={275} scale={0.75} rotate={-15} tone="#d4b8e4" inner="#e8d4f0" className="botanical-delay-one" />
+
+        {/* Top accent lilies */}
+        <Lily x={70} y={145} scale={0.7} rotate={-25} tone="#d8c0e8" inner="#ecdcf4" className="botanical-delay-two" />
+        <Lily x={930} y={145} scale={0.7} rotate={25} tone="#d8c0e8" inner="#ecdcf4" className="botanical-delay-three" />
+      </g>
+
+      {/* ============================================================
+          LAYER 4 – ROSES (warm orange/coral, thick petals)
+          ============================================================ */}
+      <g>
+        {/* Left roses */}
+        <Rose x={60} y={290} scale={1.15} rotate={-10} tone="#d47848" highlight="#e8a070" className="botanical-delay-two" />
+        <Rose x={140} y={325} scale={1.0} rotate={8} tone="#c86840" highlight="#e09060" className="botanical-delay-one" />
+        <Rose x={210} y={280} scale={0.9} rotate={-15} tone="#d88050" highlight="#eca878" className="botanical-delay-three" />
+        <Rose x={290} y={318} scale={0.8} rotate={12} tone="#cc7048" highlight="#e49868" className="botanical-delay-two" />
+        <Rose x={360} y={305} scale={0.7} rotate={-6} tone="#d47848" highlight="#e8a070" className="botanical-delay-one" />
+
+        {/* Right roses */}
+        <Rose x={940} y={290} scale={1.15} rotate={10} tone="#d47848" highlight="#e8a070" className="botanical-delay-one" />
+        <Rose x={860} y={325} scale={1.0} rotate={-8} tone="#c86840" highlight="#e09060" className="botanical-delay-three" />
+        <Rose x={790} y={280} scale={0.9} rotate={15} tone="#d88050" highlight="#eca878" className="botanical-delay-two" />
+        <Rose x={710} y={318} scale={0.8} rotate={-12} tone="#cc7048" highlight="#e49868" className="botanical-delay-one" />
+        <Rose x={640} y={305} scale={0.7} rotate={6} tone="#d47848" highlight="#e8a070" className="botanical-delay-three" />
+
+        {/* A few roses near center-bottom */}
+        <Rose x={420} y={370} scale={0.6} rotate={-10} tone="#d07850" highlight="#e8a070" className="botanical-delay-two" />
+        <Rose x={580} y={370} scale={0.6} rotate={10} tone="#d07850" highlight="#e8a070" className="botanical-delay-one" />
+      </g>
+
+      {/* ============================================================
+          LAYER 5 – small flowers & wildflowers
+          ============================================================ */}
+      <g>
+        {/* White/cream small flowers scattered throughout */}
+        <SmallFlower x={25} y={260} scale={0.65} tone="#f0ead8" petals={5} className="botanical-delay-one" />
+        <SmallFlower x={90} y={230} scale={0.55} tone="#f4efe0" petals={6} className="botanical-delay-two" />
+        <SmallFlower x={155} y={255} scale={0.6} tone="#eee6d4" petals={5} className="botanical-delay-three" />
+        <SmallFlower x={230} y={240} scale={0.5} tone="#f2ece0" petals={7} className="botanical-delay-one" />
+        <SmallFlower x={300} y={270} scale={0.55} tone="#efe8d8" petals={5} className="botanical-delay-two" />
+        <SmallFlower x={340} y={290} scale={0.45} tone="#f4efe0" petals={6} className="botanical-delay-three" />
+
+        <SmallFlower x={975} y={260} scale={0.65} tone="#f0ead8" petals={5} className="botanical-delay-two" />
+        <SmallFlower x={910} y={230} scale={0.55} tone="#f4efe0" petals={6} className="botanical-delay-one" />
+        <SmallFlower x={845} y={255} scale={0.6} tone="#eee6d4" petals={5} className="botanical-delay-three" />
+        <SmallFlower x={770} y={240} scale={0.5} tone="#f2ece0" petals={7} className="botanical-delay-two" />
+        <SmallFlower x={700} y={270} scale={0.55} tone="#efe8d8" petals={5} className="botanical-delay-one" />
+        <SmallFlower x={660} y={290} scale={0.45} tone="#f4efe0" petals={6} className="botanical-delay-three" />
+
+        {/* Pale pink small flowers */}
+        <SmallFlower x={50} y={345} scale={0.5} tone="#f0d4d4" petals={5} className="botanical-delay-one" />
+        <SmallFlower x={175} y={345} scale={0.45} tone="#ecd0d0" petals={6} className="botanical-delay-two" />
+        <SmallFlower x={260} y={340} scale={0.5} tone="#f0d8d8" petals={5} className="botanical-delay-three" />
+        <SmallFlower x={950} y={345} scale={0.5} tone="#f0d4d4" petals={5} className="botanical-delay-two" />
+        <SmallFlower x={825} y={345} scale={0.45} tone="#ecd0d0" petals={6} className="botanical-delay-one" />
+        <SmallFlower x={740} y={340} scale={0.5} tone="#f0d8d8" petals={5} className="botanical-delay-three" />
+
+        {/* Lavender sprigs */}
+        <Lavender x={20} y={200} scale={0.85} rotate={-12} className="botanical-delay-one" />
+        <Lavender x={130} y={190} scale={0.7} rotate={15} className="botanical-delay-two" />
+        <Lavender x={240} y={230} scale={0.6} rotate={-8} className="botanical-delay-three" />
+        <Lavender x={330} y={265} scale={0.55} rotate={20} className="botanical-delay-one" />
+        <Lavender x={980} y={200} scale={0.85} rotate={12} className="botanical-delay-two" />
+        <Lavender x={870} y={190} scale={0.7} rotate={-15} className="botanical-delay-one" />
+        <Lavender x={760} y={230} scale={0.6} rotate={8} className="botanical-delay-three" />
+        <Lavender x={670} y={265} scale={0.55} rotate={-20} className="botanical-delay-two" />
+      </g>
+
+      {/* ============================================================
+          LAYER 6 – Rosebuds & buds scattered
+          ============================================================ */}
+      <g>
+        <Rosebud x={45} y={230} scale={0.8} rotate={-15} tone="#d47848" className="botanical-delay-one" />
+        <Rosebud x={120} y={285} scale={0.7} rotate={20} tone="#cc6040" className="botanical-delay-two" />
+        <Rosebud x={200} y={310} scale={0.65} rotate={-10} tone="#d88050" className="botanical-delay-three" />
+        <Rosebud x={310} y={295} scale={0.6} rotate={25} tone="#d07048" className="botanical-delay-one" />
+        <Rosebud x={380} y={340} scale={0.55} rotate={-18} tone="#cc6840" className="botanical-delay-two" />
+        <Rosebud x={955} y={230} scale={0.8} rotate={15} tone="#d47848" className="botanical-delay-three" />
+        <Rosebud x={880} y={285} scale={0.7} rotate={-20} tone="#cc6040" className="botanical-delay-one" />
+        <Rosebud x={800} y={310} scale={0.65} rotate={10} tone="#d88050" className="botanical-delay-two" />
+        <Rosebud x={690} y={295} scale={0.6} rotate={-25} tone="#d07048" className="botanical-delay-three" />
+        <Rosebud x={620} y={340} scale={0.55} rotate={18} tone="#cc6840" className="botanical-delay-one" />
+
+        {/* Small round buds */}
+        <g className="botanical-bud" fill="#d4a07e">
+          <circle cx="15" cy="175" r="3.5" />
+          <circle cx="95" cy="155" r="3" />
+          <circle cx="165" cy="185" r="2.8" />
+          <circle cx="250" cy="225" r="3.2" />
+          <circle cx="330" cy="255" r="2.5" />
+          <circle cx="400" cy="290" r="2.8" />
+          <circle cx="985" cy="175" r="3.5" />
+          <circle cx="905" cy="155" r="3" />
+          <circle cx="835" cy="185" r="2.8" />
+          <circle cx="750" cy="225" r="3.2" />
+          <circle cx="670" cy="255" r="2.5" />
+          <circle cx="600" cy="290" r="2.8" />
+        </g>
+      </g>
+
+      {/* ============================================================
+          LAYER 7 – foreground leaves that overlap everything
+          ============================================================ */}
+      <g>
+        <Leaf d="M5 430Q-22 410-18 385Q10 388 18 420Z" fill="#4c6e42" className="botanical-delay-one" />
+        <Leaf d="M22 418Q38 385 68 378Q60 410 28 428Z" fill="#6a8a58" className="botanical-delay-two" />
+        <Leaf d="M55 445Q28 428 34 405Q58 410 68 438Z" fill="#5a7c4e" className="botanical-delay-three" />
+        <Leaf d="M90 430Q105 398 135 390Q128 422 94 440Z" fill="#7c9668" className="botanical-delay-one" />
+        <Leaf d="M135 450Q108 435 114 412Q136 418 148 442Z" fill="#4e7044" className="botanical-delay-two" />
+        <Leaf d="M170 438Q185 408 212 400Q206 432 174 448Z" fill="#688a56" className="botanical-delay-three" />
+        <Leaf d="M220 455Q195 440 200 418Q222 424 234 448Z" fill="#5c7e50" className="botanical-delay-one" />
+        <Leaf d="M260 440Q275 410 302 405Q296 436 264 452Z" fill="#7a9464" className="botanical-delay-two" />
+        <Leaf d="M310 460Q285 445 290 422Q312 428 324 454Z" fill="#4c6e40" className="botanical-delay-three" />
+        <Leaf d="M350 448Q365 418 392 412Q386 442 354 458Z" fill="#6c8c5a" className="botanical-delay-one" />
+        <Leaf d="M400 465Q375 450 382 428Q402 434 414 458Z" fill="#5a7c4c" className="botanical-delay-two" />
+
+        <Leaf d="M995 430Q1022 410 1018 385Q990 388 982 420Z" fill="#4c6e42" className="botanical-delay-two" />
+        <Leaf d="M978 418Q962 385 932 378Q940 410 972 428Z" fill="#6a8a58" className="botanical-delay-one" />
+        <Leaf d="M945 445Q972 428 966 405Q942 410 932 438Z" fill="#5a7c4e" className="botanical-delay-three" />
+        <Leaf d="M910 430Q895 398 865 390Q872 422 906 440Z" fill="#7c9668" className="botanical-delay-two" />
+        <Leaf d="M865 450Q892 435 886 412Q864 418 852 442Z" fill="#4e7044" className="botanical-delay-one" />
+        <Leaf d="M830 438Q815 408 788 400Q794 432 826 448Z" fill="#688a56" className="botanical-delay-three" />
+        <Leaf d="M780 455Q805 440 800 418Q778 424 766 448Z" fill="#5c7e50" className="botanical-delay-two" />
+        <Leaf d="M740 440Q725 410 698 405Q704 436 736 452Z" fill="#7a9464" className="botanical-delay-one" />
+        <Leaf d="M690 460Q715 445 710 422Q688 428 676 454Z" fill="#4c6e40" className="botanical-delay-three" />
+        <Leaf d="M650 448Q635 418 608 412Q614 442 646 458Z" fill="#6c8c5a" className="botanical-delay-two" />
+        <Leaf d="M600 465Q625 450 618 428Q598 434 586 458Z" fill="#5a7c4c" className="botanical-delay-one" />
+
+        {/* Bottom-most leaves */}
+        <Leaf d="M30 480Q8 468 12 448Q34 452 42 474Z" fill="#5a7c4c" className="botanical-delay-one" />
+        <Leaf d="M80 490Q58 478 62 458Q84 462 92 484Z" fill="#6c8c5a" className="botanical-delay-two" />
+        <Leaf d="M140 495Q118 482 122 462Q144 466 152 488Z" fill="#4c6e40" className="botanical-delay-three" />
+        <Leaf d="M200 485Q178 472 182 452Q204 456 212 478Z" fill="#7a9464" className="botanical-delay-one" />
+        <Leaf d="M260 492Q238 480 242 460Q264 464 272 486Z" fill="#5c7e50" className="botanical-delay-two" />
+        <Leaf d="M320 488Q298 476 302 456Q324 460 332 482Z" fill="#688a56" className="botanical-delay-three" />
+        <Leaf d="M390 495Q368 482 372 462Q394 466 402 488Z" fill="#4e7044" className="botanical-delay-one" />
+        <Leaf d="M450 490Q428 478 435 458Q454 462 462 484Z" fill="#6a8a58" className="botanical-delay-two" />
+        <Leaf d="M550 490Q572 478 565 458Q546 462 538 484Z" fill="#6a8a58" className="botanical-delay-one" />
+        <Leaf d="M610 495Q632 482 628 462Q606 466 598 488Z" fill="#4e7044" className="botanical-delay-three" />
+        <Leaf d="M680 488Q702 476 698 456Q676 460 668 482Z" fill="#688a56" className="botanical-delay-two" />
+        <Leaf d="M740 492Q762 480 758 460Q736 464 728 486Z" fill="#5c7e50" className="botanical-delay-one" />
+        <Leaf d="M800 485Q822 472 818 452Q796 456 788 478Z" fill="#7a9464" className="botanical-delay-three" />
+        <Leaf d="M860 495Q882 482 878 462Q856 466 848 488Z" fill="#4c6e40" className="botanical-delay-two" />
+        <Leaf d="M920 490Q942 478 938 458Q916 462 908 484Z" fill="#6c8c5a" className="botanical-delay-one" />
+        <Leaf d="M970 480Q992 468 988 448Q966 452 958 474Z" fill="#5a7c4c" className="botanical-delay-three" />
+      </g>
+
+      {/* ============================================================
+          LAYER 8 – foreground flowers (larger, closer to viewer)
+          ============================================================ */}
+      <g>
+        {/* Large foreground lilies */}
+        <Lily x={70} y={360} scale={0.9} rotate={-5} tone="#c8a4d8" inner="#e0c8ee" className="botanical-delay-two" />
+        <Lily x={200} y={375} scale={0.75} rotate={10} tone="#d0b0e0" inner="#e8d0f0" className="botanical-delay-one" />
+        <Lily x={930} y={360} scale={0.9} rotate={5} tone="#c8a4d8" inner="#e0c8ee" className="botanical-delay-three" />
+        <Lily x={800} y={375} scale={0.75} rotate={-10} tone="#d0b0e0" inner="#e8d0f0" className="botanical-delay-two" />
+
+        {/* Foreground roses */}
+        <Rose x={120} y={400} scale={0.85} rotate={-8} tone="#d07040" highlight="#e89868" className="botanical-delay-one" />
+        <Rose x={250} y={410} scale={0.7} rotate={12} tone="#cc6838" highlight="#e49060" className="botanical-delay-three" />
+        <Rose x={880} y={400} scale={0.85} rotate={8} tone="#d07040" highlight="#e89868" className="botanical-delay-two" />
+        <Rose x={750} y={410} scale={0.7} rotate={-12} tone="#cc6838" highlight="#e49060" className="botanical-delay-one" />
+
+        {/* Small foreground blooms */}
+        <SmallFlower x={40} y={380} scale={0.5} tone="#f0e4d0" petals={5} className="botanical-delay-one" />
+        <SmallFlower x={170} y={390} scale={0.45} tone="#e8d8e8" petals={6} className="botanical-delay-two" />
+        <SmallFlower x={310} y={380} scale={0.4} tone="#f0e8d4" petals={5} className="botanical-delay-three" />
+        <SmallFlower x={960} y={380} scale={0.5} tone="#f0e4d0" petals={5} className="botanical-delay-two" />
+        <SmallFlower x={830} y={390} scale={0.45} tone="#e8d8e8" petals={6} className="botanical-delay-one" />
+        <SmallFlower x={690} y={380} scale={0.4} tone="#f0e8d4" petals={5} className="botanical-delay-three" />
+
+        {/* Foreground rosebuds */}
+        <Rosebud x={30} y={410} scale={0.7} rotate={-20} tone="#d47848" className="botanical-delay-two" />
+        <Rosebud x={300} y={420} scale={0.6} rotate={15} tone="#cc6040" className="botanical-delay-one" />
+        <Rosebud x={970} y={410} scale={0.7} rotate={20} tone="#d47848" className="botanical-delay-three" />
+        <Rosebud x={700} y={420} scale={0.6} rotate={-15} tone="#cc6040" className="botanical-delay-two" />
+      </g>
+
+      {/* ============================================================
+          LAYER 9 – falling petals (very sparse, slow)
+          ============================================================ */}
+      <g>
+        <FallingPetal
+          d="M390 320Q396 312 402 322Q396 332 390 320Z"
+          fill="#d8a8b0"
+          className="petal-one"
+        />
+        <FallingPetal
+          d="M620 315Q626 308 630 318Q624 328 620 315Z"
+          fill="#d4c0e4"
+          className="petal-two"
+        />
+        <FallingPetal
+          d="M450 335Q455 328 460 336Q456 344 450 335Z"
+          fill="#e0b8a0"
+          className="petal-three"
+        />
+        <FallingPetal
+          d="M560 340Q565 332 570 341Q566 350 560 340Z"
+          fill="#c8a8d0"
+          className="petal-four"
+        />
+        <FallingPetal
+          d="M340 360Q346 354 350 362Q344 370 340 360Z"
+          fill="#d8b0a0"
+          className="petal-five"
+        />
+        <FallingPetal
+          d="M670 355Q674 348 678 357Q674 366 670 355Z"
+          fill="#c4b0d8"
+          className="petal-six"
+        />
+      </g>
+    </svg>
+  )
 }

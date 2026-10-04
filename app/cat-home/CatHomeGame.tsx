@@ -6,145 +6,74 @@ import { useEffect, useRef, useState } from 'react'
 import { CatHomeEngine, type Hud } from '@/lib/cat/engine'
 import { VH, VW } from '@/lib/cat/room'
 
-const EMPTY_HUD: Hud = {
-  hunger: 70,
-  happiness: 75,
-  energy: 80,
-  food: 1,
-  water: 2,
-  timeOfDay: 'night',
-  lampOn: true,
-  laserOn: false,
-  prompt: null,
-  message: null,
-  state: 'idle',
-}
-
+const EMPTY_HUD: Hud = { hunger: 70, happiness: 75, energy: 80, food: 1, water: 2, timeOfDay: 'night', lampOn: true, laserOn: false, prompt: null, message: null, state: 'idle', catName: '' }
 const MOVE_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'KeyA', 'KeyS', 'KeyD']
 
-function Bar({ label, value }: { label: string; value: number }) {
-  const filled = Math.max(0, Math.min(10, Math.round(value / 10)))
-  return (
-    <div className="flex items-center justify-between gap-1.5 text-[8px]">
-      <span className="text-muted tracking-wider">{label}</span>
-      <span
-        className="flex gap-[2px]"
-        role="meter"
-        aria-label={label}
-        aria-valuenow={value}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        {Array.from({ length: 10 }, (_, i) => (
-          <span
-            key={i}
-            className={`block h-1.5 w-1.5 ${
-              i < filled ? 'bg-foreground' : 'bg-muted/30'
-            }`}
-          />
-        ))}
-      </span>
-    </div>
-  )
+function shortPrompt(prompt: string) {
+  if (prompt.startsWith('return to')) return 'leave for portfolio'
+  if (prompt.startsWith('fill food')) return 'fill food bowl'
+  if (prompt.startsWith('fill water')) return 'fill water bowl'
+  if (prompt.startsWith('toss ') || prompt.startsWith('wave ')) return 'play with toy'
+  if (prompt.startsWith('tuck cat')) return 'cat bed'
+  if (prompt.startsWith('cardboard box')) return 'look inside the box'
+  if (prompt === 'cat food cabinet') return 'restock food'
+  return prompt
 }
 
-function Joystick({ onChange }: { onChange: (x: number, y: number) => void }) {
-  const base = useRef<HTMLDivElement>(null)
-  const [thumb, setThumb] = useState({ x: 0, y: 0 })
-  const active = useRef<number | null>(null)
-  const R = 32
+function DirectionPad({ onChange }: { onChange: (x: number, y: number) => void }) {
+  const directions = [
+    { key: 'up', x: 0, y: -1, icon: '↑', place: 'col-start-2 row-start-1' },
+    { key: 'left', x: -1, y: 0, icon: '←', place: 'col-start-1 row-start-2' },
+    { key: 'right', x: 1, y: 0, icon: '→', place: 'col-start-3 row-start-2' },
+    { key: 'down', x: 0, y: 1, icon: '↓', place: 'col-start-2 row-start-3' },
+  ]
+  return <div role="group" aria-label="Move around the room" className="grid grid-cols-3 grid-rows-3 gap-1 touch-none sm:hidden">
+    {directions.map((d) => <button key={d.key} type="button" aria-label={`Move ${d.key}`} className={`grid h-8 w-8 place-items-center rounded border border-dotted border-border/70 bg-background/70 font-mono text-sm text-muted active:text-foreground ${d.place}`} onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); onChange(d.x, d.y) }} onPointerUp={() => onChange(0, 0)} onPointerCancel={() => onChange(0, 0)} onLostPointerCapture={() => onChange(0, 0)} onClick={() => { onChange(d.x, d.y); window.setTimeout(() => onChange(0, 0), 140) }}>{d.icon}</button>)}
+  </div>
+}
 
-  function update(e: React.PointerEvent) {
-    const rect = base.current!.getBoundingClientRect()
-    let dx = e.clientX - (rect.left + rect.width / 2)
-    let dy = e.clientY - (rect.top + rect.height / 2)
-    const len = Math.hypot(dx, dy)
-    if (len > R) {
-      dx = (dx / len) * R
-      dy = (dy / len) * R
-    }
-    setThumb({ x: dx, y: dy })
-    onChange(dx / R, dy / R)
-  }
-
-  function end() {
-    active.current = null
-    setThumb({ x: 0, y: 0 })
-    onChange(0, 0)
-  }
-
-  return (
-    <div
-      ref={base}
-      className="relative h-20 w-20 touch-none select-none rounded-full border-2 border-border/80 bg-background/80 backdrop-blur-sm"
-      onPointerDown={(e) => {
-        e.preventDefault()
-        active.current = e.pointerId
-        e.currentTarget.setPointerCapture(e.pointerId)
-        update(e)
-      }}
-      onPointerMove={(e) => {
-        e.preventDefault()
-        if (active.current === e.pointerId) update(e)
-      }}
-      onPointerUp={end}
-      onPointerCancel={end}
-      aria-label="Directional joystick"
-    >
-      <span className="absolute top-1 left-1/2 -translate-x-1/2 text-muted text-[6px]">▲</span>
-      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-muted text-[6px]">▼</span>
-      <span className="absolute left-1 top-1/2 -translate-y-1/2 text-muted text-[6px]">◀</span>
-      <span className="absolute right-1 top-1/2 -translate-y-1/2 text-muted text-[6px]">▶</span>
-      <span
-        className="absolute left-1/2 top-1/2 block h-8 w-8 rounded-full border border-border bg-surface shadow-md transition-transform"
-        style={{
-          transform: `translate(calc(-50% + ${thumb.x}px), calc(-50% + ${thumb.y}px))`,
-        }}
-      />
-    </div>
-  )
+function StatusMeter({ label, value }: { label: string; value: number }) {
+  return <div className="grid min-w-0 grid-cols-[auto_1fr_auto] items-center gap-2 font-mono text-[7px] text-muted sm:gap-2.5 sm:text-[8px]">
+    <span>{label}</span>
+    <span className="h-1.5 w-12 overflow-hidden bg-white/10 sm:w-20"><span className="block h-full bg-[#c4a77d] transition-[width] duration-500" style={{ width: `${Math.max(0, Math.min(100, value))}%` }} /></span>
+    <span className="tabular-nums text-foreground/75">{value}</span>
+  </div>
 }
 
 export default function CatHomeGame() {
   const router = useRouter()
-  const wrap = useRef<HTMLDivElement>(null)
+  const frame = useRef<HTMLDivElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
   const engine = useRef<CatHomeEngine | null>(null)
   const [hud, setHud] = useState<Hud>(EMPTY_HUD)
+  const [draftName, setDraftName] = useState('')
+  const [editingName, setEditingName] = useState(false)
 
   useEffect(() => {
     const el = canvas.current!
-    const game = new CatHomeEngine(el, setHud, () => {
-      router.push('/home')
-    })
+    const game = new CatHomeEngine(el, setHud, () => router.push('/home'))
     engine.current = game
     game.start()
-
     const fit = () => {
-      if (!wrap.current) return
-      const box = wrap.current.getBoundingClientRect()
-      const raw = Math.min(box.width / VW, box.height / VH)
-      const scale = raw >= 2 ? Math.floor(raw) : raw
+      if (!frame.current) return
+      const { width, height } = frame.current.getBoundingClientRect()
+      const scale = Math.min(width / VW, height / VH)
       el.style.width = `${Math.floor(VW * scale)}px`
       el.style.height = `${Math.floor(VH * scale)}px`
     }
     fit()
     const ro = new ResizeObserver(fit)
-    ro.observe(wrap.current!)
-
-    const down = (e: KeyboardEvent) => {
-      if (MOVE_KEYS.includes(e.code) || e.code === 'Space' || e.code === 'KeyL') {
-        e.preventDefault()
-      }
-      game.keyDown(e.code, e.repeat)
+    ro.observe(frame.current!)
+    const down = (event: KeyboardEvent) => {
+      if (event.target instanceof HTMLElement && event.target.closest('input, textarea, select, [contenteditable="true"]')) return
+      if (MOVE_KEYS.includes(event.code) || ['Space'].includes(event.code)) event.preventDefault()
+      game.keyDown(event.code, event.repeat)
     }
-    const up = (e: KeyboardEvent) => game.keyUp(e.code)
+    const up = (event: KeyboardEvent) => game.keyUp(event.code)
     const blur = () => game.clearKeys()
-
     window.addEventListener('keydown', down)
     window.addEventListener('keyup', up)
     window.addEventListener('blur', blur)
-
     return () => {
       game.stop()
       ro.disconnect()
@@ -155,161 +84,41 @@ export default function CatHomeGame() {
     }
   }, [router])
 
-  const timeLabel = {
-    day: '☀️ DAY',
-    sunset: '🌅 SUNSET',
-    night: '🌙 NIGHT',
-  }[hud.timeOfDay]
-
-  return (
-    <section
-      aria-label="Cat Home: Interactive Pixel Pet Experience"
-      className="px-4 pb-14 pt-4 sm:px-8 sm:pb-16 flex flex-col items-center"
-      style={{ fontFamily: 'var(--font-pixel), monospace' }}
-    >
-      {/* Top Header & Status Strip */}
-      <div className="w-full max-w-[640px] mb-3 flex flex-col gap-2">
-        <div className="flex items-center justify-between text-[9px] text-muted tracking-wider">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-foreground uppercase">CAT HOME</span>
-            <span className="text-[7px] text-muted">· {hud.state}</span>
-          </div>
-          <Link
-            href="/home"
-            className="text-[8px] text-muted hover:text-foreground transition-colors"
-          >
-            ← PORTFOLIO
-          </Link>
-        </div>
-
-        {/* HUD Controls & Stats Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded border border-dashed border-border bg-surface/30 p-2.5 backdrop-blur-sm text-[8px]">
-          {/* Vitals */}
-          <div className="flex items-center gap-4">
-            <Bar label="HUNGER" value={hud.hunger} />
-            <Bar label="HAPPY" value={hud.happiness} />
-            <Bar label="ENERGY" value={hud.energy} />
-          </div>
-
-          {/* Resources */}
-          <div className="flex items-center gap-3 text-muted">
-            <span title="Kibble available in bowl">
-              KIBBLE <span className="text-[#e28f3a]">{'●'.repeat(hud.food) + '○'.repeat(3 - hud.food)}</span>
-            </span>
-            <span title="Fresh water in bowl">
-              WATER <span className="text-[#64b5f6]">{'●'.repeat(hud.water) + '○'.repeat(3 - hud.water)}</span>
-            </span>
-          </div>
-
-          {/* Interactive Mode Toggles */}
-          <div className="flex items-center gap-1.5 ml-auto">
-            {/* Time toggle */}
-            <button
-              type="button"
-              onClick={() => engine.current?.toggleTimeOfDay()}
-              className="rounded border border-border/80 bg-background/80 px-2 py-1 text-muted hover:border-foreground hover:text-foreground transition-colors"
-              title="Toggle Day / Sunset / Night"
-            >
-              {timeLabel}
-            </button>
-
-            {/* Lamp toggle */}
-            <button
-              type="button"
-              onClick={() => engine.current?.toggleLamp()}
-              className="rounded border border-border/80 bg-background/80 px-2 py-1 text-muted hover:border-foreground hover:text-foreground transition-colors"
-              title="Toggle desk lamp on/off"
-            >
-              {hud.lampOn ? '💡 LAMP' : '🌑 OFF'}
-            </button>
-
-            {/* Laser pointer toggle */}
-            <button
-              type="button"
-              onClick={() => engine.current?.toggleLaser()}
-              className={`rounded border px-2 py-1 transition-colors ${
-                hud.laserOn
-                  ? 'border-red-500 bg-red-950/60 text-red-300 font-bold'
-                  : 'border-border/80 bg-background/80 text-muted hover:border-foreground hover:text-foreground'
-              }`}
-              title="Toggle Red Laser Pointer (L key)"
-            >
-              {hud.laserOn ? '🔴 LASER ON' : '🔴 LASER'}
-            </button>
-          </div>
-        </div>
+  const showNameEditor = !hud.catName || editingName
+  return <section aria-label="Cat Home pixel-art game" className="flex h-dvh w-full flex-col overflow-hidden px-3 py-3 sm:px-6 sm:py-4">
+    <header className="mb-3 flex shrink-0 items-center justify-between gap-3 sm:mb-4">
+      <div className="flex min-w-0 items-center gap-3">
+        <h1 className="shrink-0 font-display text-[10px] font-semibold tracking-[0.17em] text-foreground sm:text-xs">CAT HOME</h1>
+        <span aria-hidden="true" className="text-border">·</span>
+        {showNameEditor ? <form className="flex min-w-0 items-center gap-1 font-mono text-[8px] sm:text-[9px]" onSubmit={(event) => { event.preventDefault(); const name = draftName.trim(); if (name) { engine.current?.setCatName(name); setEditingName(false) } }}>
+          <label htmlFor="cat-name" className="whitespace-nowrap text-muted">{editingName ? 'rename:' : <><span className="sm:hidden">name:</span><span className="hidden sm:inline">What should I call you?</span></>}</label>
+          <input id="cat-name" aria-label="Cat nickname" autoFocus={!hud.catName} value={draftName} onChange={(event) => setDraftName(event.target.value)} maxLength={14} className="w-[76px] border-b border-border/70 bg-transparent px-1 py-1 text-foreground outline-none placeholder:text-muted/50 focus:border-foreground sm:w-24" placeholder="nickname" />
+          <button type="submit" className="px-1 text-muted hover:text-foreground" aria-label="Save cat nickname">↵</button>
+        </form> : <button type="button" onClick={() => { setDraftName(hud.catName); setEditingName(true) }} className="truncate font-mono text-[8px] text-muted hover:text-foreground sm:text-[9px]">{hud.catName}<span className="ml-1 text-muted/50">✎</span></button>}
       </div>
+      <Link href="/home" className="shrink-0 font-mono text-[8px] tracking-[0.08em] text-muted transition-colors hover:text-foreground sm:text-[9px]">← PORTFOLIO</Link>
+    </header>
 
-      {/* Contained Game World Boundary (Inside Portfolio Container) */}
-      <div
-        ref={wrap}
-        className="relative w-full max-w-[640px] aspect-[5/3] overflow-hidden rounded-lg border-2 border-dashed border-border bg-[#0a0a0e] shadow-2xl flex items-center justify-center select-none"
-      >
-        <canvas
-          ref={canvas}
-          className="block max-w-full max-h-full"
-          style={{ imageRendering: 'pixelated' }}
-          aria-label="Cat Home room canvas"
-        />
+    <div className="mb-3 grid shrink-0 grid-cols-3 gap-2 border-y border-border/30 py-2 sm:mb-4 sm:flex sm:items-center sm:gap-6">
+      <StatusMeter label="HUNGER" value={hud.hunger} />
+      <StatusMeter label="HAPPY" value={hud.happiness} />
+      <StatusMeter label="ENERGY" value={hud.energy} />
+      <span className="col-span-3 font-mono text-[7px] text-muted/60 sm:ml-auto sm:text-[8px]">food {hud.food}/3 <span className="mx-1 text-border">·</span> water {hud.water}/3</span>
+    </div>
 
-        {/* Floating Contextual Prompts Inside the Room Frame */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-4 flex flex-col items-center gap-1.5">
-          {hud.message && (
-            <div className="rounded border border-border bg-[#f4f4f8] px-2.5 py-1.5 text-[8px] text-[#141416] shadow-lg animate-fade-in">
-              {hud.message}
-            </div>
-          )}
-          {hud.prompt && (
-            <div className="rounded border border-[#e0e0e8] bg-black/85 px-2.5 py-1.5 text-[8px] text-[#f4f4f8] shadow-lg">
-              <span className="text-[#f0b040] font-bold">E / ENTER</span> · {hud.prompt}
-            </div>
-          )}
-        </div>
+    <div ref={frame} className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-[#0a0a0e]" style={{ touchAction: 'none' }}>
+      <canvas ref={canvas} className="block max-h-full max-w-full" style={{ imageRendering: 'pixelated' }} aria-label="Walk around and explore the Cat Home room" role="img" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-3 flex flex-col items-center gap-1 sm:bottom-4">
+        {hud.message && <div className="border border-white/10 bg-black/75 px-2 py-1 font-mono text-[8px] text-white/85 shadow-lg sm:text-[9px]">{hud.message}</div>}
+        {hud.prompt && <div className="border border-white/15 bg-black/80 px-2.5 py-1.5 font-mono text-[8px] text-white/90 shadow-lg sm:text-[9px]"><span className="font-[var(--font-pixel)] text-[6px] font-bold text-[#e6c99d]">E</span><span className="text-white/45"> · </span>{shortPrompt(hud.prompt)}</div>}
       </div>
-
-      {/* Controls Guide & Mobile Controls Bar */}
-      <div className="w-full max-w-[640px] mt-3 flex items-center justify-between text-[7px] text-muted tracking-wider">
-        <div className="hidden sm:block">
-          WASD / ARROWS TO MOVE · E TO INTERACT · L FOR LASER · WALK TO DOOR TO EXIT
-        </div>
-
-        {/* Mobile Touch Controls Container */}
-        <div className="flex sm:hidden items-center justify-between w-full pt-1">
-          {/* Virtual Joystick */}
-          <Joystick onChange={(x, y) => engine.current?.setJoystick(x, y)} />
-
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className={`flex h-14 w-14 touch-none select-none items-center justify-center rounded-full border text-[9px] font-bold shadow-md active:scale-95 ${
-                hud.laserOn
-                  ? 'border-red-500 bg-red-950/80 text-red-300'
-                  : 'border-border bg-surface text-muted'
-              }`}
-              onPointerDown={(e) => {
-                e.preventDefault()
-                engine.current?.toggleLaser()
-              }}
-              aria-label="Toggle Laser Pointer"
-            >
-              🔴
-            </button>
-
-            <button
-              type="button"
-              className="flex h-16 w-16 touch-none select-none items-center justify-center rounded-full border-2 border-foreground bg-surface text-sm font-bold text-foreground shadow-lg active:scale-95 active:bg-foreground active:text-background"
-              onPointerDown={(e) => {
-                e.preventDefault()
-                engine.current?.interact()
-              }}
-              aria-label="Interact Button"
-            >
-              E
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
+    </div>
+    <div className="flex shrink-0 items-center justify-between gap-4 border-t border-border/30 px-1 pt-2.5 sm:pt-3">
+      <div className="sm:hidden"><DirectionPad onChange={(x, y) => engine.current?.setJoystick(x, y)} /></div>
+      <p className="hidden font-mono text-[8px] tracking-wide text-muted/65 sm:block">WASD / arrows move <span className="mx-1 text-border">·</span> E / Enter interact <span className="mx-1 text-border">·</span> C cuddle <span className="mx-1 text-border">·</span> Q call <span className="mx-1 text-border">·</span> F feed</p>
+      <span className="ml-auto font-mono text-[7px] text-muted/50 sm:hidden">move · explore</span>
+      {hud.prompt && <button type="button" onClick={() => engine.current?.interact()} className="rounded border border-foreground/30 px-2.5 py-1.5 font-mono text-[8px] text-foreground sm:hidden"><span className="font-[var(--font-pixel)] text-[6px]">E</span> · {shortPrompt(hud.prompt)}</button>}
+      <span className="hidden font-mono text-[8px] text-muted/55 sm:inline">{hud.timeOfDay}</span>
+    </div>
+  </section>
 }

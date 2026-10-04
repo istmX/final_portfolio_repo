@@ -31,6 +31,7 @@ export const COLLIDERS: Rect[] = [
   { x: 290, y: 142, w: 46, h: 26 }, // study desk / table
   { x: 338, y: 146, w: 18, h: 22 }, // chair
   { x: 356, y: 172, w: 32, h: 14 }, // scratching post
+  { x: 140, y: 114, w: 34, h: 18 }, // fish tank stand
 ]
 
 export const POI = {
@@ -48,6 +49,8 @@ export const POI = {
   chair: { x: 346, y: 160 },
   lamp: { x: 342, y: 118 },
   post: { x: 372, y: 182 },
+  tank: { x: 156, y: 140 },
+  bookshelf: { x: 280, y: 118 },
 }
 
 /** Places the cat likes to wander and investigate autonomously. */
@@ -58,6 +61,7 @@ export const INVESTIGATE: { x: number; y: number; face: 1 | -1; label: string }[
   { x: 210, y: 126, face: 1, label: 'window' },
   { x: 236, y: 188, face: -1, label: 'rug' },
   { x: 268, y: 134, face: -1, label: 'foodStorage' },
+  { x: 156, y: 140, face: 1, label: 'fish' },
   { x: 304, y: 174, face: -1, label: 'desk' },
   { x: 90, y: 124, face: 1, label: 'door' },
 ]
@@ -303,6 +307,35 @@ export function renderBackground(time: TimeOfDay, lampOn: boolean): HTMLCanvasEl
     }
   }
 
+  // Small aquarium tucked between the wall picture and window.
+  R(ctx, '#15151a', 139, 78, 39, 4)
+  R(ctx, '#51483e', 141, 82, 35, 4)
+  R(ctx, '#263541', 141, 86, 35, 23)
+  R(ctx, '#456b78', 143, 88, 31, 18)
+  R(ctx, '#528092', 143, 88, 31, 2)
+  R(ctx, '#253c46', 143, 102, 31, 4)
+  R(ctx, '#56805a', 146, 98, 2, 5)
+  R(ctx, '#56805a', 149, 96, 2, 7)
+  R(ctx, '#72915a', 169, 99, 2, 4)
+  R(ctx, '#d6bc82', 154, 103, 4, 2)
+  R(ctx, '#385766', 140, 85, 2, 24)
+  R(ctx, '#728d94', 141, 85, 35, 1)
+  // Two tiny fish silhouettes.
+  R(ctx, '#e5a66a', 150, 92, 5, 2)
+  R(ctx, '#e5a66a', 149, 91, 1, 4)
+  R(ctx, '#e5a66a', 154, 91, 1, 4)
+  R(ctx, '#e7d99f', 164, 96, 4, 2)
+  R(ctx, '#e7d99f', 167, 95, 1, 4)
+  R(ctx, '#e7d99f', 163, 95, 1, 4)
+  R(ctx, '#17171c', 139, 129, 38, 3)
+  R(ctx, '#514237', 141, 110, 34, 19)
+  R(ctx, '#79634d', 141, 110, 34, 2)
+  R(ctx, '#382d26', 144, 115, 28, 11)
+  R(ctx, '#806849', 145, 116, 26, 1)
+  R(ctx, '#c7a978', 153, 119, 8, 2)
+  R(ctx, '#544536', 145, 127, 2, 2)
+  R(ctx, '#544536', 169, 127, 2, 2)
+
   // ---------------- Central Cozy Rug
   RR(ctx, '#2c2830', 164, 158, 122, 60)
   RR(ctx, '#221e26', 168, 162, 114, 52)
@@ -403,13 +436,15 @@ export function drawPost(ctx: CanvasRenderingContext2D) {
   const { x, y } = POI.post
   R(ctx, '#141416', x - 11, y - 3, 22, 5)
   RR(ctx, '#504438', x - 10, y - 5, 20, 5)
-  R(ctx, '#a89878', x - 3, y - 36, 7, 32)
-  for (let j = y - 34; j < y - 6; j += 3) {
-    R(ctx, '#7c6c54', x - 3, j, 7, 1)
-  }
-  RR(ctx, '#e0d8c8', x - 9, y - 40, 19, 5)
-  R(ctx, '#9c8c78', x - 9, y - 36, 19, 1)
-  R(ctx, '#706050', x + 6, y - 35, 1, 9)
+  R(ctx, '#a89878', x - 3, y - 44, 7, 40)
+  for (let j = y - 42; j < y - 6; j += 3) R(ctx, '#7c6c54', x - 3, j, 7, 1)
+  // Two little climbing perches make the scratching post a compact cat tower.
+  RR(ctx, '#8c765c', x - 12, y - 29, 19, 4)
+  R(ctx, '#c0a880', x - 11, y - 29, 16, 1)
+  R(ctx, '#76634f', x + 5, y - 28, 2, 8)
+  RR(ctx, '#e0d8c8', x - 9, y - 48, 19, 5)
+  R(ctx, '#9c8c78', x - 9, y - 44, 19, 1)
+  R(ctx, '#706050', x + 6, y - 43, 1, 9)
   R(ctx, '#ff6b81', x + 5, y - 26, 3, 3)
 }
 
@@ -816,4 +851,3 @@ export function drawLaserDot(ctx: CanvasRenderingContext2D, x: number, y: number
   // White hot center
   R(ctx, `rgba(255, 240, 240, ${alpha})`, lx, ly, 1, 1)
 }
-

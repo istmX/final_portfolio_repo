@@ -39,6 +39,7 @@ export type Hud = {
   prompt: string | null
   message: string | null
   state: string
+  catName: string
 }
 
 type Mode =
@@ -84,6 +85,8 @@ type Target =
   | { kind: 'lamp'; label: string; dist: number }
   | { kind: 'window'; label: string; dist: number }
   | { kind: 'desk'; label: string; dist: number }
+  | { kind: 'tank'; label: string; dist: number }
+  | { kind: 'bookshelf'; label: string; dist: number }
   | { kind: 'door'; label: string; dist: number }
   | { kind: 'toy'; label: string; dist: number; toy: Toy }
 
@@ -130,6 +133,11 @@ export class CatHomeEngine {
 
   // Game state & stats
   private stats = { hunger: 70, happiness: 75, energy: 80 }
+  private catName = ''
+  private personality: 'playful' | 'lazy' | 'curious' | 'affectionate' | 'independent' = (['playful', 'lazy', 'curious', 'affectionate', 'independent'] as const)[Math.floor(Math.random() * 5)]
+  private affection = 0
+  private trust = 0
+  private discovered: string[] = []
   private food = 1
   private water = 2
   private lampOn = true
@@ -142,8 +150,8 @@ export class CatHomeEngine {
     { kind: 'ball', ...TOY_START.ball, vx: 0, vy: 0, spin: 0 },
     { kind: 'yarn', ...TOY_START.yarn, vx: 0, vy: 0, spin: 0 },
     { kind: 'mouse', ...TOY_START.mouse, vx: 0, vy: 0, spin: 0 },
-    { kind: 'fish', ...TOY_START.fish, vx: 0, vy: 0, spin: 0 },
     { kind: 'wand', ...TOY_START.wand, vx: 0, vy: 0, spin: 0 },
+    { kind: 'fish', ...TOY_START.fish, vx: 0, vy: 0, spin: 0 },
   ]
 
   private particles: Particle[] = []
@@ -226,6 +234,11 @@ export class CatHomeEngine {
       if (typeof data.hunger === 'number') this.stats.hunger = clamp100(data.hunger)
       if (typeof data.happiness === 'number') this.stats.happiness = clamp100(data.happiness)
       if (typeof data.energy === 'number') this.stats.energy = clamp100(data.energy)
+      if (typeof data.catName === 'string') this.catName = data.catName.slice(0, 14)
+      if (['playful', 'lazy', 'curious', 'affectionate', 'independent'].includes(data.personality)) this.personality = data.personality
+      if (typeof data.affection === 'number') this.affection = clamp100(data.affection)
+      if (typeof data.trust === 'number') this.trust = clamp100(data.trust)
+      if (Array.isArray(data.discovered)) this.discovered = data.discovered.filter((item: unknown): item is string => typeof item === 'string').slice(0, 30)
       if (typeof data.food === 'number') this.food = clamp(data.food, 0, MAX_FOOD)
       if (typeof data.water === 'number') this.water = clamp(data.water, 0, MAX_WATER)
       if (typeof data.lampOn === 'boolean') this.lampOn = data.lampOn
@@ -250,6 +263,11 @@ export class CatHomeEngine {
         hunger: Math.round(this.stats.hunger),
         happiness: Math.round(this.stats.happiness),
         energy: Math.round(this.stats.energy),
+        catName: this.catName,
+        personality: this.personality,
+        affection: Math.round(this.affection),
+        trust: Math.round(this.trust),
+        discovered: this.discovered,
         food: this.food,
         water: this.water,
         lampOn: this.lampOn,
@@ -288,6 +306,74 @@ export class CatHomeEngine {
     this.keys.add(code)
     if ((code === 'KeyE' || code === 'Enter') && !repeat) this.interact()
     if (code === 'KeyL' && !repeat) this.toggleLaser()
+    if (code === 'KeyC' && !repeat) this.cuddle()
+    if (code === 'KeyQ' && !repeat) this.callCat()
+    if (code === 'KeyF' && !repeat) this.feedCat()
+  }
+
+  setCatName(name: string) {
+    this.catName = name.trim().replace(/\s+/g, ' ').slice(0, 14)
+    this.saveToStorage()
+    this.emitHud()
+  }
+
+  cuddle() {
+    if (dist(this.player, this.cat) > 48 || ['sleep', 'eat'].includes(this.cat.mode)) return
+    const c = this.cat
+    this.player.facing = c.x >= this.player.x ? 1 : -1
+    this.player.action = 'pet'
+    this.player.actionTimer = 2.8
+    c.facing = this.player.x >= c.x ? 1 : -1
+    this.setMode('pet', 'pet', 2.8, () => this.think())
+    this.say(Math.random() < 0.5 ? 'purrr...' : 'mrrp', 2.5)
+    this.stats.happiness = clamp100(this.stats.happiness + 12)
+    this.affection = clamp100(this.affection + 3)
+    this.trust = clamp100(this.trust + 2)
+    this.spawnHearts(3)
+    this.saveToStorage()
+  }
+
+  callCat() {
+    const c = this.cat
+    if (c.mode === 'sleep') {
+      this.flash('a sleepy ear twitches')
+      return
+    }
+    if (c.mode === 'eat') {
+      this.flash(`${this.catName || 'the cat'} is busy with lunch`)
+      return
+    }
+    if (dist(this.player, c) < 48) {
+      if (Math.random() < 0.62) {
+        c.facing = this.player.x >= c.x ? 1 : -1
+        this.setMode('notice', 'alert', 0.5, () => this.setMode('sit', 'sit', 1.8))
+        this.say('mrrp')
+      } else {
+        this.flash(`${this.catName || 'the cat'} gives you a look`)
+      }
+      return
+    }
+    c.facing = this.player.x >= c.x ? 1 : -1
+      if (Math.random() < (this.personality === 'affectionate' ? 0.52 : 0.34)) {
+      this.setMode('notice', 'alert', 0.65, () => {
+        const side = c.x <= this.player.x ? -1 : 1
+        this.goTo(this.player.x + side * 18, this.player.y + 2, () => {
+          this.say('purrr...')
+          this.setMode('sit', 'sit', 2.5)
+        }, CAT_SPEED_RUN)
+      })
+    } else if (Math.random() < 0.5) {
+      this.setMode('notice', 'alert', 1.2)
+      this.say('?', 1.4)
+    } else {
+      this.flash(`${this.catName || 'the cat'} pretends not to hear`)
+    }
+  }
+
+  feedCat() {
+    if (dist(this.player, this.cat) > 52) return
+    if (this.food > 0) this.goEat()
+    else this.say('feed me', 1.8)
   }
 
   keyUp(code: string) {
@@ -362,7 +448,7 @@ export class CatHomeEngine {
 
     const dc = dist(p, c)
     if (dc < 36) {
-      options.push({ kind: 'cat', label: 'pet the cat', dist: dc - 10 })
+      options.push({ kind: 'cat', label: `pet ${this.catName || 'the cat'}`, dist: dc - 10 })
     }
 
     const dFood = dist(p, POI.foodSpot)
@@ -422,6 +508,11 @@ export class CatHomeEngine {
     if (dDesk < 36) {
       options.push({ kind: 'desk', label: 'sit at study desk', dist: dDesk })
     }
+
+    const dTank = dist(p, POI.tank)
+    if (dTank < 34) options.push({ kind: 'tank', label: 'look at the fish', dist: dTank })
+    const dBooks = dist(p, POI.bookshelf)
+    if (dBooks < 38) options.push({ kind: 'bookshelf', label: 'browse bookshelf', dist: dBooks })
 
     for (const toy of this.toys) {
       const d = dist(p, toy)
@@ -541,20 +632,23 @@ export class CatHomeEngine {
         break
 
       case 'post':
-        this.flash('jiggled the scratching post ball!')
-        this.react(0.3, () => this.goScratch())
+        this.flash('the cat tower wobbles a little.')
+        this.react(0.3, () => Math.random() < 0.42 ? this.goTower() : this.goScratch())
         break
 
       case 'box':
-        this.flash('cardboard box: a cat\'s greatest treasure')
+        this.flash(Math.random() < 0.45
+          ? (dist(this.cat, POI.box) < 30 ? 'there is definitely a cat in there.' : 'nothing here. suspicious.')
+          : 'cardboard: a cat’s greatest treasure.')
+        if (!this.discovered.includes('box')) this.discovered.push('box')
         this.react(0.3, () => this.goBox())
+        this.saveToStorage()
         break
 
       case 'plant':
         this.player.action = 'pour'
         this.player.actionTimer = 1.2
-        this.flash('watered the houseplant (looking lush & green)')
-        this.spawnWaterSplashes(POI.plant.x, POI.plant.y - 6)
+        this.flash(Math.random() < 0.5 ? 'the plant looks healthy.' : 'a tiny new leaf. nice.')
         break
 
       case 'lamp':
@@ -577,6 +671,27 @@ export class CatHomeEngine {
         this.player.actionTimer = 3.5
         this.flash('sitting at desk: coding & sipping tea')
         break
+
+      case 'tank': {
+        const first = !this.discovered.includes('fish-tank')
+        if (first) this.discovered.push('fish-tank')
+        this.player.action = 'interact'
+        this.player.actionTimer = 0.8
+        this.flash(first ? 'the fish are having a better day than you.' : 'one tiny fish follows your finger.')
+        if (Math.random() < (this.personality === 'curious' ? 0.7 : 0.35)) this.react(0.35, () => this.goTank())
+        this.saveToStorage()
+        break
+      }
+
+      case 'bookshelf': {
+        const first = !this.discovered.includes('bookshelf')
+        if (first) this.discovered.push('bookshelf')
+        this.player.action = 'interact'
+        this.player.actionTimer = 0.8
+        this.flash(first ? 'mostly technical books... and “How to Ignore Humans”.' : 'the cat rearranged the bookmarks again.')
+        this.saveToStorage()
+        break
+      }
     }
   }
 
@@ -597,6 +712,8 @@ export class CatHomeEngine {
     this.say(phrases[Math.floor(Math.random() * phrases.length)], 2.4)
 
     this.stats.happiness = clamp100(this.stats.happiness + 9)
+    this.affection = clamp100(this.affection + 2)
+    this.trust = clamp100(this.trust + 1)
     this.spawnHearts(3)
     this.saveToStorage()
   }
@@ -740,7 +857,7 @@ export class CatHomeEngine {
     const { hunger, energy } = this.stats
     const choices: [number, () => void][] = []
 
-    const sleepWeight = this.timeOfDay === 'night' ? 3.5 : 1.2
+    const sleepWeight = (this.timeOfDay === 'night' ? 3.5 : 1.2) * (this.personality === 'lazy' ? 1.65 : 1)
 
     // 1. Critical Needs: Hunger
     if (hunger < 40 && this.food > 0) {
@@ -767,19 +884,21 @@ export class CatHomeEngine {
     // 4. Autonomous Play with Toys
     if (energy > 25) {
       const randomToy = this.toys[Math.floor(Math.random() * this.toys.length)]
-      choices.push([3.5, () => this.startPlay(randomToy)])
+      choices.push([3.5 * (this.personality === 'playful' ? 2.0 : this.personality === 'lazy' ? 0.45 : 1), () => this.startPlay(randomToy)])
     }
 
     // 5. Exploration & Living Behaviors
-    choices.push([4, () => this.wander()])
+    choices.push([4 * (this.personality === 'independent' || this.personality === 'curious' ? 1.45 : 1), () => this.wander()])
     choices.push([3, () => this.setMode('sit', 'sit', rand(3, 6))])
     choices.push([2, () => this.setMode('idle', 'idle', rand(1.5, 3))])
     choices.push([2.5, () => this.setMode('stretch', 'stretch', rand(2.5, 4))])
     choices.push([2.5, () => this.setMode('groom', 'groom', rand(3, 5))])
-    choices.push([2.5, () => this.investigate()])
+    choices.push([2.5 * (this.personality === 'curious' ? 2.1 : 1), () => this.investigate()])
     choices.push([2, () => this.goWindow()])
     choices.push([2, () => this.goScratch()])
     choices.push([1.8, () => this.goBox()])
+    choices.push([this.personality === 'curious' ? 2.4 : 1.1, () => this.goTank()])
+    choices.push([this.personality === 'playful' ? 2.2 : 1, () => this.goTower()])
 
     if (this.water > 0) {
       choices.push([1.2, () => this.goDrink()])
@@ -787,7 +906,7 @@ export class CatHomeEngine {
 
     // 6. Follow Player autonomously if near
     if (dist(this.player, this.cat) > 45 && Math.random() < 0.35) {
-      choices.push([3, () => this.followPlayer()])
+      choices.push([3 * (this.personality === 'affectionate' ? 2.1 : this.personality === 'independent' ? 0.55 : 1), () => this.followPlayer()])
     }
 
     const total = choices.reduce((s, [w]) => s + w, 0)
@@ -947,7 +1066,7 @@ export class CatHomeEngine {
 
   private goScratch() {
     this.goTo(
-      POI.post.x - 14,
+      POI.post.x - 24,
       POI.post.y + 4,
       () => {
         this.cat.facing = 1
@@ -962,9 +1081,16 @@ export class CatHomeEngine {
   }
 
   private goBox() {
+    if (Math.random() < 0.24) {
+      this.goTo(POI.box.x, POI.box.y - 14, () => {
+        this.say('where did I go?', 1.7)
+        this.setMode('sit', 'sit', rand(3.5, 7), () => this.think())
+      }, CAT_SPEED_STROLL)
+      return
+    }
     this.goTo(
       POI.box.x,
-      POI.box.y - 2,
+      POI.box.y - 14,
       () => {
         this.cat.facing = 1
         this.setMode('sit', 'sit', rand(5, 9), () => this.think())
@@ -972,6 +1098,25 @@ export class CatHomeEngine {
       },
       CAT_SPEED_WALK,
     )
+  }
+
+  private goTank() {
+    this.goTo(POI.tank.x, POI.tank.y + 2, () => {
+      this.cat.facing = -1
+      this.setMode('sit', 'sit', rand(4, 8), () => this.think())
+      if (Math.random() < 0.55) this.say('...')
+    }, CAT_SPEED_STROLL)
+  }
+
+  private goTower() {
+    const perch = { x: POI.post.x, y: POI.post.y - 40 }
+    this.goTo(POI.post.x - 24, POI.post.y - 20, () => {
+      this.jump(perch.x, perch.y, () => {
+        this.setMode('sit', 'sit', rand(3, 6), () => {
+          this.jump(POI.post.x - 24, POI.post.y - 20, () => this.think())
+        })
+      })
+    }, CAT_SPEED_WALK)
   }
 
   private goWindow() {
@@ -989,10 +1134,10 @@ export class CatHomeEngine {
 
   private goSleep(forceBed = false) {
     const sleepSpots: { x: number; y: number }[] = [
-      { x: POI.bed.x, y: POI.bed.y - 2 },
+      { x: POI.bed.x, y: POI.bed.y + 10 },
       { x: 236, y: 190 }, // warm center rug
       { x: 210, y: 130 }, // sunny/moonlit window light
-      { x: 120, y: 220 }, // cardboard box
+      { x: 120, y: 206 }, // cardboard box
       { x: 334, y: 134 }, // under desk lamp
       { x: 170, y: 160 }, // peaceful floor
       { x: 270, y: 180 }, // quiet corner
@@ -1391,6 +1536,7 @@ export class CatHomeEngine {
       prompt: t ? t.label : null,
       message: this.message?.text ?? null,
       state: c.mode,
+      catName: this.catName,
     }
     const key = JSON.stringify(hud)
     if (key === this.lastHud) return
@@ -1410,6 +1556,23 @@ export class CatHomeEngine {
     ctx.translate(-Math.round(this.cam.x), -Math.round(this.cam.y))
 
     ctx.drawImage(this.bg, 0, 0)
+
+    // A couple of tiny swimmers and slow bubbles keep the aquarium quietly alive.
+    const aquariumT = performance.now() / 1000
+    for (let i = 0; i < 2; i++) {
+      const fishX = 148 + ((aquariumT * (i ? 3.1 : 2.2) + i * 13) % 23)
+      const fishY = 94 + Math.sin(aquariumT * 1.4 + i * 2) * 3
+      ctx.fillStyle = i === 0 ? '#edb578' : '#eee0ad'
+      ctx.fillRect(Math.round(fishX), Math.round(fishY), 4, 2)
+      ctx.fillRect(Math.round(fishX - 1), Math.round(fishY - 1), 1, 4)
+      ctx.fillStyle = '#18252c'
+      ctx.fillRect(Math.round(fishX + 3), Math.round(fishY), 1, 1)
+    }
+    ctx.fillStyle = 'rgba(210,235,236,.62)'
+    for (let i = 0; i < 3; i++) {
+      const bubbleY = 101 - ((aquariumT * 5 + i * 7) % 13)
+      ctx.fillRect(158 + i * 5, Math.round(bubbleY), 1, 1)
+    }
 
     drawBowlFood(ctx, this.food)
     drawBowlWater(ctx, this.water)
@@ -1444,6 +1607,17 @@ export class CatHomeEngine {
     ]
 
     sortables.sort((a, b) => a.y - b.y).forEach((s) => s.draw())
+
+    // When the cat settles into the cardboard box, its little face stays visible
+    // above the folded front flap while its paws disappear inside.
+    if (dist(c, POI.box) < 26 && ['sit', 'sleep'].includes(c.mode)) {
+      ctx.fillStyle = '#6e5640'
+      ctx.fillRect(POI.box.x - 15, POI.box.y - 15, 30, 13)
+      ctx.fillStyle = '#8c7054'
+      ctx.fillRect(POI.box.x - 15, POI.box.y - 15, 30, 2)
+      ctx.fillStyle = '#4e3c2c'
+      ctx.fillRect(POI.box.x - 2, POI.box.y - 13, 4, 11)
+    }
 
     // Red Laser Dot
     if (this.laserOn) {

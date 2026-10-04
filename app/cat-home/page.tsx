@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import { Press_Start_2P } from 'next/font/google'
-import Contanier from '../components/Contanier'
-import Navbar from '../components/Navbar'
 import CatHomeGame from './CatHomeGame'
 
 const pixelFont = Press_Start_2P({
@@ -19,10 +17,7 @@ export const metadata: Metadata = {
 export default function CatHomePage() {
   return (
     <main className={`${pixelFont.variable} min-h-dvh bg-background text-foreground`}>
-      <Contanier>
-        <Navbar />
-        <CatHomeGame />
-      </Contanier>
+      <CatHomeGame />
     </main>
   )
 }
