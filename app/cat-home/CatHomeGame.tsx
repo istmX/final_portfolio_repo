@@ -14,6 +14,7 @@ const EMPTY_HUD: Hud = {
   water: 2,
   timeOfDay: 'night',
   lampOn: true,
+  laserOn: false,
   prompt: null,
   message: null,
   state: 'idle',
@@ -24,8 +25,8 @@ const MOVE_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'K
 function Bar({ label, value }: { label: string; value: number }) {
   const filled = Math.max(0, Math.min(10, Math.round(value / 10)))
   return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="text-[#a0a0a8] text-[8px] tracking-wider">{label}</span>
+    <div className="flex items-center justify-between gap-1.5 text-[8px]">
+      <span className="text-muted tracking-wider">{label}</span>
       <span
         className="flex gap-[2px]"
         role="meter"
@@ -37,8 +38,8 @@ function Bar({ label, value }: { label: string; value: number }) {
         {Array.from({ length: 10 }, (_, i) => (
           <span
             key={i}
-            className={`block h-2 w-2 ${
-              i < filled ? 'bg-[#f4f4f8]' : 'bg-[#22222a]'
+            className={`block h-1.5 w-1.5 ${
+              i < filled ? 'bg-foreground' : 'bg-muted/30'
             }`}
           />
         ))}
@@ -51,7 +52,7 @@ function Joystick({ onChange }: { onChange: (x: number, y: number) => void }) {
   const base = useRef<HTMLDivElement>(null)
   const [thumb, setThumb] = useState({ x: 0, y: 0 })
   const active = useRef<number | null>(null)
-  const R = 34
+  const R = 32
 
   function update(e: React.PointerEvent) {
     const rect = base.current!.getBoundingClientRect()
@@ -75,26 +76,27 @@ function Joystick({ onChange }: { onChange: (x: number, y: number) => void }) {
   return (
     <div
       ref={base}
-      className="relative h-24 w-24 touch-none select-none rounded-full border-2 border-[#383844] bg-black/55 backdrop-blur-sm"
+      className="relative h-20 w-20 touch-none select-none rounded-full border-2 border-border/80 bg-background/80 backdrop-blur-sm"
       onPointerDown={(e) => {
+        e.preventDefault()
         active.current = e.pointerId
         e.currentTarget.setPointerCapture(e.pointerId)
         update(e)
       }}
-      onPointerMove={(e) => active.current === e.pointerId && update(e)}
+      onPointerMove={(e) => {
+        e.preventDefault()
+        if (active.current === e.pointerId) update(e)
+      }}
       onPointerUp={end}
       onPointerCancel={end}
-      aria-label="Directional move control"
+      aria-label="Directional joystick"
     >
-      {/* Directional marks */}
-      <span className="absolute top-1 left-1/2 -translate-x-1/2 text-[#444455] text-[7px]">▲</span>
-      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[#444455] text-[7px]">▼</span>
-      <span className="absolute left-1 top-1/2 -translate-y-1/2 text-[#444455] text-[7px]">◀</span>
-      <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[#444455] text-[7px]">▶</span>
-
-      {/* Thumb handle */}
+      <span className="absolute top-1 left-1/2 -translate-x-1/2 text-muted text-[6px]">▲</span>
+      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-muted text-[6px]">▼</span>
+      <span className="absolute left-1 top-1/2 -translate-y-1/2 text-muted text-[6px]">◀</span>
+      <span className="absolute right-1 top-1/2 -translate-y-1/2 text-muted text-[6px]">▶</span>
       <span
-        className="absolute left-1/2 top-1/2 block h-9 w-9 rounded-full border-2 border-[#bdbdbd] bg-[#2a2a34] shadow-md transition-transform"
+        className="absolute left-1/2 top-1/2 block h-8 w-8 rounded-full border border-border bg-surface shadow-md transition-transform"
         style={{
           transform: `translate(calc(-50% + ${thumb.x}px), calc(-50% + ${thumb.y}px))`,
         }}
@@ -123,15 +125,17 @@ export default function CatHomeGame() {
       const box = wrap.current.getBoundingClientRect()
       const raw = Math.min(box.width / VW, box.height / VH)
       const scale = raw >= 2 ? Math.floor(raw) : raw
-      el.style.width = `${VW * scale}px`
-      el.style.height = `${VH * scale}px`
+      el.style.width = `${Math.floor(VW * scale)}px`
+      el.style.height = `${Math.floor(VH * scale)}px`
     }
     fit()
     const ro = new ResizeObserver(fit)
     ro.observe(wrap.current!)
 
     const down = (e: KeyboardEvent) => {
-      if (MOVE_KEYS.includes(e.code) || e.code === 'Space') e.preventDefault()
+      if (MOVE_KEYS.includes(e.code) || e.code === 'Space' || e.code === 'KeyL') {
+        e.preventDefault()
+      }
       game.keyDown(e.code, e.repeat)
     }
     const up = (e: KeyboardEvent) => game.keyUp(e.code)
@@ -158,115 +162,154 @@ export default function CatHomeGame() {
   }[hud.timeOfDay]
 
   return (
-    <div
-      className="relative h-full w-full overflow-hidden text-[8px] leading-none text-[#f4f4f8]"
+    <section
+      aria-label="Cat Home: Interactive Pixel Pet Experience"
+      className="px-4 pb-14 pt-4 sm:px-8 sm:pb-16 flex flex-col items-center"
       style={{ fontFamily: 'var(--font-pixel), monospace' }}
     >
-      {/* Game Canvas Container */}
-      <div ref={wrap} className="absolute inset-0 flex items-center justify-center p-2">
+      {/* Top Header & Status Strip */}
+      <div className="w-full max-w-[640px] mb-3 flex flex-col gap-2">
+        <div className="flex items-center justify-between text-[9px] text-muted tracking-wider">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-foreground uppercase">CAT HOME</span>
+            <span className="text-[7px] text-muted">· {hud.state}</span>
+          </div>
+          <Link
+            href="/home"
+            className="text-[8px] text-muted hover:text-foreground transition-colors"
+          >
+            ← PORTFOLIO
+          </Link>
+        </div>
+
+        {/* HUD Controls & Stats Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded border border-dashed border-border bg-surface/30 p-2.5 backdrop-blur-sm text-[8px]">
+          {/* Vitals */}
+          <div className="flex items-center gap-4">
+            <Bar label="HUNGER" value={hud.hunger} />
+            <Bar label="HAPPY" value={hud.happiness} />
+            <Bar label="ENERGY" value={hud.energy} />
+          </div>
+
+          {/* Resources */}
+          <div className="flex items-center gap-3 text-muted">
+            <span title="Kibble available in bowl">
+              KIBBLE <span className="text-[#e28f3a]">{'●'.repeat(hud.food) + '○'.repeat(3 - hud.food)}</span>
+            </span>
+            <span title="Fresh water in bowl">
+              WATER <span className="text-[#64b5f6]">{'●'.repeat(hud.water) + '○'.repeat(3 - hud.water)}</span>
+            </span>
+          </div>
+
+          {/* Interactive Mode Toggles */}
+          <div className="flex items-center gap-1.5 ml-auto">
+            {/* Time toggle */}
+            <button
+              type="button"
+              onClick={() => engine.current?.toggleTimeOfDay()}
+              className="rounded border border-border/80 bg-background/80 px-2 py-1 text-muted hover:border-foreground hover:text-foreground transition-colors"
+              title="Toggle Day / Sunset / Night"
+            >
+              {timeLabel}
+            </button>
+
+            {/* Lamp toggle */}
+            <button
+              type="button"
+              onClick={() => engine.current?.toggleLamp()}
+              className="rounded border border-border/80 bg-background/80 px-2 py-1 text-muted hover:border-foreground hover:text-foreground transition-colors"
+              title="Toggle desk lamp on/off"
+            >
+              {hud.lampOn ? '💡 LAMP' : '🌑 OFF'}
+            </button>
+
+            {/* Laser pointer toggle */}
+            <button
+              type="button"
+              onClick={() => engine.current?.toggleLaser()}
+              className={`rounded border px-2 py-1 transition-colors ${
+                hud.laserOn
+                  ? 'border-red-500 bg-red-950/60 text-red-300 font-bold'
+                  : 'border-border/80 bg-background/80 text-muted hover:border-foreground hover:text-foreground'
+              }`}
+              title="Toggle Red Laser Pointer (L key)"
+            >
+              {hud.laserOn ? '🔴 LASER ON' : '🔴 LASER'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Contained Game World Boundary (Inside Portfolio Container) */}
+      <div
+        ref={wrap}
+        className="relative w-full max-w-[640px] aspect-[5/3] overflow-hidden rounded-lg border-2 border-dashed border-border bg-[#0a0a0e] shadow-2xl flex items-center justify-center select-none"
+      >
         <canvas
           ref={canvas}
-          className="block border-2 border-[#24242c] shadow-2xl"
+          className="block max-w-full max-h-full"
           style={{ imageRendering: 'pixelated' }}
-          aria-label="Cat Home: an interactive pixel art room. Move with WASD or arrows, interact with E or Enter."
+          aria-label="Cat Home room canvas"
         />
-      </div>
 
-      {/* Top Left: Compact Cat Status HUD */}
-      <div className="pointer-events-none absolute left-3 top-3 flex w-44 flex-col gap-2 rounded-sm border-2 border-[#24242c] bg-black/75 p-2.5 uppercase backdrop-blur-sm">
-        <div className="flex items-center justify-between pb-1 border-b border-[#24242c] text-[#d4d4dc] font-bold">
-          <span>CAT STATUS</span>
-          <span className="text-[7px] text-[#8e8e9c]">({hud.state})</span>
-        </div>
-        <Bar label="HUNGER" value={hud.hunger} />
-        <Bar label="HAPPY" value={hud.happiness} />
-        <Bar label="ENERGY" value={hud.energy} />
-
-        {/* Resources: Kibble & Fresh Water */}
-        <div className="flex items-center justify-between pt-1 border-t border-[#24242c] text-[#8e8e9c]">
-          <span>KIBBLE</span>
-          <span className="text-[#e28f3a]">
-            {'●'.repeat(hud.food) + '○'.repeat(3 - hud.food)}
-          </span>
-        </div>
-        <div className="flex items-center justify-between text-[#8e8e9c]">
-          <span>WATER</span>
-          <span className="text-[#64b5f6]">
-            {'●'.repeat(hud.water) + '○'.repeat(3 - hud.water)}
-          </span>
+        {/* Floating Contextual Prompts Inside the Room Frame */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 flex flex-col items-center gap-1.5">
+          {hud.message && (
+            <div className="rounded border border-border bg-[#f4f4f8] px-2.5 py-1.5 text-[8px] text-[#141416] shadow-lg animate-fade-in">
+              {hud.message}
+            </div>
+          )}
+          {hud.prompt && (
+            <div className="rounded border border-[#e0e0e8] bg-black/85 px-2.5 py-1.5 text-[8px] text-[#f4f4f8] shadow-lg">
+              <span className="text-[#f0b040] font-bold">E / ENTER</span> · {hud.prompt}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Top Right: Time, Lamp, and Exit Controls */}
-      <div className="absolute right-3 top-3 flex items-center gap-2">
-        {/* Toggleable Time of Day Button */}
-        <button
-          type="button"
-          onClick={() => engine.current?.toggleTimeOfDay()}
-          className="rounded-sm border-2 border-[#24242c] bg-black/75 px-2.5 py-2 text-[#d4d4dc] outline-none backdrop-blur-sm hover:border-[#bdbdbd] hover:text-[#ffffff] focus-visible:ring-1 focus-visible:ring-white active:bg-[#24242c]"
-          title="Click to toggle Day / Sunset / Night atmosphere"
-        >
-          {timeLabel}
-        </button>
-
-        {/* Toggleable Lamp Button */}
-        <button
-          type="button"
-          onClick={() => engine.current?.toggleLamp()}
-          className="rounded-sm border-2 border-[#24242c] bg-black/75 px-2.5 py-2 text-[#d4d4dc] outline-none backdrop-blur-sm hover:border-[#bdbdbd] hover:text-[#ffffff] focus-visible:ring-1 focus-visible:ring-white active:bg-[#24242c]"
-          title="Toggle Room Lamp"
-        >
-          {hud.lampOn ? '💡 LAMP ON' : '🌑 LAMP OFF'}
-        </button>
-
-        {/* Exit Button */}
-        <Link
-          href="/home"
-          className="rounded-sm border-2 border-[#24242c] bg-black/75 px-2.5 py-2 text-[#bdbdbd] outline-none backdrop-blur-sm hover:border-[#bdbdbd] hover:text-[#ffffff] focus-visible:ring-1 focus-visible:ring-white"
-        >
-          ← PORTFOLIO
-        </Link>
-      </div>
-
-      {/* Bottom Center: Interaction Prompts and Messages */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-24 flex flex-col items-center gap-2 [@media(pointer:fine)]:bottom-6">
-        {hud.message && (
-          <div className="rounded-sm border border-[#24242c] bg-[#f4f4f8] px-3 py-2 text-[8px] text-[#141416] shadow-lg">
-            {hud.message}
-          </div>
-        )}
-        {hud.prompt && (
-          <div className="rounded-sm border-2 border-[#e0e0e8] bg-black/85 px-3 py-2 text-[9px] text-[#f4f4f8] shadow-lg">
-            <span className="text-[#f0b040] font-bold">E / ENTER</span> · {hud.prompt}
-          </div>
-        )}
-        <div className="hidden text-[7px] text-[#747484] [@media(pointer:fine)]:block tracking-wider">
-          WASD / ARROWS TO MOVE · E TO INTERACT · WALK TO DOOR TO LEAVE
+      {/* Controls Guide & Mobile Controls Bar */}
+      <div className="w-full max-w-[640px] mt-3 flex items-center justify-between text-[7px] text-muted tracking-wider">
+        <div className="hidden sm:block">
+          WASD / ARROWS TO MOVE · E TO INTERACT · L FOR LASER · WALK TO DOOR TO EXIT
         </div>
-      </div>
 
-      {/* Mobile Touch Controls */}
-      <div className="absolute inset-x-4 bottom-4 flex items-end justify-between pointer-events-none [@media(pointer:fine)]:hidden">
-        {/* Virtual Joystick */}
-        <div className="pointer-events-auto">
+        {/* Mobile Touch Controls Container */}
+        <div className="flex sm:hidden items-center justify-between w-full pt-1">
+          {/* Virtual Joystick */}
           <Joystick onChange={(x, y) => engine.current?.setJoystick(x, y)} />
-        </div>
 
-        {/* Large Action Interact Button */}
-        <div className="pointer-events-auto">
-          <button
-            type="button"
-            className="flex h-20 w-20 touch-none select-none items-center justify-center rounded-full border-2 border-[#d4d4dc] bg-black/60 text-base font-bold text-[#f4f4f8] shadow-lg backdrop-blur-sm active:bg-[#282834] active:scale-95"
-            onPointerDown={(e) => {
-              e.preventDefault()
-              engine.current?.interact()
-            }}
-            aria-label="Interact Button"
-          >
-            E
-          </button>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className={`flex h-14 w-14 touch-none select-none items-center justify-center rounded-full border text-[9px] font-bold shadow-md active:scale-95 ${
+                hud.laserOn
+                  ? 'border-red-500 bg-red-950/80 text-red-300'
+                  : 'border-border bg-surface text-muted'
+              }`}
+              onPointerDown={(e) => {
+                e.preventDefault()
+                engine.current?.toggleLaser()
+              }}
+              aria-label="Toggle Laser Pointer"
+            >
+              🔴
+            </button>
+
+            <button
+              type="button"
+              className="flex h-16 w-16 touch-none select-none items-center justify-center rounded-full border-2 border-foreground bg-surface text-sm font-bold text-foreground shadow-lg active:scale-95 active:bg-foreground active:text-background"
+              onPointerDown={(e) => {
+                e.preventDefault()
+                engine.current?.interact()
+              }}
+              aria-label="Interact Button"
+            >
+              E
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

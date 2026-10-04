@@ -17,6 +17,7 @@ import {
   drawBox,
   drawDeskAndChair,
   drawFoodStorage,
+  drawLaserDot,
   drawPlant,
   drawPlayer,
   drawPost,
@@ -34,6 +35,7 @@ export type Hud = {
   water: number // 0-3
   timeOfDay: TimeOfDay
   lampOn: boolean
+  laserOn: boolean
   prompt: string | null
   message: string | null
   state: string
@@ -42,6 +44,8 @@ export type Hud = {
 type Mode =
   | 'idle'
   | 'walk'
+  | 'run'
+  | 'jump'
   | 'sit'
   | 'sleep'
   | 'eat'
@@ -54,6 +58,7 @@ type Mode =
   | 'follow'
   | 'pet'
   | 'happy'
+  | 'alert'
 
 type Pt = { x: number; y: number }
 type Toy = { kind: ToyKind; x: number; y: number; vx: number; vy: number; spin: number }
@@ -87,10 +92,14 @@ const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 const clamp100 = (v: number) => clamp(v, 0, 100)
 const dist = (a: Pt, b: Pt) => Math.hypot(a.x - b.x, a.y - b.y)
 
-const CAT_SPEED = 34
-const PLAYER_SPEED = 68
-const MAX_FOOD = 3
-const MAX_WATER = 3
+export const CAT_SPEED_STROLL = 24
+export const CAT_SPEED_WALK = 38
+export const CAT_SPEED_TROT = 54
+export const CAT_SPEED_RUN = 88
+export const CAT_SPEED_SPRINT = 112
+export const PLAYER_SPEED = 68
+export const MAX_FOOD = 3
+export const MAX_WATER = 3
 const STORAGE_KEY = 'cathome_v2_state'
 
 export class CatHomeEngine {
@@ -124,6 +133,8 @@ export class CatHomeEngine {
   private food = 1
   private water = 2
   private lampOn = true
+  private laserOn = false
+  private laserPos: Pt = { x: 220, y: 180 }
   private timeOfDay: TimeOfDay = 'night'
   private autoTime = true
 
@@ -142,7 +153,7 @@ export class CatHomeEngine {
   private heartTimer = 0
   private saveTimer = 0
 
-  // Cat autonomous state
+  // Cat autonomous state & physics
   private cat = {
     x: 230,
     y: 180,
@@ -151,11 +162,26 @@ export class CatHomeEngine {
     anim: 'idle' as CatAnim,
     animT: 0,
     timer: 2.0,
+    speed: CAT_SPEED_WALK,
+    jumpY: 0,
+    jumping: null as {
+      startX: number
+      startY: number
+      targetX: number
+      targetY: number
+      progress: number
+      onEnd: () => void
+    } | null,
     onEnd: null as (() => void) | null,
     target: null as Pt | null,
     then: null as (() => void) | null,
     chasing: null as Toy | null,
     walkT: 0,
+    stuckTimer: 0,
+    lastX: 230,
+    lastY: 180,
+    followingPlayer: false,
+    followTimer: 0,
     noticeCd: 3,
     playLeft: 0,
     impulsed: false,
@@ -207,9 +233,9 @@ export class CatHomeEngine {
       if (typeof data.lastSaved === 'number') {
         const elapsedMins = (Date.now() - data.lastSaved) / 60000
         if (elapsedMins > 1) {
-          const hungerDrop = Math.min(40, elapsedMins * 0.08)
+          const hungerDrop = Math.min(30, elapsedMins * 0.05)
           this.stats.hunger = clamp100(this.stats.hunger - hungerDrop)
-          this.stats.energy = clamp100(this.stats.energy + Math.min(50, elapsedMins * 0.15))
+          this.stats.energy = clamp100(this.stats.energy + Math.min(50, elapsedMins * 0.12))
         }
       }
     } catch {
@@ -261,6 +287,7 @@ export class CatHomeEngine {
   keyDown(code: string, repeat = false) {
     this.keys.add(code)
     if ((code === 'KeyE' || code === 'Enter') && !repeat) this.interact()
+    if (code === 'KeyL' && !repeat) this.toggleLaser()
   }
 
   keyUp(code: string) {
@@ -293,6 +320,34 @@ export class CatHomeEngine {
     this.saveToStorage()
   }
 
+  toggleLaser() {
+    this.laserOn = !this.laserOn
+    if (this.laserOn) {
+      this.laserPos = {
+        x: clamp(this.player.x + this.player.facing * 38, BOUNDS.minX + 16, BOUNDS.maxX - 16),
+        y: clamp(this.player.y + 8, BOUNDS.minY + 12, BOUNDS.maxY - 12),
+      }
+      this.flash('laser pointer on! (cat is locked in)')
+      this.react(0.1, () => {
+        this.cat.facing = this.laserPos.x >= this.cat.x ? 1 : -1
+        this.say('!')
+        this.chaseLaser()
+      })
+    } else {
+      this.flash('laser pointer off')
+    }
+    this.emitHud()
+  }
+
+  setLaserPos(x: number, y: number) {
+    if (!this.laserOn) return
+    this.laserPos.x = clamp(x, BOUNDS.minX + 12, BOUNDS.maxX - 12)
+    this.laserPos.y = clamp(y, BOUNDS.minY + 10, BOUNDS.maxY - 8)
+    if (['idle', 'walk', 'sit', 'notice'].includes(this.cat.mode) && !this.cat.jumping) {
+      this.chaseLaser()
+    }
+  }
+
   // -------------------------------------------------------------- Interaction
 
   private target(): Target | null {
@@ -302,7 +357,7 @@ export class CatHomeEngine {
 
     const dDoor = dist(p, POI.door)
     if (dDoor < 34) {
-      options.push({ kind: 'door', label: 'Leave Cat Home (return to portfolio)', dist: dDoor - 14 })
+      options.push({ kind: 'door', label: 'return to portfolio', dist: dDoor - 14 })
     }
 
     const dc = dist(p, c)
@@ -335,7 +390,7 @@ export class CatHomeEngine {
 
     const dBed = dist(p, { x: POI.bed.x, y: POI.bed.y + 6 })
     if (dBed < 38) {
-      options.push({ kind: 'bed', label: 'tuck cat in bed', dist: dBed })
+      options.push({ kind: 'bed', label: 'tuck cat into bed', dist: dBed })
     }
 
     const dPost = dist(p, POI.post)
@@ -345,7 +400,7 @@ export class CatHomeEngine {
 
     const dBox = dist(p, POI.box)
     if (dBox < 34) {
-      options.push({ kind: 'box', label: 'cardboard box', dist: dBox })
+      options.push({ kind: 'box', label: 'cardboard box ("if it fits, I sits")', dist: dBox })
     }
 
     const dPlant = dist(p, POI.plant)
@@ -376,7 +431,7 @@ export class CatHomeEngine {
             ? 'wave feather wand'
             : toy.kind === 'fish'
               ? 'toss catnip fish'
-              : `play with ${toy.kind}`
+              : `toss ${toy.kind}`
         options.push({ kind: 'toy', label: actionVerb, dist: d - 4, toy })
       }
     }
@@ -389,7 +444,7 @@ export class CatHomeEngine {
     if (this.interactCd > 0) return
     const t = this.target()
     if (!t) return
-    this.interactCd = 0.25
+    this.interactCd = 0.3
 
     switch (t.kind) {
       case 'door':
@@ -405,13 +460,14 @@ export class CatHomeEngine {
         this.player.action = 'pour'
         this.player.actionTimer = 1.4
         if (this.food >= MAX_FOOD) {
-          this.flash('the food bowl is already full!')
+          this.flash('food bowl is already full!')
         } else {
           this.food = MAX_FOOD
           this.flash('kibble bowl filled!')
-          this.react(0.4, () => {
+          this.react(0.3, () => {
             if (this.stats.hunger < 70) {
-              this.setMode('happy', 'happy', 1, () => this.goEat())
+              this.say('nom nom', 2.0)
+              this.goEat()
             } else {
               this.say('mrrp')
             }
@@ -427,9 +483,9 @@ export class CatHomeEngine {
           this.flash('water bowl is clean & fresh!')
         } else {
           this.water = MAX_WATER
-          this.flash('poured fresh water!')
+          this.flash('fresh water poured!')
           this.spawnWaterSplashes(POI.waterSpot.x, POI.waterSpot.y)
-          this.react(0.5, () => {
+          this.react(0.4, () => {
             if (Math.random() < 0.6) this.goDrink()
             else this.say('mrrp')
           })
@@ -441,55 +497,63 @@ export class CatHomeEngine {
         this.player.action = 'pour'
         this.player.actionTimer = 1.2
         this.food = MAX_FOOD
-        this.flash('restocked cat food!')
-        this.react(0.5, () => this.say('meow!'))
+        this.flash('restocked delicious cat food!')
+        this.react(0.4, () => this.say('meow!'))
         this.saveToStorage()
         break
 
       case 'toy':
         if (t.toy.kind === 'wand') {
-          // Player waves feather wand!
+          // Player waves feather wand high!
           this.player.action = 'wave'
-          this.player.actionTimer = 3.2
+          this.player.actionTimer = 3.0
           this.flash('waving feather teaser wand!')
-          this.react(0.3, () => {
-            this.goTo(this.player.x + (this.player.facing === 1 ? 16 : -16), this.player.y + 2, () => {
-              this.setMode('happy', 'play', 2.5)
-              this.say('play!', 1.6)
-              this.stats.happiness = clamp100(this.stats.happiness + 10)
-            })
+          this.react(0.2, () => {
+            const side = this.player.facing === 1 ? 18 : -18
+            this.goTo(
+              this.player.x + side,
+              this.player.y + 2,
+              () => {
+                this.jump(this.cat.x + side * 0.4, this.cat.y - 2, () => {
+                  this.setMode('happy', 'play', 2.0)
+                  this.say('play!', 1.6)
+                  this.stats.happiness = clamp100(this.stats.happiness + 10)
+                })
+              },
+              CAT_SPEED_RUN,
+            )
           })
         } else {
-          this.kick(t.toy)
+          this.throwToy(t.toy)
         }
         break
 
       case 'bed':
         if (this.cat.mode === 'sleep') {
           this.flash('shh... the cat is sleeping peacefully')
-        } else if (this.stats.energy > 90) {
-          this.flash('cat is wide awake and energetic!')
+        } else if (this.stats.energy > 85) {
+          this.flash('cat is wide awake and ready to play!')
           this.say('mrrp')
         } else {
           this.flash('time for a cozy nap')
-          this.goSleep()
+          this.goSleep(true)
         }
         break
 
       case 'post':
         this.flash('jiggled the scratching post ball!')
-        this.react(0.4, () => this.goScratch())
+        this.react(0.3, () => this.goScratch())
         break
 
       case 'box':
-        this.flash('cat examines the box ("if it fits, I sits")')
-        this.react(0.4, () => this.goBox())
+        this.flash('cardboard box: a cat\'s greatest treasure')
+        this.react(0.3, () => this.goBox())
         break
 
       case 'plant':
         this.player.action = 'pour'
         this.player.actionTimer = 1.2
-        this.flash('watered the plant (it looks vibrant)')
+        this.flash('watered the houseplant (looking lush & green)')
         this.spawnWaterSplashes(POI.plant.x, POI.plant.y - 6)
         break
 
@@ -499,19 +563,19 @@ export class CatHomeEngine {
 
       case 'window':
         if (this.timeOfDay === 'day') {
-          this.flash('sunny day outside, birds singing in the distance')
+          this.flash('warm daylight streaming in, birds fluttering outside')
         } else if (this.timeOfDay === 'sunset') {
-          this.flash('golden sunset glow across the sky')
+          this.flash('gorgeous golden sunset painting the horizon')
         } else {
           this.flash('quiet starry night, soft moonlight outside')
         }
-        this.react(0.6, () => this.goWindow())
+        this.react(0.4, () => this.goWindow())
         break
 
       case 'desk':
         this.player.action = 'sit'
         this.player.actionTimer = 3.5
-        this.flash('sitting at desk: coding & enjoying tea')
+        this.flash('sitting at desk: coding & sipping tea')
         break
     }
   }
@@ -521,31 +585,99 @@ export class CatHomeEngine {
     const wasSleeping = c.mode === 'sleep'
     this.player.facing = c.x >= this.player.x ? 1 : -1
     this.player.action = 'pet'
-    this.player.actionTimer = 2.8
+    this.player.actionTimer = 2.6
 
+    // Cat turns and steps slightly toward player
     c.facing = this.player.x >= c.x ? 1 : -1
-    if (c.mode !== 'pet') {
-      this.setMode('pet', 'pet', 2.8, () => this.think())
-      const phrases = wasSleeping ? ['mrrp', 'purrr...'] : ['purrr...', 'meow', ':3']
-      this.say(phrases[Math.floor(Math.random() * phrases.length)], 2.4)
-    } else {
-      c.timer = 2.8
-    }
-    this.stats.happiness = clamp100(this.stats.happiness + 8)
+    const stepDx = this.player.facing === 1 ? -4 : 4
+    c.x = clamp(c.x + stepDx, BOUNDS.minX + 12, BOUNDS.maxX - 12)
+
+    this.setMode('pet', 'pet', 2.6, () => this.think())
+    const phrases = wasSleeping ? ['purrr...', 'mrrp'] : ['purrr...', 'meow!', ':3']
+    this.say(phrases[Math.floor(Math.random() * phrases.length)], 2.4)
+
+    this.stats.happiness = clamp100(this.stats.happiness + 9)
     this.spawnHearts(3)
     this.saveToStorage()
   }
 
-  private kick(toy: Toy) {
-    const dir = this.player.dir
-    toy.vx = (dir.x || this.player.facing) * 160
-    toy.vy = (dir.y || (Math.random() - 0.5)) * 90
-    this.react(0.4, () => {
-      if (this.stats.energy > 15) {
-        this.setMode('happy', 'happy', 0.8, () => this.startPlay(toy))
-        this.say('play?', 1.6)
-      }
+  private throwToy(toy: Toy) {
+    this.player.action = 'throw'
+    this.player.actionTimer = 0.8
+    const facing = this.player.facing
+
+    toy.vx = facing * rand(130, 190)
+    toy.vy = (Math.random() - 0.5) * 80
+    toy.spin = 1
+    this.flash(`tossed the ${toy.kind}!`)
+
+    // Cat notices and races after the toy!
+    this.react(0.2, () => {
+      this.cat.facing = toy.x >= this.cat.x ? 1 : -1
+      this.say('!')
+      this.setMode('notice', 'alert', 0.4, () => {
+        this.runToToy(toy)
+      })
     })
+  }
+
+  private runToToy(toy: Toy) {
+    const c = this.cat
+    this.goTo(
+      toy.x,
+      toy.y,
+      () => {
+        this.pounceOnToy(toy)
+      },
+      CAT_SPEED_RUN,
+    )
+    c.chasing = toy
+  }
+
+  private pounceOnToy(toy: Toy) {
+    const c = this.cat
+    c.facing = toy.x >= c.x ? 1 : -1
+    // Jump pounce onto toy
+    this.jump(toy.x + (c.facing === 1 ? -6 : 6), toy.y, () => {
+      this.setMode('bat', 'play', 1.2, () => {
+        const ang = (c.facing === 1 ? 0 : Math.PI) + rand(-0.7, 0.7)
+        toy.vx = Math.cos(ang) * rand(80, 130)
+        toy.vy = Math.sin(ang) * rand(40, 80)
+        this.stats.happiness = clamp100(this.stats.happiness + 8)
+        this.stats.energy = clamp100(this.stats.energy - 3)
+        this.say('meow!')
+        this.saveToStorage()
+        this.think()
+      })
+    })
+  }
+
+  private chaseLaser() {
+    if (!this.laserOn) return
+    this.goTo(
+      this.laserPos.x,
+      this.laserPos.y,
+      () => {
+        if (!this.laserOn) return this.think()
+        // Playful pounce on laser dot!
+        this.jump(this.laserPos.x + rand(-4, 4), this.laserPos.y + rand(-3, 3), () => {
+          this.say(':3', 1.2)
+          this.stats.happiness = clamp100(this.stats.happiness + 4)
+          this.stats.energy = clamp100(this.stats.energy - 2)
+          if (this.laserOn) {
+            // Dart laser to a fresh nearby floor position
+            this.laserPos.x = clamp(this.laserPos.x + rand(-45, 45), BOUNDS.minX + 16, BOUNDS.maxX - 16)
+            this.laserPos.y = clamp(this.laserPos.y + rand(-35, 35), BOUNDS.minY + 12, BOUNDS.maxY - 8)
+            setTimeout(() => {
+              if (this.laserOn) this.chaseLaser()
+            }, 300)
+          } else {
+            this.think()
+          }
+        })
+      },
+      CAT_SPEED_SPRINT,
+    )
   }
 
   private react(delay: number, fn: () => void) {
@@ -576,12 +708,31 @@ export class CatHomeEngine {
     this.bubble = { text, t: 0, ttl }
   }
 
-  private goTo(x: number, y: number, then: () => void) {
+  private goTo(x: number, y: number, then: () => void, speed = CAT_SPEED_WALK) {
     const c = this.cat
-    this.setMode('walk', 'walk', 0)
+    c.speed = speed
+    const anim: CatAnim = speed >= CAT_SPEED_RUN ? 'run' : 'walk'
+    this.setMode('walk', anim, 0)
     c.target = { x, y }
     c.then = then
     c.walkT = 0
+    c.stuckTimer = 0
+  }
+
+  private jump(tx: number, ty: number, onEnd: () => void) {
+    const c = this.cat
+    c.facing = tx >= c.x ? 1 : -1
+    c.jumping = {
+      startX: c.x,
+      startY: c.y,
+      targetX: clamp(tx, BOUNDS.minX + 10, BOUNDS.maxX - 10),
+      targetY: clamp(ty, BOUNDS.minY + 8, BOUNDS.maxY - 4),
+      progress: 0,
+      onEnd,
+    }
+    c.mode = 'jump'
+    c.anim = 'jump'
+    c.animT = 0
   }
 
   private think = () => {
@@ -589,42 +740,54 @@ export class CatHomeEngine {
     const { hunger, energy } = this.stats
     const choices: [number, () => void][] = []
 
-    const sleepWeight = this.timeOfDay === 'night' ? 4 : 1.5
+    const sleepWeight = this.timeOfDay === 'night' ? 3.5 : 1.2
 
+    // 1. Critical Needs: Hunger
     if (hunger < 40 && this.food > 0) {
       choices.push([7, () => this.goEat()])
     } else if (hunger < 40 && this.food === 0) {
       choices.push([4, () => this.goBeg()])
     }
 
-    if (energy < 35) {
-      choices.push([9 * sleepWeight, () => this.goSleep()])
-    } else {
-      choices.push([energy < 70 ? 2 * sleepWeight : 0.6, () => this.goSleep()])
+    // 2. High Energy: Spontaneous Zoomies!
+    if (energy > 70 && Math.random() < 0.2) {
+      choices.push([5, () => this.zoomies()])
     }
 
+    // 3. Low Energy: Cozy Sleep & Lounging (Not sad, cozy and sleepy!)
+    if (energy < 35) {
+      choices.push([8 * sleepWeight, () => this.goSleep()])
+      choices.push([3, () => this.setMode('stretch', 'stretch', rand(2.5, 4))])
+      choices.push([3, () => this.setMode('groom', 'groom', rand(3, 5))])
+      choices.push([3, () => this.setMode('sit', 'sit', rand(3, 6))])
+    } else {
+      choices.push([energy < 65 ? 1.8 * sleepWeight : 0.6, () => this.goSleep()])
+    }
+
+    // 4. Autonomous Play with Toys
+    if (energy > 25) {
+      const randomToy = this.toys[Math.floor(Math.random() * this.toys.length)]
+      choices.push([3.5, () => this.startPlay(randomToy)])
+    }
+
+    // 5. Exploration & Living Behaviors
     choices.push([4, () => this.wander()])
-    choices.push([3, () => this.setMode('sit', 'sit', rand(3, 7))])
-    choices.push([2, () => this.setMode('idle', 'idle', rand(1.5, 3.5))])
-    choices.push([2, () => this.setMode('stretch', 'stretch', rand(2.5, 4))])
+    choices.push([3, () => this.setMode('sit', 'sit', rand(3, 6))])
+    choices.push([2, () => this.setMode('idle', 'idle', rand(1.5, 3))])
+    choices.push([2.5, () => this.setMode('stretch', 'stretch', rand(2.5, 4))])
     choices.push([2.5, () => this.setMode('groom', 'groom', rand(3, 5))])
     choices.push([2.5, () => this.investigate()])
-    choices.push([1.5, () => this.goWindow()])
-    choices.push([1.8, () => this.goScratch()])
+    choices.push([2, () => this.goWindow()])
+    choices.push([2, () => this.goScratch()])
+    choices.push([1.8, () => this.goBox()])
 
     if (this.water > 0) {
       choices.push([1.2, () => this.goDrink()])
     }
 
-    if (energy > 20) {
-      choices.push([
-        3.5,
-        () => this.startPlay(this.toys[Math.floor(Math.random() * this.toys.length)]),
-      ])
-    }
-
-    if (dist(this.player, this.cat) > 60 && Math.random() < 0.25) {
-      choices.push([2, () => this.followPlayer()])
+    // 6. Follow Player autonomously if near
+    if (dist(this.player, this.cat) > 45 && Math.random() < 0.35) {
+      choices.push([3, () => this.followPlayer()])
     }
 
     const total = choices.reduce((s, [w]) => s + w, 0)
@@ -636,115 +799,224 @@ export class CatHomeEngine {
     c.mode = 'idle'
   }
 
+  private zoomies() {
+    this.say('meow!')
+    const waypoints = [
+      { x: 120, y: 220 }, // box
+      { x: 340, y: 180 }, // post
+      { x: 210, y: 126 }, // window
+      { x: 236, y: 190 }, // rug
+      { x: 160, y: 160 },
+    ]
+    const p1 = waypoints[Math.floor(Math.random() * waypoints.length)]
+    const p2 = waypoints[Math.floor(Math.random() * waypoints.length)]
+
+    this.goTo(
+      p1.x,
+      p1.y,
+      () => {
+        this.jump(p2.x, p2.y, () => {
+          this.setMode('alert', 'alert', 1.5, () => {
+            this.stats.energy = clamp100(this.stats.energy - 8)
+            this.think()
+          })
+        })
+      },
+      CAT_SPEED_SPRINT,
+    )
+  }
+
   private wander() {
     for (let i = 0; i < 20; i++) {
-      const x = rand(BOUNDS.minX + 10, BOUNDS.maxX - 10)
-      const y = rand(BOUNDS.minY + 6, BOUNDS.maxY - 4)
-      if (insideCollider(x, y, 10)) continue
-      if (dist({ x, y }, this.cat) < 30) continue
-      return this.goTo(x, y, () => this.setMode('idle', 'idle', rand(1.5, 3)))
+      const x = rand(BOUNDS.minX + 12, BOUNDS.maxX - 12)
+      const y = rand(BOUNDS.minY + 8, BOUNDS.maxY - 6)
+      if (insideCollider(x, y, 8)) continue
+      if (dist({ x, y }, this.cat) < 28) continue
+      const speed = this.stats.energy > 60 ? CAT_SPEED_TROT : CAT_SPEED_WALK
+      return this.goTo(
+        x,
+        y,
+        () => {
+          this.setMode('idle', 'idle', rand(1.5, 3))
+        },
+        speed,
+      )
     }
     this.setMode('idle', 'idle', 2)
   }
 
   private followPlayer() {
+    const c = this.cat
+    c.followingPlayer = true
+    c.followTimer = rand(3.5, 6.0)
+
     const p = this.player
-    const ang = Math.atan2(p.y - this.cat.y, p.x - this.cat.x)
-    const targetX = clamp(p.x - Math.cos(ang) * 32, BOUNDS.minX + 8, BOUNDS.maxX - 8)
-    const targetY = clamp(p.y - Math.sin(ang) * 32, BOUNDS.minY + 6, BOUNDS.maxY)
-    this.goTo(targetX, targetY, () => {
-      this.cat.facing = p.x >= this.cat.x ? 1 : -1
-      this.setMode('sit', 'sit', rand(2, 4))
-      if (Math.random() < 0.4) this.say('mrrp')
-    })
+    const ang = Math.atan2(p.y - c.y, p.x - c.x)
+    const targetX = clamp(p.x - Math.cos(ang) * 32, BOUNDS.minX + 12, BOUNDS.maxX - 12)
+    const targetY = clamp(p.y - Math.sin(ang) * 32, BOUNDS.minY + 8, BOUNDS.maxY - 4)
+
+    this.goTo(
+      targetX,
+      targetY,
+      () => {
+        c.followingPlayer = false
+        c.facing = this.player.x >= c.x ? 1 : -1
+        const dice = Math.random()
+        if (dice < 0.4) {
+          this.say('purrr...')
+          this.setMode('happy', 'happy', 1.6, () => this.think())
+        } else if (dice < 0.7) {
+          this.setMode('groom', 'groom', rand(2.5, 4), () => this.think())
+        } else {
+          this.think()
+        }
+      },
+      CAT_SPEED_TROT,
+    )
   }
 
   private investigate() {
     const p = INVESTIGATE[Math.floor(Math.random() * INVESTIGATE.length)]
-    this.goTo(p.x, p.y, () => {
-      this.cat.facing = p.face
-      this.setMode('idle', 'idle', rand(2, 4))
-      if (Math.random() < 0.35) this.say('mrrp')
-    })
+    this.goTo(
+      p.x,
+      p.y,
+      () => {
+        this.cat.facing = p.face
+        this.setMode('idle', 'idle', rand(2, 4))
+        if (Math.random() < 0.35) this.say('mrrp')
+      },
+      CAT_SPEED_WALK,
+    )
   }
 
   private goEat() {
-    this.goTo(POI.foodSpot.x, POI.foodSpot.y, () => {
-      this.cat.facing = 1
-      if (this.food <= 0) {
-        this.say('feed me', 2.0)
-        this.setMode('sit', 'sit', rand(2.5, 4))
-        return
-      }
-      this.setMode('eat', 'eat', 3.6, () => {
-        this.stats.hunger = clamp100(this.stats.hunger + 35)
-        this.stats.happiness = clamp100(this.stats.happiness + 8)
-        this.food = Math.max(0, this.food - 1)
-        this.setMode('stretch', 'stretch', 2)
-        this.saveToStorage()
-      })
-      this.say('nom nom', 2.6)
-    })
+    this.goTo(
+      POI.foodSpot.x,
+      POI.foodSpot.y,
+      () => {
+        this.cat.facing = 1
+        if (this.food <= 0) {
+          this.say('feed me', 2.0)
+          this.setMode('sit', 'sit', rand(2.5, 4))
+          return
+        }
+        this.setMode('eat', 'eat', 3.6, () => {
+          this.stats.hunger = clamp100(this.stats.hunger + 35)
+          this.stats.happiness = clamp100(this.stats.happiness + 8)
+          this.food = Math.max(0, this.food - 1)
+          this.setMode('stretch', 'stretch', 2)
+          this.saveToStorage()
+        })
+        this.say('nom nom', 2.6)
+      },
+      CAT_SPEED_TROT,
+    )
   }
 
   private goBeg() {
-    this.goTo(POI.foodSpot.x, POI.foodSpot.y, () => {
-      this.cat.facing = 1
-      this.say('feed me', 2.2)
-      this.setMode('sit', 'sit', rand(3, 5))
-    })
+    this.goTo(
+      POI.foodSpot.x,
+      POI.foodSpot.y,
+      () => {
+        this.cat.facing = 1
+        this.say('feed me', 2.2)
+        this.setMode('sit', 'sit', rand(3, 5))
+      },
+      CAT_SPEED_WALK,
+    )
   }
 
   private goDrink() {
-    this.goTo(POI.waterSpot.x, POI.waterSpot.y, () => {
-      this.cat.facing = 1
-      this.setMode('drink', 'eat', rand(2.4, 3.5), () => {
-        this.water = Math.max(0, this.water - 1)
-        this.stats.happiness = clamp100(this.stats.happiness + 4)
-        this.say('mrrp')
-        this.setMode('groom', 'groom', 2.5)
-        this.saveToStorage()
-      })
-      this.spawnWaterSplashes(POI.waterBowl.x, POI.waterBowl.y - 2)
-    })
+    this.goTo(
+      POI.waterSpot.x,
+      POI.waterSpot.y,
+      () => {
+        this.cat.facing = 1
+        this.setMode('drink', 'eat', rand(2.4, 3.5), () => {
+          this.water = Math.max(0, this.water - 1)
+          this.stats.happiness = clamp100(this.stats.happiness + 4)
+          this.say('mrrp')
+          this.setMode('groom', 'groom', 2.5)
+          this.saveToStorage()
+        })
+        this.spawnWaterSplashes(POI.waterBowl.x, POI.waterBowl.y - 2)
+      },
+      CAT_SPEED_WALK,
+    )
   }
 
   private goScratch() {
-    this.goTo(POI.post.x - 14, POI.post.y + 4, () => {
-      this.cat.facing = 1
-      this.setMode('scratch', 'scratch', rand(3, 4.5), () => {
-        this.stats.happiness = clamp100(this.stats.happiness + 6)
-        this.setMode('stretch', 'stretch', 2.0)
-      })
-      if (Math.random() < 0.4) this.say('purrr...')
-    })
+    this.goTo(
+      POI.post.x - 14,
+      POI.post.y + 4,
+      () => {
+        this.cat.facing = 1
+        this.setMode('scratch', 'scratch', rand(3, 4.5), () => {
+          this.stats.happiness = clamp100(this.stats.happiness + 6)
+          this.setMode('stretch', 'stretch', 2.0)
+        })
+        if (Math.random() < 0.4) this.say('purrr...')
+      },
+      CAT_SPEED_WALK,
+    )
   }
 
   private goBox() {
-    this.goTo(POI.box.x, POI.box.y - 2, () => {
-      this.cat.facing = 1
-      this.setMode('sit', 'sit', rand(5, 9), () => this.think())
-      this.say(':3', 2.2)
-    })
+    this.goTo(
+      POI.box.x,
+      POI.box.y - 2,
+      () => {
+        this.cat.facing = 1
+        this.setMode('sit', 'sit', rand(5, 9), () => this.think())
+        this.say(':3', 2.2)
+      },
+      CAT_SPEED_WALK,
+    )
   }
 
   private goWindow() {
-    this.goTo(POI.window.x, POI.window.y + 6, () => {
-      this.cat.facing = 1
-      this.setMode('sit', 'sit', rand(4, 9), () => this.think())
-      if (Math.random() < 0.4) this.say('meow')
-    })
+    this.goTo(
+      POI.window.x,
+      POI.window.y + 6,
+      () => {
+        this.cat.facing = 1
+        this.setMode('sit', 'sit', rand(4, 9), () => this.think())
+        if (Math.random() < 0.4) this.say('meow')
+      },
+      CAT_SPEED_STROLL,
+    )
   }
 
-  private goSleep() {
-    this.goTo(POI.bed.x, POI.bed.y - 2, () => {
-      this.cat.facing = 1
-      this.setMode('sleep', 'sleep', rand(16, 30), () => {
-        this.setMode('stretch', 'stretch', 2.5, () => this.think())
-        this.say('mrrp')
-      })
-      this.say('zzz...', 2.4)
-    })
+  private goSleep(forceBed = false) {
+    const sleepSpots: { x: number; y: number }[] = [
+      { x: POI.bed.x, y: POI.bed.y - 2 },
+      { x: 236, y: 190 }, // warm center rug
+      { x: 210, y: 130 }, // sunny/moonlit window light
+      { x: 120, y: 220 }, // cardboard box
+      { x: 334, y: 134 }, // under desk lamp
+      { x: 170, y: 160 }, // peaceful floor
+      { x: 270, y: 180 }, // quiet corner
+    ]
+    const spot = forceBed ? sleepSpots[0] : sleepSpots[Math.floor(Math.random() * sleepSpots.length)]
+
+    this.goTo(
+      spot.x,
+      spot.y,
+      () => {
+        // Cat arrives, sits, stretches, then loafs down to sleep
+        this.setMode('sit', 'sit', rand(1.5, 2.5), () => {
+          this.setMode('stretch', 'stretch', 2.0, () => {
+            this.setMode('sleep', 'sleep', rand(16, 28), () => {
+              // Waking up peacefully
+              this.setMode('stretch', 'stretch', 2.5, () => this.think())
+              this.say('mrrp')
+            })
+            this.say('zzz...', 2.4)
+          })
+        })
+      },
+      CAT_SPEED_STROLL,
+    )
   }
 
   private startPlay(toy: Toy) {
@@ -753,7 +1025,14 @@ export class CatHomeEngine {
   }
 
   private chasePlay(toy: Toy) {
-    this.goTo(toy.x, toy.y, () => this.bat(toy))
+    this.goTo(
+      toy.x,
+      toy.y,
+      () => {
+        this.bat(toy)
+      },
+      CAT_SPEED_RUN,
+    )
     this.cat.chasing = toy
   }
 
@@ -784,6 +1063,25 @@ export class CatHomeEngine {
       }
     }
 
+    // 1. Jumping Physics (Playful airborne pounce)
+    if (c.jumping) {
+      const j = c.jumping
+      j.progress += dt * 2.2
+      if (j.progress >= 1) {
+        c.x = j.targetX
+        c.y = j.targetY
+        c.jumpY = 0
+        c.jumping = null
+        j.onEnd()
+      } else {
+        c.x = j.startX + (j.targetX - j.startX) * j.progress
+        c.y = j.startY + (j.targetY - j.startY) * j.progress
+        c.jumpY = -Math.sin(j.progress * Math.PI) * 14
+      }
+      return
+    }
+
+    // 2. Noticing Player
     const dp = dist(p, c)
     if (dp < 60 && c.noticeCd <= 0 && ['idle', 'walk', 'sit'].includes(c.mode)) {
       c.noticeCd = rand(14, 22)
@@ -801,6 +1099,7 @@ export class CatHomeEngine {
       c.facing = p.x >= c.x ? 1 : -1
     }
 
+    // 3. Walking / Running movement & collision
     if (c.mode === 'walk') {
       let tx = c.target!.x
       let ty = c.target!.y
@@ -813,20 +1112,45 @@ export class CatHomeEngine {
       const dx = tx - c.x
       const dy = ty - c.y
       const d = Math.hypot(dx, dy)
-      if (c.walkT > 14) this.think()
-      else if (d < 2.5) {
+
+      // Stuck detection: if barely moved for 1.8s
+      const movedDist = Math.hypot(c.x - c.lastX, c.y - c.lastY)
+      if (movedDist < 1.0) {
+        c.stuckTimer += dt
+        if (c.stuckTimer > 1.8) {
+          c.stuckTimer = 0
+          this.unstickCat()
+          return
+        }
+      } else {
+        c.stuckTimer = 0
+      }
+      c.lastX = c.x
+      c.lastY = c.y
+
+      if (c.walkT > 10) {
+        this.think()
+      } else if (d < 3.0) {
         const then = c.then
         c.then = null
         then?.()
       } else {
-        const s = Math.min(d, CAT_SPEED * dt)
-        c.x += (dx / d) * s
-        c.y += (dy / d) * s
+        const s = Math.min(d, c.speed * dt)
+        const stepX = (dx / d) * s
+        const stepY = (dy / d) * s
+        const nx = clamp(c.x + stepX, BOUNDS.minX + 8, BOUNDS.maxX - 8)
+        const ny = clamp(c.y + stepY, BOUNDS.minY + 6, BOUNDS.maxY - 4)
+
+        if (!insideCollider(nx, c.y, 4)) c.x = nx
+        if (!insideCollider(c.x, ny, 4)) c.y = ny
+
         if (Math.abs(dx) > 0.4) c.facing = dx > 0 ? 1 : -1
+        c.anim = c.speed >= CAT_SPEED_RUN ? 'run' : 'walk'
       }
       return
     }
 
+    // 4. Toy Batting Impulse
     if (c.mode === 'bat' && !c.impulsed && c.timer < 0.65 && c.chasing === null) {
       c.impulsed = true
       const toy = this.toys.reduce((a, b) => (dist(a, c) < dist(b, c) ? a : b))
@@ -834,10 +1158,11 @@ export class CatHomeEngine {
       toy.vx = Math.cos(ang) * 120
       toy.vy = Math.sin(ang) * 60
       this.stats.happiness = clamp100(this.stats.happiness + 6)
-      this.stats.energy = clamp100(this.stats.energy - 4)
+      this.stats.energy = clamp100(this.stats.energy - 3)
       this.saveToStorage()
     }
 
+    // 5. Sleep Z-particles
     if (c.mode === 'sleep') {
       this.zTimer -= dt
       if (this.zTimer <= 0) {
@@ -847,6 +1172,7 @@ export class CatHomeEngine {
       if (this.stats.energy >= 99) c.timer = Math.min(c.timer, 0)
     }
 
+    // 6. Petting Hearts
     if (c.mode === 'pet') {
       this.heartTimer -= dt
       if (this.heartTimer <= 0) {
@@ -862,6 +1188,22 @@ export class CatHomeEngine {
       if (end) end()
       else this.think()
     }
+  }
+
+  private unstickCat() {
+    const c = this.cat
+    c.chasing = null
+    c.target = null
+    c.then = null
+    c.jumping = null
+    c.jumpY = 0
+    c.x = clamp(c.x, BOUNDS.minX + 16, BOUNDS.maxX - 16)
+    c.y = clamp(c.y, BOUNDS.minY + 16, BOUNDS.maxY - 16)
+    if (insideCollider(c.x, c.y, 6)) {
+      c.x = 236
+      c.y = 190
+    }
+    this.setMode('idle', 'idle', 1.0, () => this.think())
   }
 
   private spawnHearts(n: number) {
@@ -948,9 +1290,9 @@ export class CatHomeEngine {
   private updateStats(dt: number) {
     const s = this.stats
     const sleeping = this.cat.mode === 'sleep'
-    s.hunger = clamp100(s.hunger - (sleeping ? 0.08 : 0.22) * dt)
-    s.happiness = clamp100(s.happiness - 0.15 * dt)
-    s.energy = clamp100(s.energy + (sleeping ? 1.8 : -0.15) * dt)
+    s.hunger = clamp100(s.hunger - (sleeping ? 0.06 : 0.16) * dt)
+    s.happiness = clamp100(s.happiness - 0.10 * dt)
+    s.energy = clamp100(s.energy + (sleeping ? 1.8 : -0.12) * dt)
   }
 
   private updatePlayer(dt: number) {
@@ -1045,6 +1387,7 @@ export class CatHomeEngine {
       water: this.water,
       timeOfDay: this.timeOfDay,
       lampOn: this.lampOn,
+      laserOn: this.laserOn,
       prompt: t ? t.label : null,
       message: this.message?.text ?? null,
       state: c.mode,
@@ -1091,7 +1434,7 @@ export class CatHomeEngine {
           ctx.fillStyle = 'rgba(0,0,0,0.45)'
           ctx.fillRect(Math.round(c.x) - (wide ? 12 : 9), Math.round(c.y) - 1, wide ? 24 : 18, 2)
           const a = ANIMATIONS[c.anim]
-          drawCat(ctx, c.anim, Math.floor(c.animT * a.fps), c.x, c.y, c.facing)
+          drawCat(ctx, c.anim, Math.floor(c.animT * a.fps), c.x, c.y + c.jumpY, c.facing)
         },
       },
       {
@@ -1101,6 +1444,11 @@ export class CatHomeEngine {
     ]
 
     sortables.sort((a, b) => a.y - b.y).forEach((s) => s.draw())
+
+    // Red Laser Dot
+    if (this.laserOn) {
+      drawLaserDot(ctx, this.laserPos.x, this.laserPos.y)
+    }
 
     for (const q of this.particles) {
       ctx.globalAlpha = Math.min(1, (q.ttl - q.t) / 0.4)
@@ -1131,7 +1479,7 @@ export class CatHomeEngine {
         ctx,
         this.bubble.text,
         c.x + c.facing * 4,
-        c.y - anchor,
+        c.y + c.jumpY - anchor,
         Math.min(1, left / 0.25),
       )
     }

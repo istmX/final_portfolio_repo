@@ -67,6 +67,7 @@
   --color-border: var(--border);
   --font-display: var(--font-schibsted-grotesk);
   --font-secondary: var(--font-inter);
+  --font-signature: var(--font-marck-script);
 }
 
 body {
@@ -208,6 +209,68 @@ a:focus-visible .nav-link-label {
   }
 }
 
+@keyframes botanical-sway {
+  0%, 100% { transform: rotate(-0.65deg); }
+  50% { transform: rotate(0.8deg); }
+}
+
+@keyframes botanical-leaf-breeze {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1.2deg); }
+}
+
+@keyframes botanical-bob {
+  0%, 100% { transform: translateY(0) scale(0.98); }
+  50% { transform: translateY(-1.5px) scale(1); }
+}
+
+@keyframes botanical-petal-drift {
+  0%, 55% { opacity: 0; transform: translate(0, -4px) rotate(0); }
+  62% { opacity: 0.7; }
+  88% { opacity: 0.55; }
+  100% { opacity: 0; transform: translate(5px, 24px) rotate(22deg); }
+}
+
+.botanical-stem {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: botanical-sway 16s ease-in-out infinite;
+}
+
+.botanical-leaf {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  animation: botanical-leaf-breeze 12s ease-in-out infinite;
+}
+
+.botanical-blossom {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: botanical-bob 11s ease-in-out infinite;
+}
+
+.botanical-bud {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: botanical-bob 14s ease-in-out infinite;
+}
+
+.botanical-blossom:nth-of-type(3n) { animation-duration: 13s; }
+.botanical-blossom:nth-of-type(4n) { animation-delay: -3.7s; }
+.botanical-leaf:nth-of-type(3n) { animation-duration: 15s; }
+
+.botanical-falling-petal {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: botanical-petal-drift 13s ease-in-out infinite;
+}
+
+.botanical-delay-one { animation-delay: -1.8s; }
+.botanical-delay-two { animation-delay: -4.6s; }
+.botanical-delay-three { animation-delay: -7.2s; }
+.petal-one { animation-delay: -6s; }
+.petal-two { animation-delay: -11s; }
+
 @media (prefers-reduced-motion: reduce) {
   .text-shimmer {
     color: var(--foreground);
@@ -225,7 +288,12 @@ a:focus-visible .nav-link-label {
   .project-card,
   .project-image,
   .project-image-glow,
-  .project-tech {
+  .project-tech,
+  .botanical-stem,
+  .botanical-leaf,
+  .botanical-blossom,
+  .botanical-bud,
+  .botanical-falling-petal {
     transition: none;
     animation: none;
   }

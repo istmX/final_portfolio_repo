@@ -492,12 +492,12 @@ function myEye(spin: number) {
 
 // ---------------------------------------------------------------- Player
 
-export type PlayerAction = 'idle' | 'walk' | 'pet' | 'pour' | 'wave' | 'sit'
+export type PlayerAction = 'idle' | 'walk' | 'pet' | 'pour' | 'wave' | 'sit' | 'throw' | 'interact'
 
 /**
  * Polished, high-detail retro human player character with expressive animations:
  * walking, idling with eye blinks, kneeling & petting cat, waving feather wand,
- * pouring food/water, and sitting.
+ * pouring food/water, throwing toys, interacting, and sitting.
  *
  * 40px tall (clearly larger than ~20px cat, 2:1 proportion), sharing the exact
  * same pixel-art grid and palette.
@@ -645,7 +645,63 @@ export function drawPlayer(
     return
   }
 
-  // 5. STANDARD WALK & IDLE ANIMATION
+  // 5. THROWING TOY ANIMATION
+  if (action === 'throw') {
+    ctx.save()
+    ctx.translate(px, py)
+    if (facing === -1) ctx.scale(-1, 1)
+
+    // Wide stable stance
+    R(ctx, '#141418', -6, -10, 4, 8)
+    R(ctx, '#1a1a20', 2, -10, 4, 8)
+    R(ctx, '#f0f0f4', -6, -2, 4, 2)
+    R(ctx, '#f0f0f4', 2, -2, 4, 2)
+
+    // Leaning forward torso
+    const ty = -25
+    RR(ctx, '#282832', -4, ty, 13, 15)
+    // Forward extended throw arm
+    R(ctx, '#202028', 5, ty + 2, 8, 4)
+    R(ctx, '#f4ece2', 13, ty + 2, 3, 3) // hand opening releasing toy
+
+    // Head looking ahead
+    const hy = ty - 12
+    RR(ctx, '#18181c', -4, hy, 11, 6)
+    RR(ctx, '#f4ece2', -2, hy + 3, 9, 9)
+    R(ctx, '#18181c', 3, hy + 6, 2, 2)
+    R(ctx, '#ffffff', 3, hy + 6, 1, 1)
+
+    ctx.restore()
+    return
+  }
+
+  // 6. FRIENDLY INTERACTION GESTURE ANIMATION
+  if (action === 'interact') {
+    ctx.save()
+    ctx.translate(px, py)
+    if (facing === -1) ctx.scale(-1, 1)
+
+    R(ctx, '#141418', -4, -10, 4, 8)
+    R(ctx, '#1a1a20', 1, -10, 4, 8)
+    R(ctx, '#f0f0f4', -4, -2, 4, 2)
+    R(ctx, '#f0f0f4', 1, -2, 4, 2)
+
+    const ty = -25
+    RR(ctx, '#282832', -5, ty, 12, 15)
+    R(ctx, '#202028', 3, ty + 4, 5, 4)
+    R(ctx, '#f4ece2', 7, ty + 5, 3, 3)
+
+    const hy = ty - 12
+    RR(ctx, '#18181c', -5, hy, 11, 6)
+    RR(ctx, '#f4ece2', -3, hy + 3, 9, 9)
+    R(ctx, '#18181c', 2, hy + 6, 2, 2)
+    R(ctx, '#ffffff', 2, hy + 6, 1, 1)
+
+    ctx.restore()
+    return
+  }
+
+  // 7. STANDARD WALK & IDLE ANIMATION
   const isMoving = action === 'walk'
   const bob = isMoving && (step % 2 === 1) ? 1 : (!isMoving && (step % 16 < 8) ? 1 : 0) // breathing bob
   const isBlink = !isMoving && (step % 32 >= 30) // blink every few seconds
@@ -745,3 +801,19 @@ export function drawPlayer(
     ctx.restore()
   }
 }
+
+/**
+ * Draws an interactive glowing red laser dot on the floor that the cat enthusiastically chases!
+ */
+export function drawLaserDot(ctx: CanvasRenderingContext2D, x: number, y: number, alpha = 1) {
+  const lx = Math.round(x)
+  const ly = Math.round(y)
+  // Outer soft red bloom
+  R(ctx, `rgba(255, 40, 60, ${0.35 * alpha})`, lx - 4, ly - 4, 9, 9)
+  R(ctx, `rgba(255, 60, 80, ${0.65 * alpha})`, lx - 2, ly - 2, 5, 5)
+  // Bright red core
+  R(ctx, `rgba(255, 20, 40, ${alpha})`, lx - 1, ly - 1, 3, 3)
+  // White hot center
+  R(ctx, `rgba(255, 240, 240, ${alpha})`, lx, ly, 1, 1)
+}
+

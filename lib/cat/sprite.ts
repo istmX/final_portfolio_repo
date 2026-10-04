@@ -16,6 +16,8 @@ export const CAT_FEET_Y = 27
 export type CatAnim =
   | 'idle'
   | 'walk'
+  | 'run'
+  | 'jump'
   | 'sit'
   | 'sleep'
   | 'eat'
@@ -131,12 +133,18 @@ function drawHead(g: Grid, hx: number, hy: number, f: CatFrame) {
 
   const eye = (cx: number, mirror: boolean) => {
     const e = f.eyes ?? 'open'
-    if (e === 'open') g.rect(cx, hy + 3, 1, 2, 3)
-    else if (e === 'blink' || e === 'closed') g.rect(mirror ? cx : cx - 1, hy + 4, 2, 1, 3)
-    else if (e === 'wide') {
-      g.rect(cx - (mirror ? 0 : 1), hy + 3, 2, 3, 3)
-      g.px(cx - (mirror ? 0 : 1), hy + 3, 2) // catch-light
+    if (e === 'open') {
+      const glintX = mirror ? cx : cx - 1
+      g.rect(glintX, hy + 3, 2, 2, 3)
+      g.px(glintX, hy + 3, 1) // bright catch-light glint
+    } else if (e === 'blink' || e === 'closed') {
+      g.rect(mirror ? cx - 1 : cx - 1, hy + 4, 3, 1, 3) // sweet closed eyelid line
+    } else if (e === 'wide') {
+      const glintX = mirror ? cx - 1 : cx - 1
+      g.rect(glintX, hy + 2, 3, 3, 3)
+      g.px(glintX, hy + 2, 1) // big bright sparkle
     } else if (e === 'happy') {
+      // ^ ^ happy smiling eye arcs
       g.px(cx - 1, hy + 4, 3)
       g.px(cx, hy + 3, 3)
       g.px(cx + 1, hy + 4, 3)
@@ -145,15 +153,27 @@ function drawHead(g: Grid, hx: number, hy: number, f: CatFrame) {
   eye(hx + 3, false)
   eye(hx + 9, true)
 
-  g.rect(hx + 5, hy + 5, 2, 1, 3) // nose
-  if (f.mouth === 'open') g.rect(hx + 5, hy + 6, 2, 2, 3)
-  else {
-    g.px(hx + 4, hy + 6, 3)
-    g.px(hx + 7, hy + 6, 3)
+  // Cute little dark nose
+  g.rect(hx + 5, hy + 5, 2, 1, 3)
+
+  if (f.mouth === 'open') {
+    // Open happy mouth with tongue highlight
+    g.rect(hx + 5, hy + 6, 2, 2, 3)
+    g.px(hx + 5, hy + 7, 2)
+  } else {
+    // Adorable :3 cat mouth smiling upwards into the cheeks
+    g.px(hx + 5, hy + 6, 3)
+    g.px(hx + 6, hy + 6, 3)
+    // Upward smiling cheeks / muzzle tips
+    g.px(hx + 4, hy + 5, 3)
+    g.px(hx + 7, hy + 5, 3)
   }
+
   // Cute whiskers
   g.px(hx - 2, hy + 5, 2)
+  g.px(hx - 2, hy + 7, 2)
   g.px(hx + 14, hy + 5, 2)
+  g.px(hx + 14, hy + 7, 2)
 }
 
 function drawLeg(g: Grid, x: number, y0: number, len: number, v: number) {
@@ -267,7 +287,7 @@ export function buildCatGrid(f: CatFrame): Uint8Array {
 
 const IDLE_TAIL: number[] = [0, 1, 0, -1]
 const idle: CatFrame[] = Array.from({ length: 12 }, (_, i) => ({
-  tail: 'low',
+  tail: 'up',
   sway: IDLE_TAIL[i % 4],
   eyes: i === 9 ? 'blink' : 'open',
 }))
@@ -278,10 +298,29 @@ export const ANIMATIONS: Record<CatAnim, { fps: number; frames: CatFrame[] }> = 
     fps: 8,
     frames: [0, 1, 2, 3].map((p) => ({
       legs: p as 0 | 1 | 2 | 3,
-      tail: 'mid',
+      tail: 'up',
       sway: p % 2 === 0 ? 1 : -1,
       bob: p % 2 === 1 ? -1 : 0,
     })),
+  },
+  run: {
+    fps: 12,
+    frames: [
+      { legs: 0, bob: -1, tail: 'up', sway: 1, headDX: 1 },
+      { legs: 'jump', bob: -3, tail: 'up', sway: 0, headDX: 2, eyes: 'wide' },
+      { legs: 2, bob: -1, tail: 'up', sway: -1, headDX: 1 },
+      { legs: 'jump', bob: -2, tail: 'up', sway: 0, headDX: 1 },
+    ],
+  },
+  jump: {
+    fps: 8,
+    frames: [
+      { bob: 1, legs: 0, tail: 'low', headDY: 1 }, // crouch prep
+      { bob: -4, legs: 'jump', tail: 'up', sway: 1, headDX: 1, eyes: 'wide' }, // leap
+      { bob: -5, legs: 'jump', tail: 'up', sway: -1, headDX: 1, eyes: 'wide' }, // apex
+      { bob: -2, legs: 1, tail: 'mid', headDY: 0 }, // descent
+      { bob: 1, legs: 0, tail: 'mid', headDY: 1 }, // land
+    ],
   },
   sit: {
     fps: 2,

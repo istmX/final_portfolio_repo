@@ -3,13 +3,13 @@
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from 'motion/react'
-import { CAT_SIZE, type CatAnim } from '@/lib/cat/sprite'
+import { CAT_SIZE } from '@/lib/cat/sprite'
 import CatSprite, { type CatSpritePose } from './CatSprite'
 
 type Pose = CatSpritePose
 type Controls = { stop: () => void; pause: () => void; play: () => void }
 
-const MESSAGES = ['meow', 'meow', 'meow', 'meow', 'meow', 'meow?', ':3']
+const MESSAGES = ['meow', 'meow!', 'purrr...', 'mrrp', ':3']
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min)
 
@@ -256,7 +256,7 @@ function PixelCat() {
   return (
     <motion.div
       ref={root}
-      className="pointer-events-none fixed left-0 top-0 z-[60] h-8 w-8 select-none"
+      className="pointer-events-none fixed left-0 top-0 z-[60] h-9 w-9 sm:h-10 sm:w-10 select-none"
       style={{ x, y }}
     >
       <div className="h-full w-full" style={{ transform: `scaleX(${facing})` }}>
