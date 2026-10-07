@@ -6,7 +6,7 @@ This repository contains the personal portfolio of **Aryan**, also known online 
 | ----------------- | -------------------------------------------------------------------------------------- |
 | Website           | [aryanonai.vercel.app](https://aryanonai.vercel.app/)                                  |
 | GitHub profile    | [github.com/istmX](https://github.com/istmX)                                           |
-| This repository   | [github.com/istmX/final_portfolio_repo](https://github.com/istmX/final_portfolio_repo) |
+| This repository   | [https://github.com/istmX/istmx-library](https://github.com/istmX/istmx-library) |
 | Component library | [ISTMX Library](https://aryanonai.vercel.app/library)                                  |
 
 ## Identity and projects
