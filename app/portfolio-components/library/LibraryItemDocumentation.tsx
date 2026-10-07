@@ -22,9 +22,12 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import DockNavigation from '@/components/ui/dock-navigation'
+import Button from '@/components/ui/button'
 import MobileMenuDock from '@/components/ui/mobile-menu-dock'
 import { AnimatedText } from '@/components/ui/animated-text'
 import ImageAccordion from '@/components/ui/image-accordion'
+import ImageTrail from '@/components/ui/image-trail'
+import InfiniteImageCanvas from '@/components/ui/infinite-image-canvas'
 import ScrollStoryCards from '@/components/ui/scroll-story-cards'
 import {
   PixelCat,
@@ -35,6 +38,8 @@ import { TechIcon, type TechIconName } from '../icons'
 import InstallCommand from './InstallCommand'
 import type { LibraryItem } from './library-items'
 import { IMAGE_ACCORDION_IMAGES } from './image-accordion-data'
+import { IMAGE_TRAIL_IMAGES } from './image-trail-data'
+import { INFINITE_IMAGE_CANVAS_IMAGES } from './infinite-image-canvas-data'
 import { SCROLL_STORY_CARDS } from './scroll-story-cards-data'
 
 const DIFF_EXAMPLE = `+ import { AnimatedText } from "@/components/ui/animated-text"
@@ -149,6 +154,22 @@ function Preview({
   item: LibraryItem
   scrollContainerRef?: RefObject<HTMLElement | null>
 }) {
+  if (item.slug === 'button') {
+    return (
+      <div className="flex w-full flex-wrap items-center justify-center gap-3 px-4 py-8">
+        <Button intent="save" feedback={{ label: 'Saved' }} onClick={() => {}}>
+          Save
+        </Button>
+        <Button intent="share" feedback={{ label: 'Link copied' }} onClick={() => {}}>
+          Share
+        </Button>
+        <Button intent="delete" feedback={{ label: 'Deleted' }} onClick={() => {}}>
+          Delete
+        </Button>
+      </div>
+    )
+  }
+
   if (item.slug === 'mobile-menu-dock') {
     return (
       <div className="relative flex min-h-72 w-full items-center justify-center overflow-hidden px-4 py-6">
@@ -247,6 +268,32 @@ function Preview({
           imageClassName="object-cover"
           previewClassName="min-h-48 rounded-lg sm:min-h-64"
           glow={{ opacity: 0.18, blur: 14 }}
+        />
+      </div>
+    )
+  }
+
+  if (item.slug === 'image-trail') {
+    return (
+      <div className="w-full py-3">
+        <ImageTrail
+          images={IMAGE_TRAIL_IMAGES}
+          className="mx-auto h-[20rem] max-w-3xl sm:h-[25rem]"
+          throttle={160}
+          maxTrailItems={5}
+        />
+      </div>
+    )
+  }
+
+  if (item.slug === 'infinite-image-canvas') {
+    return (
+      <div className="w-full py-3">
+        <InfiniteImageCanvas
+          images={INFINITE_IMAGE_CANVAS_IMAGES}
+          heading="Somewhere, Everywhere"
+          description="An endless field of images, waiting to be explored."
+          className="mx-auto h-[23rem] max-w-3xl sm:h-[28rem]"
         />
       </div>
     )
@@ -450,7 +497,7 @@ export default function LibraryItemDocumentation({
         ) : view === 'preview' ? (
           <DoubleBorderCard
             className="mt-3"
-            innerClassName={`bg-background flex items-center justify-center p-4 sm:p-6 ${item.slug === 'image-accordion' ? 'min-h-[25rem] sm:min-h-[29rem]' : 'min-h-52'}`}
+            innerClassName={`bg-background flex items-center justify-center p-4 sm:p-6 ${item.slug === 'image-accordion' ? 'min-h-[25rem] sm:min-h-[29rem]' : item.slug === 'image-trail' ? 'min-h-[23rem] sm:min-h-[28rem]' : item.slug === 'infinite-image-canvas' ? 'min-h-[26rem] sm:min-h-[31rem]' : 'min-h-52'}`}
           >
             <Preview item={item} />
           </DoubleBorderCard>

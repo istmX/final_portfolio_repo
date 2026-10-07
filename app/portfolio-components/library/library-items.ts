@@ -1,5 +1,8 @@
 import { dockNavigationSourceCode } from './dock-navigation-source'
+import { buttonSourceCode } from './button-source'
 import { imageAccordionSourceCode } from './image-accordion-source'
+import { imageTrailSourceCode } from './image-trail-source'
+import { infiniteImageCanvasSourceCode } from './infinite-image-canvas-source'
 import { mobileMenuDockSourceCode } from './mobile-menu-dock-source'
 import { pixelCatSourceCode } from './pixel-cat-source'
 import { scrollStoryCardsSourceCode } from './scroll-story-cards-source'
@@ -33,6 +36,114 @@ export type LibraryItem = {
 }
 
 export const LIBRARY_ITEMS: LibraryItem[] = [
+  {
+    slug: 'button',
+    name: 'Button',
+    description:
+      'An animated action button with solid save, share, and delete colors, optional icons, and success feedback.',
+    seoTitle: 'Button — Motion-Ready React Button | ISTMX',
+    seoDescription:
+      'A reusable React button with primary, secondary, outline, ghost, and soft variants, multiple sizes, link support, and reduced-motion-aware interaction.',
+    keywords: ['react button', 'motion button', 'tailwind button', 'button component'],
+    accessibility:
+      'Uses native button or anchor semantics, an announced polite feedback label, visible keyboard focus, disabled link handling, and reduced-motion-aware transitions.',
+    interaction:
+      'Save uses emerald, share uses sky, and delete uses rose. A matching hover glow and spring press response keep each action lively. Optional feedback animates the label and icon, then returns to the original state after its duration. Motion is reduced when the user prefers reduced motion.',
+    limitations:
+      'This is a single-action control. Use a separate Toggle or Tabs component when the control represents persistent selection or a group of choices.',
+    category: 'Controls',
+    commandName: 'button',
+    dependencies: ['React', 'Motion', 'Tailwind CSS', 'clsx', 'tailwind-merge'],
+    features: [
+      'Use as a native button or provide href for an anchor link.',
+      'Choose primary, secondary, outline, ghost, or soft visual variants.',
+      'Choose small, medium, large, or icon sizing.',
+      'Pass an optional icon and feedback label/icon for animated action confirmation.',
+      'Adds an intent-matched hover glow, focus ring, lift, and press response.',
+      'Keeps keyboard focus visible and respects reduced-motion preferences.',
+    ],
+    composition: ['Button', '├── Surface and sheen', '└── Action content'],
+    props: [
+      { name: 'children', type: 'ReactNode', description: 'Button label or content.' },
+      {
+        name: 'href?',
+        type: 'string',
+        description: 'When provided, renders an anchor instead of a button.',
+      },
+      {
+        name: 'variant?',
+        type: 'ButtonVariant',
+        description: 'primary, secondary, outline, ghost, or soft. Defaults to primary.',
+      },
+      {
+        name: 'intent?',
+        type: 'ButtonIntent',
+        description: 'Sets the primary action color: save (emerald), share (sky), or delete (rose). Defaults to save.',
+      },
+      {
+        name: 'size?',
+        type: 'ButtonSize',
+        description: 'sm, md, lg, or icon. Defaults to md.',
+      },
+      {
+        name: 'disabled?',
+        type: 'boolean',
+        description: 'Disables a button or prevents navigation for an anchor.',
+      },
+      {
+        name: 'icon?',
+        type: 'ReactNode',
+        description: 'Optional leading icon shown beside the idle label.',
+      },
+      {
+        name: 'feedback?',
+        type: '{ label: string; icon?: ReactNode; duration?: number }',
+        description: 'After activation, briefly swaps to a confirmation label and optional icon. Defaults to a check mark and 1800 ms.',
+      },
+      {
+        name: 'className?',
+        type: 'string',
+        description: 'Additional Tailwind classes for the control.',
+      },
+      {
+        name: 'type?',
+        type: '"button" | "submit" | "reset"',
+        description: 'Native button type; defaults to button.',
+      },
+    ],
+    sourceCode: buttonSourceCode,
+    usage: `import Button from '@/components/ui/button'
+
+<Button onClick={() => console.log('Saved')}>
+  Save changes
+</Button>
+
+<Button
+  icon={<BookmarkIcon />}
+  feedback={{ label: 'Saved', icon: <CheckIcon /> }}
+  onClick={saveItem}
+>
+  Save
+</Button>
+
+<Button intent="share" feedback={{ label: 'Link copied' }} onClick={shareLink}>
+  Share
+</Button>
+
+<Button intent="delete" feedback={{ label: 'Deleted' }} onClick={deleteItem}>
+  Delete
+</Button>
+
+<Button href="/stays" variant="outline" size="lg">
+  Explore stays
+</Button>`,
+    example:
+      'Use the primary variant for the main action and opt into feedback when the user needs confirmation that a save, send, or similar action completed. The component accepts native button props and anchor props when href is supplied.',
+    migrationExample: `+ import Button from '@/components/ui/button'
+
+- <button className="rounded-full bg-black px-4 py-2 text-white">Save</button>
++ <Button>Save</Button>`,
+  },
   {
     slug: 'animated-text',
     name: 'Animated Text',
@@ -501,6 +612,196 @@ const images = [
 +
 +- <div>{images.map((image) => <img key={image.src} {...image} />)}</div>
 ++ <ImageAccordion images={images} visibleCount={5} className="my-gallery" />`,
+  },
+  {
+    slug: 'infinite-image-canvas',
+    name: 'Infinite Image Canvas',
+    description:
+      'An endless, pannable image grid with spring-smooth movement, animated tiles, and pastel image labels.',
+    seoTitle: 'Infinite Image Canvas — React Image Grid | ISTMX',
+    seoDescription:
+      'Explore a repeating image canvas with wheel, drag, and keyboard navigation, animated tile transitions, and editable React source.',
+    keywords: [
+      'infinite image canvas react',
+      'pannable image grid',
+      'react infinite gallery',
+      'motion image canvas',
+    ],
+    accessibility:
+      'The canvas is a labeled keyboard-focusable region. Arrow keys pan the grid, each image is treated as decorative, and reduced-motion preferences disable tile transitions.',
+    interaction:
+      'Scroll over the canvas, drag it, or focus it and use the arrow keys to explore. Tiles are generated around the current view, with enter and exit transitions as they move into and out of view. Scroll outside the canvas to move the page.',
+    limitations:
+      'Image positions repeat from the supplied collection as the canvas expands. The app is responsible for hosting the image URLs and providing image names and pastel colors.',
+    category: 'Media',
+    commandName: 'infinite-image-canvas',
+    dependencies: ['React', 'Motion', 'Tailwind CSS', 'clsx', 'tailwind-merge'],
+    features: [
+      'Creates an endless image grid with at least eight rows and columns around the current view.',
+      'Pan with the mouse wheel, drag, or keyboard arrow keys.',
+      'Scroll outside the canvas to continue scrolling the page.',
+      'Uses spring motion for smooth tile movement and fades, scales, and blurs tiles as they enter or leave view.',
+      'Displays each image name in a solid pastel label beneath the image.',
+      'Respects reduced-motion preferences.',
+    ],
+    composition: [
+      'InfiniteImageCanvas',
+      '├── Pannable image grid',
+      '├── Animated image tiles',
+      '└── Pastel name labels',
+    ],
+    props: [
+      {
+        name: 'images',
+        type: 'InfiniteImageCanvasItem[]',
+        description:
+          'Required image collection. Each item has src, alt, name, and color fields.',
+      },
+      {
+        name: 'heading?',
+        type: 'string',
+        description:
+          'Centered heading layered over the images. Defaults to “Somewhere, Everywhere”.',
+      },
+      {
+        name: 'description?',
+        type: 'string',
+        description: 'Supporting text below the centered heading.',
+      },
+      {
+        name: 'className?',
+        type: 'string',
+        description: 'Classes applied to the outer canvas section.',
+      },
+      {
+        name: 'tileWidth?',
+        type: 'number',
+        description: 'Grid cell width in pixels. Defaults to 210.',
+      },
+      {
+        name: 'tileHeight?',
+        type: 'number',
+        description: 'Grid cell height in pixels. Defaults to 270.',
+      },
+    ],
+    sourceCode: infiniteImageCanvasSourceCode,
+    usage: `import InfiniteImageCanvas from '@/components/ui/infinite-image-canvas'
+
+const images = [
+  {
+    src: '/images/one.jpg',
+    alt: 'A quiet mountain lake',
+    name: 'Stillwater',
+    color: '#d9c9ff',
+  },
+  {
+    src: '/images/two.jpg',
+    alt: 'Sunlight over the coast',
+    name: 'Sunday Light',
+    color: '#ffd8c4',
+  },
+]
+
+<InfiniteImageCanvas
+  images={images}
+  heading="Somewhere, Everywhere"
+  description="An endless field of images, waiting to be explored."
+  className="h-[42rem]"
+/>`,
+    example:
+      'Provide image URLs, descriptive alt text, a short image name, and a solid pastel color for each item. Pan the canvas with the wheel, drag, or arrow keys; scrolling outside the canvas continues to move the page.',
+    migrationExample: `+ import InfiniteImageCanvas from '@/components/ui/infinite-image-canvas'
+
+- <div className="grid">{images.map((image) => <img key={image.src} src={image.src} alt={image.alt} />)}</div>
++ <InfiniteImageCanvas images={images} heading="Somewhere, Everywhere" />`,
+  },
+  {
+    slug: 'image-trail',
+    name: 'Image Trail',
+    description:
+      'A pointer-driven trail of floating image cards, staggered and faded with Motion.',
+    seoTitle: 'Image Trail — Animated React Image Effect | ISTMX',
+    seoDescription:
+      'Create a throttled image trail that follows pointer movement with editable React, Motion, and Tailwind CSS source.',
+    keywords: [
+      'react image trail',
+      'image trail effect',
+      'animated image cards',
+      'motion image trail',
+    ],
+    accessibility:
+      'The canvas has an accessible label and supports pointer and touch input. Decorative trail images are hidden from assistive technology, and the effect is disabled for users who prefer reduced motion.',
+    interaction:
+      'Move or tap over the canvas to place image cards. New cards are throttled, drift slightly as they fade, and are removed after their animation completes.',
+    limitations:
+      'The component renders the supplied image URLs directly. Keep the images array stable, provide useful alt text for the source data, and ensure the image host permits embedding.',
+    category: 'Media',
+    commandName: 'image-trail',
+    dependencies: ['React', 'Motion', 'Tailwind CSS', 'clsx', 'tailwind-merge'],
+    features: [
+      'Cycles through the supplied images as the pointer moves or the canvas is tapped.',
+      'Throttles image creation to keep the interaction smooth.',
+      'Adds a small rotation and drift as each image fades away.',
+      'Limits the number of active trail cards.',
+      'Supports custom container and image classes.',
+      'Respects reduced-motion preferences.',
+    ],
+    composition: [
+      'ImageTrail',
+      '├── Interactive canvas',
+      '├── Pointer and touch input',
+      '└── Animated image trail',
+    ],
+    props: [
+      {
+        name: 'images',
+        type: 'ImageTrailItem[]',
+        description: 'Required image list. Each item contains src and alt.',
+      },
+      {
+        name: 'className?',
+        type: 'string',
+        description: 'Classes for the canvas container.',
+      },
+      {
+        name: 'imageClassName?',
+        type: 'string',
+        description: 'Classes applied to each trail image.',
+      },
+      {
+        name: 'throttle?',
+        type: 'number',
+        description:
+          'Minimum interval between image spawns in milliseconds. Defaults to 160.',
+      },
+      {
+        name: 'maxTrailItems?',
+        type: 'number',
+        description:
+          'Maximum number of trail images active at once. Defaults to 5.',
+      },
+    ],
+    sourceCode: imageTrailSourceCode,
+    usage: `import ImageTrail from '@/components/ui/image-trail'
+
+const images = [
+  { src: '/images/one.jpg', alt: 'Mountain lake' },
+  { src: '/images/two.jpg', alt: 'Coastal cliffs' },
+]
+
+<ImageTrail
+  images={images}
+  throttle={160}
+  maxTrailItems={5}
+  className="h-[30rem]"
+  imageClassName="rounded-2xl"
+/>`,
+    example:
+      'Move the pointer across the canvas or tap to place image cards. Lower throttle values create a denser trail; maxTrailItems controls how many cards remain active together.',
+    migrationExample: `+ import ImageTrail from '@/components/ui/image-trail'
+
+- <img src={activeImage} alt="" />
++ <ImageTrail images={images} throttle={160} maxTrailItems={5} />`,
   },
   {
     slug: 'dock-navigation',

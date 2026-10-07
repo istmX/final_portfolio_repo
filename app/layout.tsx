@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import Script from 'next/script'
 import { Geist_Mono, Schibsted_Grotesk, Inter } from 'next/font/google'
 import ScrollToHome from '@/app/portfolio-components/ScrollToHome'
+import ThemeInit from '@/app/portfolio-components/ThemeInit'
 import { SITE_URL } from '@/app/portfolio-components/site'
 import './globals.css'
 
@@ -77,11 +77,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground font-secondary flex min-h-full flex-col overflow-x-clip">
+        <ThemeInit />
         <ScrollToHome />
         {children}
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`try { var savedTheme = localStorage.getItem('istmx-theme'); if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.dataset.theme = savedTheme; } catch (_) {}`}
-        </Script>
       </body>
     </html>
   )

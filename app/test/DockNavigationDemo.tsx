@@ -36,25 +36,12 @@ const items = [
 
 export default function DockNavigationDemo() {
   return (
-    <section className="border-border mt-24 border-t pt-12">
-      <p className="text-muted font-mono text-[10px] tracking-[0.18em] uppercase">
-        Navigation experiment
-      </p>
-      <h2 className="font-display mt-2 text-2xl tracking-tight sm:text-3xl">
-        Dock Navigation
-      </h2>
-      <p className="text-muted mt-2 max-w-xl text-sm leading-6">
-        Hover across the dock to lift and elastically magnify nearby icons with
-        a soft radial highlight. Each item is a regular link with a label, an
-        optional active state, and a custom icon.
-      </p>
-      <div className="mt-10 flex min-h-36 items-center justify-center">
+    <div className="bg-surface/30 flex min-h-44 items-center justify-center rounded-xl px-4 py-8">
         <DockNavigation
           items={items}
           label="Portfolio links"
           glow={{ color: 'var(--foreground)', opacity: 0.2, blur: 12 }}
         />
-      </div>
-    </section>
+    </div>
   )
 }

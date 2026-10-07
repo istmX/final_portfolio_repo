@@ -13,6 +13,12 @@ Run the command from your project root:
 npx @istmx/ui add animated-text
 ```
 
+Add the practical controls:
+
+```sh
+npx @istmx/ui add button
+```
+
 Or use your preferred package manager:
 
 ```sh
@@ -25,6 +31,18 @@ Add the image stack component with:
 
 ```sh
 npx @istmx/ui add image-accordion
+```
+
+Add the pointer-driven image trail with:
+
+```sh
+npx @istmx/ui add image-trail
+```
+
+Add the pannable infinite image canvas with:
+
+```sh
+npx @istmx/ui add infinite-image-canvas
 ```
 
 Add the magnifying dock navigation with:
@@ -119,6 +137,8 @@ in your `components/ui/animated-text.tsx` file.
 npx @istmx/ui add animated-text --no-install
 npx @istmx/ui add animated-text --overwrite
 npx @istmx/ui add image-accordion
+npx @istmx/ui add image-trail
+npx @istmx/ui add infinite-image-canvas
 npx @istmx/ui add dock-navigation
 npx @istmx/ui add mobile-menu-dock
 ```

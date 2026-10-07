@@ -1,11 +1,32 @@
 export const COMPONENT_SEARCH_ITEMS = [
   {
+    name: 'Button',
+    slug: 'button',
+    href: '/library/button',
+    category: 'Controls',
+    description: 'A motion-ready button with practical variants, sizes, and link support.',
+  },
+  {
     name: 'Animated Text',
     slug: 'animated-text',
     href: '/library/animated-text',
     category: 'Text',
     description:
       'Combine configurable blur, fade, shimmer, slide, and wave effects.',
+  },
+  {
+    name: 'Infinite Image Canvas',
+    slug: 'infinite-image-canvas',
+    href: '/library/infinite-image-canvas',
+    category: 'Media',
+    description: 'A pannable, endless image grid with spring motion and image labels.',
+  },
+  {
+    name: 'Image Trail',
+    slug: 'image-trail',
+    href: '/library/image-trail',
+    category: 'Media',
+    description: 'A throttled trail of animated image cards that follows pointer movement.',
   },
   {
     name: 'Image Accordion',
