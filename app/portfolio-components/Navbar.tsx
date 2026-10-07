@@ -4,64 +4,100 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { IconBrandGithub, IconSearch, IconX } from '@tabler/icons-react'
+import MobileMenuDock from '@/components/ui/mobile-menu-dock'
 import ThemeToggle from './ThemeToggle'
 import { IstmxLogo } from './LogoSvg'
+import { COMPONENT_ICONS } from './ComponentsSpotlight'
+import { COMPONENT_SEARCH_ITEMS } from './library/component-search-data'
 
 const NAV_ITEMS = [
-  { label: 'Home', href: '/' },
   { label: 'About', href: '/#about' },
   { label: 'Projects', href: '/#projects' },
-  { label: 'Library', href: '/library' },
+  { label: 'Components', href: '/library' },
   { label: 'Blogs', href: '/blogs' },
 ]
 
-const NAV_LINK_LABEL_CLASS =
-  'nav-link-label inline-block transition-colors duration-150 group-hover/nav:bg-[linear-gradient(110deg,var(--muted)_38%,var(--foreground)_50%,var(--muted)_62%)] group-hover/nav:bg-[length:220%_100%] group-hover/nav:bg-clip-text group-hover/nav:text-transparent group-hover/nav:animate-[nav-text-shimmer_750ms_ease-out_forwards] group-focus-visible/nav:bg-[linear-gradient(110deg,var(--muted)_38%,var(--foreground)_50%,var(--muted)_62%)] group-focus-visible/nav:bg-[length:220%_100%] group-focus-visible/nav:bg-clip-text group-focus-visible/nav:text-transparent group-focus-visible/nav:animate-[nav-text-shimmer_750ms_ease-out_forwards] motion-reduce:group-hover/nav:animate-none motion-reduce:group-hover/nav:bg-none motion-reduce:group-hover/nav:text-foreground motion-reduce:group-focus-visible/nav:animate-none motion-reduce:group-focus-visible/nav:bg-none motion-reduce:group-focus-visible/nav:text-foreground'
-
 function Navbar() {
   const pathname = usePathname()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLUListElement>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchTriggerRef = useRef<HTMLButtonElement>(null)
+  const filteredComponents = COMPONENT_SEARCH_ITEMS.filter((item) =>
+    `${item.name} ${item.category} ${item.description}`
+      .toLowerCase()
+      .includes(searchQuery.trim().toLowerCase()),
+  )
 
   useEffect(() => {
-    if (!menuOpen) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false)
-    }
-    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target
+      const isTyping =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+
+      const isSearchShortcut =
+        (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k'
+
       if (
-        event.target instanceof Node &&
-        !menuRef.current?.parentElement?.contains(event.target)
-      )
-        setMenuOpen(false)
+        ((event.key === '/' && !event.metaKey && !event.ctrlKey) ||
+          isSearchShortcut) &&
+        !isTyping
+      ) {
+        event.preventDefault()
+        setSearchOpen(true)
+      }
+
+      if (event.key === 'Escape' && searchOpen) {
+        setSearchOpen(false)
+        setSearchQuery('')
+        searchTriggerRef.current?.focus()
+      }
     }
-    document.addEventListener('keydown', onKeyDown)
-    document.addEventListener('pointerdown', onPointerDown)
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [searchOpen])
+
+  useEffect(() => {
+    if (searchOpen) searchInputRef.current?.focus()
+  }, [searchOpen])
+
+  useEffect(() => {
+    if (!searchOpen) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     return () => {
-      document.removeEventListener('keydown', onKeyDown)
-      document.removeEventListener('pointerdown', onPointerDown)
+      document.body.style.overflow = previousOverflow
     }
-  }, [menuOpen])
+  }, [searchOpen])
+
+  const closeSearch = () => {
+    setSearchOpen(false)
+    setSearchQuery('')
+  }
 
   return (
-    <header className="relative z-30 mx-auto w-full max-w-3xl px-8 pt-6 sm:px-8 sm:pt-8">
+    <header className="border-border/50 relative z-30 mx-auto w-full max-w-3xl border-b px-8 pt-6 pb-3 sm:px-8 sm:pt-8 sm:pb-3">
       <nav
         aria-label="Main navigation"
-        className="relative flex flex-wrap items-center justify-between gap-y-2 px-1 sm:px-2.5"
+        className="relative flex flex-wrap items-center justify-between gap-y-2 px-1 sm:flex-nowrap sm:px-2.5"
       >
         <Link
           href="/"
           scroll={true}
           onClick={() => {
-            setMenuOpen(false)
             if (pathname === '/')
               window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
           aria-label="istmX home"
-          className="flex shrink-0 flex-col items-center gap-0.5"
+          className="flex shrink-0 items-center gap-2"
         >
-          <IstmxLogo className="text-foreground size-10 sm:size-11" />
-          <span className="text-muted/60 text-[9px] font-medium tracking-[0.18em]">
+          <IstmxLogo className="text-foreground size-8 sm:size-9" />
+          <span className="font-display text-foreground text-sm font-semibold tracking-tight sm:text-base">
             istmX
           </span>
         </Link>
@@ -83,105 +119,193 @@ function Navbar() {
                   <Link
                     href={item.href}
                     aria-current={isActive ? 'page' : undefined}
-                    className={`group/nav block rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`block rounded-sm px-2 py-2 text-xs font-medium transition-colors ${
                       isActive
                         ? 'text-foreground'
                         : 'text-muted hover:text-foreground'
                     }`}
                   >
-                    <span className={NAV_LINK_LABEL_CLASS}>{item.label}</span>
+                    {item.label}
                   </Link>
                 </motion.li>
               )
             })}
           </ul>
 
-          <ThemeToggle />
-
-          <motion.button
+          <button
+            ref={searchTriggerRef}
             type="button"
-            aria-label={
-              menuOpen ? 'Close navigation menu' : 'Open navigation menu'
-            }
-            aria-expanded={menuOpen}
-            aria-controls={menuOpen ? 'mobile-navigation' : undefined}
-            onClick={() => setMenuOpen((open) => !open)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ type: 'spring', stiffness: 450, damping: 24 }}
-            className="text-muted hover:text-foreground focus-visible:outline-foreground flex size-9 cursor-pointer items-center justify-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 sm:hidden"
+            aria-label="Search components"
+            aria-haspopup="dialog"
+            aria-expanded={searchOpen}
+            onClick={() => setSearchOpen(true)}
+            className="border-border/50 text-muted hover:text-foreground focus-visible:outline-foreground hidden h-8 cursor-pointer items-center gap-2 border-l pl-2.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 sm:inline-flex sm:pl-3"
           >
-            {menuOpen ? (
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="size-6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="size-6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </motion.button>
+            <IconSearch aria-hidden="true" size={15} stroke={1.7} />
+            <span className="hidden text-[11px] font-medium md:inline">
+              Search
+            </span>
+            <span className="hidden items-center gap-1 md:inline-flex">
+              <kbd className="border-border/60 rounded-sm border px-1 py-0.5 font-mono text-[9px] leading-3">
+                Ctrl
+              </kbd>
+              <kbd className="border-border/60 rounded-sm border px-1 py-0.5 font-mono text-[9px] leading-3">
+                K
+              </kbd>
+            </span>
+          </button>
+
+          <a
+            href="https://github.com/istmX/final_portfolio_repo"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open the istmX portfolio repository on GitHub"
+            title="GitHub repository"
+            className="border-border/50 text-muted hover:text-foreground focus-visible:outline-foreground inline-flex size-8 items-center justify-center border-l pl-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <IconBrandGithub aria-hidden="true" size={16} stroke={1.7} />
+          </a>
+
+          <ThemeToggle />
         </div>
 
         <AnimatePresence>
-          {menuOpen && (
-            <motion.ul
-              ref={menuRef}
-              id="mobile-navigation"
-              className="mobile-nav-panel bg-background/95 absolute top-full left-1/2 isolate z-50 mt-2 flex w-[min(20rem,calc(100vw-2rem))] -translate-x-1/2 flex-col gap-1 rounded-xl border border-transparent p-2 shadow-xl backdrop-blur-md sm:hidden"
-              initial={{ opacity: 0, y: -7, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -5, scale: 0.99 }}
-              transition={{ duration: 0.18, ease: 'easeOut' }}
+          {searchOpen ? (
+            <motion.div
+              className="fixed inset-0 z-[100] flex items-start justify-center bg-black/45 px-4 pt-[min(18vh,8rem)]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.16 }}
+              onMouseDown={(event) => {
+                if (event.target === event.currentTarget) closeSearch()
+              }}
             >
-              {NAV_ITEMS.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== '/' && pathname.startsWith(`${item.href}/`))
-
-                return (
-                  <motion.li
-                    key={item.href}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 28 }}
-                  >
-                    <Link
-                      href={item.href}
-                      aria-current={isActive ? 'page' : undefined}
-                      onClick={() => setMenuOpen(false)}
-                      className={`group/nav block rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors ${
-                        isActive
-                          ? 'text-foreground'
-                          : 'text-muted hover:text-foreground'
-                      }`}
+              <motion.section
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="component-search-title"
+                className="border-border bg-background w-full max-w-xl rounded-sm border p-3 shadow-xl sm:p-4"
+                initial={{ opacity: 0, y: 8, scale: 0.99 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 5, scale: 0.99 }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
+              >
+                <div className="mb-3 flex items-center justify-between px-1">
+                  <div>
+                    <p
+                      id="component-search-title"
+                      className="font-display text-sm font-semibold"
                     >
-                      <span className={NAV_LINK_LABEL_CLASS}>{item.label}</span>
-                    </Link>
-                  </motion.li>
-                )
-              })}
-            </motion.ul>
-          )}
+                      Find a component
+                    </p>
+                    <p className="text-muted mt-0.5 text-[10px]">
+                      Search the istmX source library
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={closeSearch}
+                    aria-label="Close component search"
+                    className="text-muted hover:text-foreground focus-visible:outline-foreground inline-flex size-8 items-center justify-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+                  >
+                    <IconX aria-hidden="true" size={17} stroke={1.7} />
+                  </button>
+                </div>
+
+                <div className="border-border/60 bg-surface/25 focus-within:border-foreground/40 flex h-11 items-center gap-2 border px-3 transition-colors">
+                  <IconSearch
+                    aria-hidden="true"
+                    className="text-muted shrink-0"
+                    size={17}
+                    stroke={1.7}
+                  />
+                  <input
+                    ref={searchInputRef}
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Name, category, or effect..."
+                    aria-label="Search components by name, category, or description"
+                    className="text-foreground placeholder:text-muted/65 min-w-0 flex-1 bg-transparent text-sm outline-none"
+                  />
+                  {searchQuery ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery('')
+                        searchInputRef.current?.focus()
+                      }}
+                      aria-label="Clear search"
+                      className="text-muted hover:text-foreground inline-flex size-7 items-center justify-center transition-colors"
+                    >
+                      <IconX aria-hidden="true" size={14} stroke={1.7} />
+                    </button>
+                  ) : null}
+                </div>
+
+                <ul className="mt-3 max-h-[min(55vh,24rem)] overflow-y-auto">
+                  {filteredComponents.length ? (
+                    filteredComponents.map((item) => {
+                      const ComponentIcon = COMPONENT_ICONS[item.slug]
+
+                      return (
+                        <li key={item.slug}>
+                          <Link
+                            href={`/library/${item.slug}`}
+                            onClick={closeSearch}
+                            className="group hover:bg-surface/35 focus-visible:bg-surface/35 focus-visible:outline-foreground border-border/40 flex items-center gap-3 border-b px-3 py-3 transition-colors focus-visible:outline focus-visible:outline-1"
+                          >
+                            <span className="border-border/60 bg-surface/40 text-muted group-hover:text-foreground inline-flex size-8 shrink-0 items-center justify-center rounded-md border transition-colors">
+                              <ComponentIcon
+                                aria-hidden="true"
+                                size={16}
+                                stroke={1.6}
+                              />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="flex items-center justify-between gap-3">
+                                <span className="font-display text-sm font-semibold">
+                                  {item.name}
+                                </span>
+                                <span className="text-muted font-mono text-[9px] tracking-[0.12em] uppercase">
+                                  {item.category}
+                                </span>
+                              </span>
+                              <span className="text-muted mt-1 block text-xs leading-5">
+                                {item.description}
+                              </span>
+                            </span>
+                          </Link>
+                        </li>
+                      )
+                    })
+                  ) : (
+                    <li className="text-muted px-3 py-6 text-center text-sm">
+                      No components match “{searchQuery}”.
+                    </li>
+                  )}
+                </ul>
+                <div className="border-border/60 text-muted mt-2 flex items-center justify-between border-t border-dotted px-2 pt-3 text-[10px]">
+                  <span>{filteredComponents.length} components</span>
+                  <span>
+                    Press <kbd className="font-mono">Esc</kbd> to close
+                  </span>
+                </div>
+              </motion.section>
+            </motion.div>
+          ) : null}
         </AnimatePresence>
       </nav>
+      <MobileMenuDock
+        searchItems={COMPONENT_SEARCH_ITEMS}
+        items={NAV_ITEMS.map((item) => ({
+          ...item,
+          active:
+            item.href === '/library'
+              ? pathname.startsWith('/library')
+              : pathname === item.href,
+        }))}
+      />
     </header>
   )
 }

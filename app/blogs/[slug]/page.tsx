@@ -28,13 +28,6 @@ export async function generateMetadata({
     title: `${post.title} | Aryan`,
     description: post.excerpt,
     alternates: { canonical: `/blogs/${post.slug}` },
-    keywords: [
-      post.category,
-      'Aryan',
-      'AI developer',
-      'software engineering',
-      'India',
-    ],
     openGraph: {
       type: 'article',
       url: `${SITE_URL}/blogs/${post.slug}`,
@@ -61,21 +54,43 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
 
   const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.excerpt,
-    articleSection: post.category,
-    keywords: [
-      post.category,
-      ...post.title.split(' '),
-      'Aryan',
-      'AI developer',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${SITE_URL}/blogs/${post.slug}#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Writing',
+            item: `${SITE_URL}/blogs`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: post.title,
+            item: `${SITE_URL}/blogs/${post.slug}`,
+          },
+        ],
+      },
+      {
+        '@type': 'BlogPosting',
+        '@id': `${SITE_URL}/blogs/${post.slug}#article`,
+        headline: post.title,
+        description: post.excerpt,
+        articleSection: post.category,
+        inLanguage: 'en',
+        author: { '@id': `${SITE_URL}/#aryan` },
+        publisher: { '@id': `${SITE_URL}/#aryan` },
+        isPartOf: { '@id': `${SITE_URL}/#website` },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': `${SITE_URL}/blogs/${post.slug}`,
+        },
+        ...(post.image ? { image: post.image } : {}),
+      },
     ],
-    inLanguage: 'en',
-    author: { '@type': 'Person', name: 'Aryan', url: SITE_URL },
-    publisher: { '@type': 'Person', name: 'Aryan', url: SITE_URL },
-    mainEntityOfPage: `${SITE_URL}/blogs/${post.slug}`,
-    ...(post.image ? { image: post.image } : {}),
   }
   const safeArticleSchema = JSON.stringify(articleSchema).replace(
     /</g,
@@ -92,13 +107,31 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
             dangerouslySetInnerHTML={{ __html: safeArticleSchema }}
           />
           <div className="mx-auto max-w-3xl">
-            <Link
-              href="/blogs"
-              className="text-muted hover:text-foreground focus-visible:outline-foreground inline-flex items-center gap-2 text-[10px] font-medium tracking-[0.13em] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-3"
-            >
-              <IconArrowLeft size={14} stroke={1.7} aria-hidden="true" /> All
-              articles
-            </Link>
+            <nav aria-label="Breadcrumb" className="mb-6">
+              <ol className="text-muted flex flex-wrap items-center gap-2 text-xs">
+                <li>
+                  <Link
+                    href="/"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li aria-hidden="true">/</li>
+                <li>
+                  <Link
+                    href="/blogs"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Writing
+                  </Link>
+                </li>
+                <li aria-hidden="true">/</li>
+                <li className="text-foreground" aria-current="page">
+                  {post.title}
+                </li>
+              </ol>
+            </nav>
 
             <header className="mx-auto mt-8 mb-7 max-w-2xl sm:mt-10 sm:mb-9">
               <p className="text-muted text-[10px] font-medium tracking-[0.16em] uppercase">
@@ -111,7 +144,12 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
                 {post.excerpt}
               </p>
               <div className="text-muted mt-5 flex items-center gap-2 text-[11px]">
-                <span className="text-foreground font-medium">Aryan</span>
+                <Link
+                  href="/"
+                  className="text-foreground hover:text-muted font-medium transition-colors"
+                >
+                  Aryan <span className="text-muted">(@istmX)</span>
+                </Link>
                 <span aria-hidden="true">·</span>
                 <span>{post.readTime}</span>
               </div>
@@ -126,7 +164,6 @@ export default async function BlogPostPage({ params }: BlogPageProps) {
                     fill
                     priority
                     sizes="(max-width: 768px) 100vw, 768px"
-                    unoptimized
                     className="object-cover"
                   />
                 </div>

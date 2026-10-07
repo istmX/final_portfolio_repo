@@ -26,7 +26,7 @@ export default function LibraryCatalog() {
     <div className="px-8 pb-14 sm:px-8 sm:pb-16">
       <section className="pt-8 sm:pt-12" aria-labelledby="library-title">
         <p className="text-muted text-[10px] font-medium tracking-[0.18em] uppercase">
-          ISTMX / SOURCE LIBRARY
+          istmX / SOURCE LIBRARY
         </p>
         <h1
           id="library-title"
@@ -35,8 +35,9 @@ export default function LibraryCatalog() {
           Components
         </h1>
         <p className="text-muted mt-2 max-w-xl text-xs leading-5 sm:text-sm">
-          Small interface pieces to bring into your project, edit, and make your
-          own.
+          ISTMX is Aryan&apos;s source-first React component collection. Bring
+          small interface pieces into your project, edit the code, and make
+          them your own.
         </p>
       </section>
 

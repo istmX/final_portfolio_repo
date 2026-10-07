@@ -10,15 +10,6 @@ export const metadata: Metadata = {
   description:
     'Practical articles by Aryan on AI agents, Python, FastAPI, backend engineering, full-stack development, and mobile apps.',
   alternates: { canonical: '/blogs' },
-  keywords: [
-    'AI engineering',
-    'AI agents',
-    'Python',
-    'FastAPI',
-    'backend development',
-    'full-stack development',
-    'mobile development',
-  ],
   openGraph: {
     type: 'website',
     url: `${SITE_URL}/blogs`,
@@ -47,7 +38,7 @@ export default function BlogsPage() {
       'Practical articles on AI agents, Python, FastAPI, backend systems, full-stack development, and mobile apps.',
     url: `${SITE_URL}/blogs`,
     inLanguage: 'en',
-    author: { '@type': 'Person', name: 'Aryan', url: SITE_URL },
+    author: { '@id': `${SITE_URL}/#aryan` },
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: BLOG_POSTS.map((post, index) => ({

@@ -6,7 +6,24 @@ import { access, mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const VERSION = '0.1.2'
+const VERSION = '0.1.7'
+const COMPONENTS = {
+  'animated-text': { fileName: 'animated-text.tsx' },
+  'image-accordion': { fileName: 'image-accordion.tsx' },
+  'dock-navigation': {
+    fileName: 'dock-navigation.tsx',
+    dependencies: ['@tabler/icons-react'],
+  },
+  'mobile-menu-dock': {
+    fileName: 'mobile-menu-dock.tsx',
+    dependencies: ['@tabler/icons-react'],
+  },
+  'scroll-story-cards': {
+    fileName: 'scroll-story-cards.tsx',
+    dependencies: ['@tabler/icons-react'],
+  },
+  'pixel-cat': { fileName: 'pixel-cat.tsx' },
+}
 const DEPENDENCIES = ['motion', 'clsx', 'tailwind-merge']
 const COMMANDS = {
   npm: ['install'],
@@ -56,7 +73,9 @@ Options:
   --overwrite   Replace component files that already exist
 
 Components:
-  animated-text`)
+${Object.keys(COMPONENTS)
+  .map((name) => `  ${name}`)
+  .join('\n')}`)
 }
 
 function detectPackageManager(projectPackage) {
@@ -160,11 +179,15 @@ function installDependencies(manager, dependencies) {
 }
 
 async function addComponent(component, options) {
-  if (component !== 'animated-text') {
+  const definition = COMPONENTS[component]
+  if (!definition) {
     throw new Error(
-      `Unknown component "${component}". Available component: animated-text. Use \`istmx add animated-text\`.`,
+      `Unknown component "${component}". Available components: ${Object.keys(COMPONENTS).join(', ')}. Run istmx --help to see available components.`,
     )
   }
+  const componentDependencies = [
+    ...new Set([...DEPENDENCIES, ...(definition.dependencies ?? [])]),
+  ]
 
   const projectPackage = await readProjectPackage()
   const manager = detectPackageManager(projectPackage)
@@ -177,15 +200,15 @@ async function addComponent(component, options) {
     CURRENT_DIRECTORY,
     'components',
     'ui',
-    'animated-text.tsx',
+    definition.fileName,
   )
   const utilityPath = path.join(CURRENT_DIRECTORY, 'lib', 'utils.ts')
 
   await writeRegistryFile('utils.ts', utilityPath, options.overwrite)
-  await writeRegistryFile('animated-text.tsx', componentPath, options.overwrite)
+  await writeRegistryFile(definition.fileName, componentPath, options.overwrite)
 
   if (options.noInstall) {
-    const missing = DEPENDENCIES.filter(
+    const missing = componentDependencies.filter(
       (dependency) => !installedDependencies(projectPackage)[dependency],
     )
     if (missing.length > 0) {
@@ -197,7 +220,7 @@ async function addComponent(component, options) {
   }
 
   const installed = installedDependencies(projectPackage)
-  const missingDependencies = DEPENDENCIES.filter(
+  const missingDependencies = componentDependencies.filter(
     (dependency) => !installed[dependency],
   )
 
@@ -209,9 +232,11 @@ async function addComponent(component, options) {
 
   console.log(`\n${green('Done!')} ${component} is ready to edit.`)
   console.log(
-    `  ${muted('Import from')} ${cyan('@/components/ui/animated-text')}`,
+    `  ${muted('Import from')} ${cyan(`@/components/ui/${component}`)}`,
   )
-  console.log(`  ${muted('Dependencies')} ${cyan(DEPENDENCIES.join(', '))}\n`)
+  console.log(
+    `  ${muted('Dependencies')} ${cyan(componentDependencies.join(', '))}\n`,
+  )
 }
 
 const [command, ...argumentsList] = process.argv.slice(2)
@@ -230,7 +255,7 @@ if (command === '--help' || command === '-h' || !command) {
   console.log(VERSION)
 } else if (command === 'add') {
   if (!component || component.startsWith('--')) {
-    console.error('Choose a component: `istmx add animated-text`.')
+    console.error('Choose a component name. Run `istmx --help` to see options.')
     process.exitCode = 1
   } else {
     addComponent(component, options).catch((error) => {

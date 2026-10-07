@@ -1,6 +1,6 @@
 {
   "name": "@istmx/ui",
-  "version": "0.1.2",
+  "version": "0.1.7",
   "description": "Add editable ISTMX UI components to your project.",
   "type": "module",
   "bin": {

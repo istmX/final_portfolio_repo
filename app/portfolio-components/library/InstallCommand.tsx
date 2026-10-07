@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { IconCheck, IconCopy, IconSelector } from '@tabler/icons-react'
 import ShimmerText from '@/app/portfolio-components/ShimmerText'
@@ -32,9 +33,14 @@ export default function InstallCommand({
 }: InstallCommandProps) {
   const [packageManager, setPackageManager] = useState<PackageManager>('npm')
   const [managerMenuOpen, setManagerMenuOpen] = useState(false)
+  const [managerMenuPosition, setManagerMenuPosition] = useState<{
+    top: number
+    left: number
+  } | null>(null)
   const [copiedCommand, setCopiedCommand] = useState('')
   const [copyFailed, setCopyFailed] = useState(false)
   const managerControlRef = useRef<HTMLDivElement>(null)
+  const managerMenuRef = useRef<HTMLDivElement>(null)
   const managerTriggerRef = useRef<HTMLButtonElement>(null)
   const reduceMotion = useReducedMotion()
   const commandPrefix =
@@ -50,7 +56,8 @@ export default function InstallCommand({
     const onPointerDown = (event: PointerEvent) => {
       if (
         event.target instanceof Node &&
-        !managerControlRef.current?.contains(event.target)
+        !managerControlRef.current?.contains(event.target) &&
+        !managerMenuRef.current?.contains(event.target)
       ) {
         setManagerMenuOpen(false)
       }
@@ -82,6 +89,31 @@ export default function InstallCommand({
     }
   }
 
+  function toggleManagerMenu() {
+    if (managerMenuOpen) {
+      setManagerMenuOpen(false)
+      return
+    }
+
+    const trigger = managerTriggerRef.current
+    if (trigger) {
+      const rect = trigger.getBoundingClientRect()
+      const menuHeight = 132
+      const menuWidth = 112
+      const top =
+        rect.top >= menuHeight + 8
+          ? rect.top - menuHeight - 6
+          : Math.min(rect.bottom + 6, window.innerHeight - menuHeight - 8)
+      const left = Math.min(
+        Math.max(8, rect.right - menuWidth),
+        window.innerWidth - menuWidth - 8,
+      )
+      setManagerMenuPosition({ top, left })
+    }
+
+    setManagerMenuOpen(true)
+  }
+
   return (
     <div>
       <DoubleBorderCard innerClassName="bg-surface/20 border-border/40">
@@ -99,7 +131,7 @@ export default function InstallCommand({
               aria-haspopup="menu"
               aria-expanded={managerMenuOpen}
               aria-label={`Package manager: ${packageManager}`}
-              onClick={() => setManagerMenuOpen((open) => !open)}
+              onClick={toggleManagerMenu}
               className="border-border/70 bg-background text-foreground font-secondary hover:border-border focus-visible:outline-foreground inline-flex min-w-28 cursor-pointer items-center justify-between gap-3 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <AnimatePresence mode="wait" initial={false}>
@@ -128,49 +160,6 @@ export default function InstallCommand({
               </AnimatePresence>
               <IconSelector size={15} stroke={1.7} aria-hidden="true" />
             </button>
-            <AnimatePresence>
-              {managerMenuOpen && (
-                <motion.div
-                  role="menu"
-                  aria-label="Choose a package manager"
-                  initial={{ opacity: 0, y: -4, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -3, scale: 0.98 }}
-                  transition={{ duration: reduceMotion ? 0 : 0.14 }}
-                  className="border-border bg-background absolute top-[calc(100%+6px)] right-0 z-20 min-w-28 rounded-md border p-1 shadow-md"
-                >
-                  {(Object.keys(PACKAGE_MANAGERS) as PackageManager[]).map(
-                    (manager) => (
-                      <button
-                        key={manager}
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={packageManager === manager}
-                        onClick={() => {
-                          setPackageManager(manager)
-                          setManagerMenuOpen(false)
-                          setCopyFailed(false)
-                        }}
-                        className={`font-secondary focus-visible:outline-foreground flex w-full cursor-pointer items-center justify-between rounded px-2.5 py-1.5 text-left text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] ${
-                          packageManager === manager
-                            ? 'text-foreground bg-surface/70'
-                            : 'text-muted hover:bg-surface/50 hover:text-foreground'
-                        }`}
-                      >
-                        {manager}
-                        {packageManager === manager && (
-                          <IconCheck
-                            size={13}
-                            stroke={1.8}
-                            aria-hidden="true"
-                          />
-                        )}
-                      </button>
-                    ),
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
 
@@ -247,6 +236,55 @@ export default function InstallCommand({
             ? 'Command copied.'
             : 'Copies the install command for your selected package manager.'}
       </p>
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {managerMenuOpen && managerMenuPosition ? (
+              <motion.div
+                ref={managerMenuRef}
+                role="menu"
+                aria-label="Choose a package manager"
+                initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                transition={{ duration: reduceMotion ? 0 : 0.14 }}
+                style={{
+                  position: 'fixed',
+                  top: managerMenuPosition.top,
+                  left: managerMenuPosition.left,
+                }}
+                className="border-border bg-background z-[100] min-w-28 rounded-md border p-1 shadow-md"
+              >
+                {(Object.keys(PACKAGE_MANAGERS) as PackageManager[]).map(
+                  (manager) => (
+                    <button
+                      key={manager}
+                      type="button"
+                      role="menuitemradio"
+                      aria-checked={packageManager === manager}
+                      onClick={() => {
+                        setPackageManager(manager)
+                        setManagerMenuOpen(false)
+                        setCopyFailed(false)
+                      }}
+                      className={`font-secondary focus-visible:outline-foreground flex w-full cursor-pointer items-center justify-between rounded px-2.5 py-1.5 text-left text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] ${
+                        packageManager === manager
+                          ? 'text-foreground bg-surface/70'
+                          : 'text-muted hover:bg-surface/50 hover:text-foreground'
+                      }`}
+                    >
+                      {manager}
+                      {packageManager === manager && (
+                        <IconCheck size={13} stroke={1.8} aria-hidden="true" />
+                      )}
+                    </button>
+                  ),
+                )}
+              </motion.div>
+            ) : null}
+          </AnimatePresence>,
+          document.body,
+        )}
     </div>
   )
 }

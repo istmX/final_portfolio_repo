@@ -3,15 +3,7 @@ import { SITE_URL } from '@/app/portfolio-components/site'
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    // Explicitly permit search and retrieval crawlers that honor per-agent groups.
-    rules: [
-      { userAgent: '*', allow: '/' },
-      { userAgent: 'OAI-SearchBot', allow: '/' },
-      { userAgent: 'ChatGPT-User', allow: '/' },
-      { userAgent: 'Claude-SearchBot', allow: '/' },
-      { userAgent: 'ClaudeBot', allow: '/' },
-      { userAgent: 'PerplexityBot', allow: '/' },
-    ],
+    rules: [{ userAgent: '*', allow: '/' }],
     sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }

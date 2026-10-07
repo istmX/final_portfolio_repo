@@ -5,7 +5,7 @@ export default function PortfolioFooter() {
   return (
     <footer
       aria-label="Footer"
-      className="relative mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-0"
+      className="relative mx-auto w-full max-w-3xl px-4 pb-20 sm:px-6 sm:pb-0 lg:px-0"
     >
       <div
         aria-hidden="true"

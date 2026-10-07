@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
+import { IconMoonStars, IconSun } from '@tabler/icons-react'
 
 type Theme = 'light' | 'dark'
 
@@ -53,32 +54,9 @@ function ThemeToggle() {
         className="flex items-center justify-center"
       >
         {theme === 'dark' ? (
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="size-5"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-            <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
-          </svg>
+          <IconSun aria-hidden="true" className="size-5" stroke={1.7} />
         ) : (
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="size-5"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454l0 .008" />
-          </svg>
+          <IconMoonStars aria-hidden="true" className="size-5" stroke={1.7} />
         )}
       </motion.span>
     </motion.button>

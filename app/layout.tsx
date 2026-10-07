@@ -22,33 +22,38 @@ const GeistMonoFont = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'Aryan | AI Developer & Full-Stack Builder',
+  title: {
+    default: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
+    template: '%s',
+  },
   description:
-    'Aryan is an AI developer and full-stack builder from India creating AI agents, Python and FastAPI backends, web products, and mobile apps.',
-  applicationName: 'Aryan’s Portfolio',
-  alternates: { canonical: '/' },
+    'Aryan, also known as istmX, is a developer and student in India building AI agents, full-stack products, and ISTMX, a source-first React component library.',
+  applicationName: 'Aryan’s portfolio and ISTMX component library',
+  authors: [{ name: 'Aryan', url: SITE_URL }],
+  creator: 'Aryan',
+  category: 'technology',
   openGraph: {
     type: 'website',
     url: SITE_URL,
     siteName: 'Aryan’s Portfolio',
-    title: 'Aryan | AI Developer & Full-Stack Builder',
+    title: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
     description:
-      'AI developer and full-stack builder from India working across agents, Python backends, web, and mobile.',
+      'Aryan builds AI agents, full-stack products, and ISTMX, a source-first React component library.',
     locale: 'en_IN',
     images: [
       {
         url: '/hero.png',
         width: 1536,
         height: 1536,
-        alt: 'Aryan, AI developer and full-stack builder',
+        alt: 'Illustrated portrait of Aryan, also known as aryanonai',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aryan | AI Developer & Full-Stack Builder',
+    title: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
     description:
-      'AI developer and full-stack builder from India working across agents, Python backends, web, and mobile.',
+      'Aryan builds AI agents, full-stack products, and ISTMX, a source-first React component library.',
     images: ['/hero.png'],
   },
   robots: {
@@ -62,21 +67,6 @@ export const metadata: Metadata = {
       'max-video-preview': -1,
     },
   },
-  keywords: [
-    'Aryan',
-    'AI developer',
-    'full-stack developer',
-    'AI agents',
-    'multi-agent systems',
-    'Crew',
-    'CodeCat',
-    'Noiseless',
-    'Python developer',
-    'FastAPI developer',
-    'React Native developer',
-    'mobile app development',
-    'India',
-  ],
 }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {

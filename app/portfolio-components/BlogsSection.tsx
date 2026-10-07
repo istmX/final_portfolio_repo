@@ -52,7 +52,6 @@ export default function BlogsSection() {
                     alt={post.imageAlt ?? ''}
                     fill
                     sizes="(max-width: 640px) 96px, 190px"
-                    unoptimized
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                   />
                 )}
