@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   color-scheme: light;
@@ -31,7 +31,7 @@
 }
 
 /* Explicit theme values take precedence over the system preference. */
-:root[data-theme="light"] {
+:root[data-theme='light'] {
   color-scheme: light;
   --background: #f5f5f5; /* neutral-100 */
   --foreground: #171717; /* neutral-900 */
@@ -45,7 +45,7 @@
   --contribution-level-4: #404040;
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   color-scheme: dark;
   --background: #0a0a0a; /* neutral-950 */
   --foreground: #f5f5f5; /* neutral-100 */
@@ -76,7 +76,9 @@ body {
   overflow-x: clip;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 .mobile-nav-panel {
   position: absolute;
@@ -85,26 +87,47 @@ html { scroll-behavior: smooth; }
 }
 
 .mobile-nav-panel::before {
-  content: "";
+  content: '';
   position: absolute;
   z-index: -1;
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: conic-gradient(from var(--menu-edge-angle, 0deg), transparent 0deg, rgb(125 211 252 / 0.65) 65deg, rgb(196 181 253 / 0.35) 125deg, transparent 190deg, transparent 360deg);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  background: conic-gradient(
+    from var(--menu-edge-angle, 0deg),
+    transparent 0deg,
+    rgb(125 211 252 / 0.65) 65deg,
+    rgb(196 181 253 / 0.35) 125deg,
+    transparent 190deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: menu-edge-drift 7s linear infinite;
   pointer-events: none;
 }
 
-@keyframes menu-edge-drift { to { --menu-edge-angle: 360deg; } }
-@property --menu-edge-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes menu-edge-drift {
+  to {
+    --menu-edge-angle: 360deg;
+  }
+}
+@property --menu-edge-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .mobile-nav-panel::before { animation: none; }
+  html {
+    scroll-behavior: auto;
+  }
+  .mobile-nav-panel::before {
+    animation: none;
+  }
 }
 
 .nav-link-label {
@@ -115,11 +138,35 @@ html { scroll-behavior: smooth; }
   --dot-cursor-x: -100px;
   --dot-cursor-y: -100px;
   --dot-cursor-mask:
-    radial-gradient(ellipse 35px 22px at calc(var(--dot-cursor-x) - 15px) calc(var(--dot-cursor-y) - 4px), transparent 0 18px, #000 35px),
-    radial-gradient(ellipse 29px 26px at calc(var(--dot-cursor-x) + 12px) calc(var(--dot-cursor-y) - 12px), transparent 0 14px, #000 29px),
-    radial-gradient(ellipse 32px 20px at calc(var(--dot-cursor-x) + 13px) calc(var(--dot-cursor-y) + 13px), transparent 0 16px, #000 32px),
-    radial-gradient(ellipse 24px 27px at calc(var(--dot-cursor-x) - 13px) calc(var(--dot-cursor-y) + 15px), transparent 0 12px, #000 27px);
-  background-image: radial-gradient(circle, var(--muted) 0.7px, transparent 0.9px);
+    radial-gradient(
+      ellipse 35px 22px at calc(var(--dot-cursor-x) - 15px)
+        calc(var(--dot-cursor-y) - 4px),
+      transparent 0 18px,
+      #000 35px
+    ),
+    radial-gradient(
+      ellipse 29px 26px at calc(var(--dot-cursor-x) + 12px)
+        calc(var(--dot-cursor-y) - 12px),
+      transparent 0 14px,
+      #000 29px
+    ),
+    radial-gradient(
+      ellipse 32px 20px at calc(var(--dot-cursor-x) + 13px)
+        calc(var(--dot-cursor-y) + 13px),
+      transparent 0 16px,
+      #000 32px
+    ),
+    radial-gradient(
+      ellipse 24px 27px at calc(var(--dot-cursor-x) - 13px)
+        calc(var(--dot-cursor-y) + 15px),
+      transparent 0 12px,
+      #000 27px
+    );
+  background-image: radial-gradient(
+    circle,
+    var(--muted) 0.7px,
+    transparent 0.9px
+  );
   background-size: 6px 6px;
   -webkit-mask-image: var(--dot-cursor-mask);
   mask-image: var(--dot-cursor-mask);
@@ -130,11 +177,9 @@ html { scroll-behavior: smooth; }
 
 .hero-dot-texture {
   -webkit-mask-image:
-    var(--dot-cursor-mask),
-    linear-gradient(to bottom, #000, transparent);
+    var(--dot-cursor-mask), linear-gradient(to bottom, #000, transparent);
   mask-image:
-    var(--dot-cursor-mask),
-    linear-gradient(to bottom, #000, transparent);
+    var(--dot-cursor-mask), linear-gradient(to bottom, #000, transparent);
   -webkit-mask-composite: source-in, source-in, source-in, source-in;
   mask-composite: intersect;
 }
@@ -165,17 +210,31 @@ html { scroll-behavior: smooth; }
 
 .page-divider {
   width: 4px;
-  background-image: radial-gradient(circle, var(--muted) 1.15px, transparent 1.3px);
+  background-image: radial-gradient(
+    circle,
+    var(--muted) 1.5px,
+    transparent 1.7px
+  );
   background-position: center top;
-  background-size: 4px 7px;
+  background-size: 5px 8px;
   opacity: 0.7;
 }
 
-.contribution-level-0 { background-color: var(--contribution-level-0); }
-.contribution-level-1 { background-color: var(--contribution-level-1); }
-.contribution-level-2 { background-color: var(--contribution-level-2); }
-.contribution-level-3 { background-color: var(--contribution-level-3); }
-.contribution-level-4 { background-color: var(--contribution-level-4); }
+.contribution-level-0 {
+  background-color: var(--contribution-level-0);
+}
+.contribution-level-1 {
+  background-color: var(--contribution-level-1);
+}
+.contribution-level-2 {
+  background-color: var(--contribution-level-2);
+}
+.contribution-level-3 {
+  background-color: var(--contribution-level-3);
+}
+.contribution-level-4 {
+  background-color: var(--contribution-level-4);
+}
 
 .project-image-glow {
   position: absolute;
@@ -185,7 +244,9 @@ html { scroll-behavior: smooth; }
   opacity: 0;
   filter: blur(24px);
   transform: scale(0.88);
-  transition: opacity 350ms ease, transform 450ms ease;
+  transition:
+    opacity 350ms ease,
+    transform 450ms ease;
   pointer-events: none;
 }
 

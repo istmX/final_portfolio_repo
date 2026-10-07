@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { BLOG_POSTS } from './blogs/blogData'
-import { SITE_URL } from '../lib/site'
+import { SITE_URL } from '@/app/portfolio-components/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

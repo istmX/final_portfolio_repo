@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function CatHomePage() {
   return (
-    <main className="min-h-dvh bg-background text-foreground">
+    <main className="bg-background text-foreground min-h-dvh">
       <CatHomeGame />
     </main>
   )
