@@ -165,7 +165,10 @@ export default function GitHubContributions() {
                   <span
                     key={day.date}
                     title={contributionDescription(day)}
-                    className={`contribution-day contribution-level-${Math.max(0, Math.min(4, day.level))} aspect-square min-w-0 rounded-[2px]`}
+                    style={{
+                      backgroundColor: `var(--contribution-level-${Math.max(0, Math.min(4, day.level))})`,
+                    }}
+                    className="aspect-square min-w-0 rounded-[2px]"
                   />
                 ) : (
                   <span
@@ -198,7 +201,10 @@ export default function GitHubContributions() {
               <span
                 key={level}
                 aria-hidden="true"
-                className={`contribution-day contribution-level-${level} size-2.5 rounded-[2px]`}
+                style={{
+                  backgroundColor: `var(--contribution-level-${level})`,
+                }}
+                className="size-2.5 rounded-[2px]"
               />
             ))}
             <span>More</span>

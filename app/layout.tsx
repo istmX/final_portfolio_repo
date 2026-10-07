@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { Schibsted_Grotesk, Inter } from 'next/font/google'
-import PortfolioPreloader from '@/app/portfolio-components/PortfolioPreloader'
+import { Geist_Mono, Schibsted_Grotesk, Inter } from 'next/font/google'
 import ScrollToHome from '@/app/portfolio-components/ScrollToHome'
 import { SITE_URL } from '@/app/portfolio-components/site'
 import './globals.css'
@@ -13,6 +12,11 @@ const Grotesk = Schibsted_Grotesk({
 
 const InterFont = Inter({
   variable: '--font-inter',
+  subsets: ['latin'],
+})
+
+const GeistMonoFont = Geist_Mono({
+  variable: '--font-geist-mono',
   subsets: ['latin'],
 })
 
@@ -79,12 +83,11 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html
       lang="en"
-      className={`${Grotesk.variable} ${InterFont.variable} h-full antialiased`}
+      className={`${Grotesk.variable} ${InterFont.variable} ${GeistMonoFont.variable} h-full scroll-smooth antialiased motion-reduce:scroll-auto`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">
+      <body className="bg-background text-foreground font-secondary flex min-h-full flex-col overflow-x-clip">
         <ScrollToHome />
-        <PortfolioPreloader />
         {children}
         <Script id="theme-init" strategy="beforeInteractive">
           {`try { var savedTheme = localStorage.getItem('istmx-theme'); if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.dataset.theme = savedTheme; } catch (_) {}`}

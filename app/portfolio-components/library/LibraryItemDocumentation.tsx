@@ -1,56 +1,120 @@
 'use client'
 
 import { useState } from 'react'
-import { IconArrowUpRight } from '@tabler/icons-react'
-import AnimatedRole from '@/app/portfolio-components/AnimatedRole'
-import ShimmerText from '@/app/portfolio-components/ShimmerText'
+import PillTabs from '@/app/portfolio-components/PillTabs'
+import CodeBlock from '@/app/portfolio-components/CodeBlock'
+import DoubleBorderCard from '@/app/portfolio-components/DoubleBorderCard'
+import PortfolioSectionFrame from '@/app/portfolio-components/PortfolioSectionFrame'
+import {
+  IconArrowsJoin,
+  IconBraces,
+  IconPackage,
+  IconPoint,
+} from '@tabler/icons-react'
+import { AnimatedText } from '@/components/ui/animated-text'
+import { TechIcon, type TechIconName } from '../icons'
 import InstallCommand from './InstallCommand'
 import type { LibraryItem } from './library-items'
 
-function CodeBlock({ children }: { children: string }) {
-  return (
-    <pre className="border-border bg-surface/50 overflow-x-auto rounded-lg border p-4 font-mono text-[11px] leading-6 sm:p-5 sm:text-xs">
-      <code>{children}</code>
-    </pre>
-  )
-}
+const DIFF_EXAMPLE = `+ import { AnimatedText } from "@/components/ui/animated-text"
+
+- <h1 className="text-xl">I am an AI Engineer</h1>
++ <AnimatedText
++   prefix="I am"
++   items={["an AI Engineer", "a Full-Stack Developer", "a Builder"]}
++ />`
 
 function Preview({ item }: { item: LibraryItem }) {
-  if (item.slug === 'shimmer-text') {
-    return (
-      <div className="flex min-h-52 items-center justify-center">
-        <ShimmerText className="text-xl font-medium sm:text-2xl">
-          AI Engineer
-        </ShimmerText>
-      </div>
-    )
-  }
-
   if (item.slug === 'animated-text') {
     return (
-      <div className="flex min-h-52 items-center justify-center gap-2 text-lg font-medium">
-        <span>I am</span>
-        <AnimatedRole />
+      <div className="flex min-h-52 items-center justify-center text-lg font-medium">
+        <AnimatedText
+          prefix="I am"
+          items={['an AI Engineer', 'a Full-Stack Developer', 'a Builder']}
+          effects={['blur', 'shimmer', 'slide', 'wave']}
+          effectOptions={{
+            blur: { amount: 6 },
+            slide: { distance: 8 },
+            shimmer: { duration: 2.2 },
+          }}
+          scale={0.96}
+          className="text-lg"
+        />
       </div>
     )
   }
 
-  if (item.slug === 'layered-button') {
-    return (
-      <div className="flex min-h-52 items-center justify-center">
-        <button
-          type="button"
-          className="border-border bg-background text-foreground inline-flex items-center gap-4 border px-5 py-3 text-sm font-medium shadow-[4px_4px_0_var(--border)] transition-transform hover:-translate-y-0.5 active:translate-y-0"
-        >
-          Explore projects <IconArrowUpRight size={16} stroke={1.6} />
-        </button>
-      </div>
-    )
-  }
+  return null
+}
 
+const CN_HELPER = `import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}`
+
+const DEPENDENCY_TECH_ICONS: Partial<Record<string, TechIconName>> = {
+  React: 'React',
+  Motion: 'Motion',
+  'Tailwind CSS': 'Tailwind CSS',
+}
+
+function ManualInstallation({
+  item,
+  sourcePath,
+}: {
+  item: LibraryItem
+  sourcePath: string
+}) {
   return (
-    <div className="text-muted flex min-h-52 items-center justify-center font-mono text-5xl">
-      ᓚᘏᗢ
+    <div className="mt-4 space-y-5">
+      <section>
+        <h3 className="text-sm font-medium">1. Install the dependencies</h3>
+        <p className="text-muted mt-1 mb-3 text-xs leading-5">
+          React and Tailwind CSS should already be set up in your project.
+          Install Motion and the class utilities used by this component.
+        </p>
+        <InstallCommand
+          component="motion clsx tailwind-merge"
+          mode="dependencies"
+        />
+      </section>
+
+      <section>
+        <h3 className="text-sm font-medium">2. Add the cn helper</h3>
+        <p className="text-muted mt-1 mb-3 text-xs leading-5">
+          Create <code className="font-mono">lib/utils.ts</code> and add the
+          helper used to merge Tailwind classes.
+        </p>
+        <CodeBlock label="lib/utils.ts">{CN_HELPER}</CodeBlock>
+      </section>
+
+      <section>
+        <h3 className="text-sm font-medium">3. Add the component source</h3>
+        <p className="text-muted mt-1 text-xs leading-5">
+          Copy the source from the Code tab above into{' '}
+          <code className="font-mono">{sourcePath}</code>, then update the
+          <code className="mx-1 font-mono">@/</code> alias if your project uses
+          a different import path.
+        </p>
+      </section>
+
+      <section>
+        <h3 className="text-sm font-medium">4. Use the component</h3>
+        <p className="text-muted mt-1 mb-3 text-xs leading-5">
+          Import it from the file you added and customize the words and effect.
+        </p>
+        <CodeBlock label="Usage">{item.usage}</CodeBlock>
+        <div className="mt-4">
+          <p className="text-muted mb-2 font-mono text-[10px] tracking-[0.14em] uppercase">
+            Diff / Migration example
+          </p>
+          <CodeBlock label="Migration diff" diff>
+            {DIFF_EXAMPLE}
+          </CodeBlock>
+        </div>
+      </section>
     </div>
   )
 }
@@ -61,150 +125,188 @@ export default function LibraryItemDocumentation({
   item: LibraryItem
 }) {
   const [view, setView] = useState<'preview' | 'code'>('preview')
+  const [installMode, setInstallMode] = useState<'command' | 'manual'>(
+    'command',
+  )
   const sourcePath = `components/ui/${item.slug}.tsx`
 
   return (
-    <div className="px-8 pb-24 sm:px-10">
-      <header className="pt-12 sm:pt-16">
+    <div className="px-8 pb-14 sm:px-8 sm:pb-16">
+      <header className="pt-7 sm:pt-9">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-muted font-mono text-[10px] tracking-[0.16em] uppercase">
+          <span className="text-muted text-[10px] font-medium tracking-[0.18em] uppercase">
             {item.category} / COMPONENT
           </span>
-          <span className="text-muted border-border/70 rounded-full border px-2 py-0.5 font-mono text-[9px]">
-            Draft
-          </span>
         </div>
-        <h1 className="font-display mt-3 text-4xl font-medium tracking-[-0.05em] sm:text-5xl">
+        <h1 className="font-display mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
           {item.name}
         </h1>
-        <p className="text-muted mt-3 max-w-xl text-sm leading-6">
+        <p className="text-muted mt-2 max-w-xl text-xs leading-5 sm:text-sm">
           {item.description}
         </p>
       </header>
 
-      <section className="mt-8" aria-label={`${item.name} preview and code`}>
-        <div
-          role="group"
-          aria-label="Component view"
-          className="border-border/70 flex gap-1 border-b border-dotted"
-        >
-          {(['preview', 'code'] as const).map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              aria-pressed={view === tab}
-              onClick={() => setView(tab)}
-              className={`focus-visible:outline-foreground rounded-t-md px-3 py-2 text-xs capitalize transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                view === tab
-                  ? 'text-foreground border-foreground border-b'
-                  : 'text-muted hover:text-foreground'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-          <span className="text-muted ml-auto self-center font-mono text-[9px] tracking-[0.12em] uppercase">
-            {view === 'preview' ? 'Live preview' : 'Source draft'}
+      <section className="mt-7" aria-label={`${item.name} preview and code`}>
+        <div className="flex items-center justify-between gap-3">
+          <PillTabs
+            options={['preview', 'code'] as const}
+            value={view}
+            onChange={setView}
+            layoutId="component-view-pill"
+            ariaLabel="Component view"
+          />
+          <span className="text-muted font-mono text-[9px] tracking-[0.12em] uppercase">
+            {view === 'preview' ? 'Live preview' : 'Source code'}
           </span>
         </div>
 
         {view === 'preview' ? (
-          <div className="border-border/70 bg-background mt-3 overflow-hidden rounded-lg border">
+          <DoubleBorderCard
+            className="mt-3"
+            innerClassName="bg-background flex min-h-52 items-center justify-center p-4 sm:p-6"
+          >
             <Preview item={item} />
-          </div>
+          </DoubleBorderCard>
         ) : (
-          <div className="mt-3">
-            <p className="text-muted mb-2 text-xs">
-              Source will be published here when this component is implemented.
-            </p>
-            <CodeBlock>{`// ${sourcePath}\n// Editable component source is coming soon.`}</CodeBlock>
-          </div>
+          <CodeBlock label={sourcePath} expandable>
+            {item.sourceCode}
+          </CodeBlock>
         )}
       </section>
 
-      <section className="mt-10" aria-labelledby="features-title">
-        <h2 id="features-title" className="font-display text-xl font-medium">
+      <PortfolioSectionFrame className="mt-8" ariaLabelledby="features-title">
+        <h2
+          id="features-title"
+          className="font-display text-lg font-semibold sm:text-xl"
+        >
           Features
         </h2>
         <ul className="text-muted mt-3 grid gap-2 text-sm leading-6">
           {item.features.map((feature) => (
             <li key={feature} className="flex gap-2">
-              <span aria-hidden="true" className="text-foreground">
-                ·
-              </span>
+              <IconPoint
+                aria-hidden="true"
+                className="text-foreground mt-0.5 shrink-0"
+                size={15}
+                stroke={2}
+              />
               {feature}
             </li>
           ))}
         </ul>
-      </section>
+      </PortfolioSectionFrame>
 
-      <section
-        className="border-border/70 mt-10 border-t border-dotted pt-7"
-        aria-labelledby="installation-title"
+      <PortfolioSectionFrame
+        className="mt-8"
+        ariaLabelledby="installation-title"
       >
         <h2
           id="installation-title"
-          className="font-display text-xl font-medium"
+          className="font-display text-lg font-semibold sm:text-xl"
         >
           Installation
         </h2>
         <p className="text-muted mt-2 mb-4 text-sm leading-6">
-          Choose your package manager to get the component command.
+          Choose the CLI command or install the component manually.
         </p>
-        <InstallCommand component={item.commandName} />
+        <PillTabs
+          options={['command', 'manual'] as const}
+          value={installMode}
+          onChange={setInstallMode}
+          layoutId="installation-method-pill"
+          ariaLabel="Installation method"
+        />
 
-        <h3 className="mt-7 text-sm font-medium">Manual installation</h3>
-        <ol className="text-muted mt-3 list-inside list-decimal space-y-2 text-xs leading-5 sm:text-sm">
-          <li>Install the dependencies listed below in your own project.</li>
-          <li>
-            Copy the component source into{' '}
-            <code className="text-foreground font-mono">{sourcePath}</code>.
-          </li>
-          <li>Adjust imports and styles to match your project.</li>
-        </ol>
-
-        <div className="mt-5">
-          <p className="text-muted mb-2 font-mono text-[9px] tracking-[0.12em] uppercase">
-            Dependencies
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {item.dependencies.map((dependency) => (
-              <span
-                key={dependency}
-                className="border-border/70 text-muted rounded-full border px-2.5 py-1 text-[10px]"
-              >
-                {dependency}
-              </span>
-            ))}
-          </div>
+        <div role="tabpanel" className="mt-4">
+          {installMode === 'command' ? (
+            <InstallCommand component={item.commandName} />
+          ) : (
+            <ManualInstallation item={item} sourcePath={sourcePath} />
+          )}
         </div>
-      </section>
 
-      <section
-        className="border-border/70 mt-10 border-t border-dotted pt-7"
-        aria-labelledby="usage-title"
-      >
-        <h2 id="usage-title" className="font-display text-xl font-medium">
+        {installMode === 'command' ? (
+          <div className="mt-5">
+            <p className="text-muted mb-2 font-mono text-[9px] tracking-[0.12em] uppercase">
+              Dependencies
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {item.dependencies.map((dependency) => (
+                <span
+                  key={dependency}
+                  className="bg-surface/80 text-foreground inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs leading-4 font-medium"
+                >
+                  {DEPENDENCY_TECH_ICONS[dependency] ? (
+                    <TechIcon
+                      name={DEPENDENCY_TECH_ICONS[dependency]!}
+                      className="size-4 shrink-0"
+                    />
+                  ) : dependency === 'clsx' ? (
+                    <IconBraces
+                      size={15}
+                      stroke={1.7}
+                      className="shrink-0"
+                      aria-hidden="true"
+                    />
+                  ) : dependency === 'tailwind-merge' ? (
+                    <IconArrowsJoin
+                      size={15}
+                      stroke={1.7}
+                      className="shrink-0"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <IconPackage
+                      size={15}
+                      stroke={1.7}
+                      className="shrink-0"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {dependency}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </PortfolioSectionFrame>
+
+      <PortfolioSectionFrame className="mt-8" ariaLabelledby="usage-title">
+        <h2
+          id="usage-title"
+          className="font-display text-lg font-semibold sm:text-xl"
+        >
           Usage
         </h2>
         <p className="text-muted mt-2 mb-4 text-sm leading-6">
           Import the component from the file you copied it to, then use it like
           any other React component.
         </p>
-        <CodeBlock>{item.usage}</CodeBlock>
-      </section>
+        <CodeBlock label="Usage">{item.usage}</CodeBlock>
+      </PortfolioSectionFrame>
 
-      <section className="mt-10" aria-labelledby="composition-title">
-        <h2 id="composition-title" className="font-display text-xl font-medium">
+      <PortfolioSectionFrame
+        className="mt-8"
+        ariaLabelledby="composition-title"
+      >
+        <h2
+          id="composition-title"
+          className="font-display text-lg font-semibold sm:text-xl"
+        >
           Composition
         </h2>
-        <pre className="text-muted border-border/70 bg-surface/30 mt-3 overflow-x-auto rounded-lg border border-dotted p-4 font-mono text-xs leading-6">
-          {item.composition.join('\n')}
-        </pre>
-      </section>
+        <div className="mt-3">
+          <CodeBlock label="Composition">
+            {item.composition.join('\n')}
+          </CodeBlock>
+        </div>
+      </PortfolioSectionFrame>
 
-      <section className="mt-10" aria-labelledby="api-title">
-        <h2 id="api-title" className="font-display text-xl font-medium">
+      <PortfolioSectionFrame className="mt-8" ariaLabelledby="api-title">
+        <h2
+          id="api-title"
+          className="font-display text-lg font-semibold sm:text-xl"
+        >
           API reference
         </h2>
         <div className="border-border/70 mt-3 divide-y divide-dotted border-y border-dotted">
@@ -224,38 +326,44 @@ export default function LibraryItemDocumentation({
           ))}
         </div>
         <p className="text-muted mt-2 text-[10px]">
-          Draft API — names and types may change before source release.
+          The listed props match the current component implementation.
         </p>
-      </section>
+      </PortfolioSectionFrame>
 
-      <section className="mt-10" aria-labelledby="attributes-title">
-        <h2 id="attributes-title" className="font-display text-xl font-medium">
+      <PortfolioSectionFrame className="mt-8" ariaLabelledby="attributes-title">
+        <h2
+          id="attributes-title"
+          className="font-display text-lg font-semibold sm:text-xl"
+        >
           Data attributes
         </h2>
         <p className="text-muted mt-2 text-sm leading-6">
-          No custom data attributes are defined in this draft.
+          AnimatedText does not expose custom data attributes.
         </p>
-      </section>
+      </PortfolioSectionFrame>
 
-      <section className="mt-10" aria-labelledby="examples-title">
-        <h2 id="examples-title" className="font-display text-xl font-medium">
+      <PortfolioSectionFrame className="mt-8" ariaLabelledby="examples-title">
+        <h2
+          id="examples-title"
+          className="font-display text-lg font-semibold sm:text-xl"
+        >
           Examples
         </h2>
         <p className="text-muted mt-2 text-sm leading-6">{item.example}</p>
-      </section>
+      </PortfolioSectionFrame>
 
-      <section
-        className="border-border/70 mt-10 border-t border-dotted pt-7"
-        aria-labelledby="credits-title"
-      >
-        <h2 id="credits-title" className="font-display text-xl font-medium">
+      <PortfolioSectionFrame className="mt-8" ariaLabelledby="credits-title">
+        <h2
+          id="credits-title"
+          className="font-display text-lg font-semibold sm:text-xl"
+        >
           Credits &amp; inspiration
         </h2>
         <p className="text-muted mt-2 text-sm leading-6">
           Designed for ISTMX. The source-first, copy-and-own philosophy is
           inspired by shadcn/ui.
         </p>
-      </section>
+      </PortfolioSectionFrame>
     </div>
   )
 }

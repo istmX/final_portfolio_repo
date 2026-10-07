@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Contanier from '@/app/portfolio-components/Contanier'
 import Navbar from '@/app/portfolio-components/Navbar'
 import PortfolioFooter from '@/app/portfolio-components/PortfolioFooter'
+import ScrollBlur from '@/app/portfolio-components/ScrollBlur'
 import LibraryCatalog from '@/app/portfolio-components/library/LibraryCatalog'
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function LibraryPage() {
         </Contanier>
       </main>
       <PortfolioFooter />
+      <ScrollBlur />
     </>
   )
 }

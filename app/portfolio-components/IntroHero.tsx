@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import AnimatedRole from './AnimatedRole'
+import { AnimatedText } from '@/components/ui/animated-text'
 import IndiaClock from './IndiaClock'
 import InteractiveDotField from './InteractiveDotField'
 import { TechIcon, type TechIconName } from './icons'
@@ -72,7 +72,7 @@ export default function IntroHero() {
               </h1>
               <p className="text-muted mt-1 flex flex-wrap items-center gap-x-1.5">
                 <span className="text-sm sm:text-base">I&apos;m</span>
-                <AnimatedRole />
+                <AnimatedText />
               </p>
             </div>
           </div>

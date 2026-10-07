@@ -15,6 +15,9 @@ const NAV_ITEMS = [
   { label: 'Blogs', href: '/blogs' },
 ]
 
+const NAV_LINK_LABEL_CLASS =
+  'nav-link-label inline-block transition-colors duration-150 group-hover/nav:bg-[linear-gradient(110deg,var(--muted)_38%,var(--foreground)_50%,var(--muted)_62%)] group-hover/nav:bg-[length:220%_100%] group-hover/nav:bg-clip-text group-hover/nav:text-transparent group-hover/nav:animate-[nav-text-shimmer_750ms_ease-out_forwards] group-focus-visible/nav:bg-[linear-gradient(110deg,var(--muted)_38%,var(--foreground)_50%,var(--muted)_62%)] group-focus-visible/nav:bg-[length:220%_100%] group-focus-visible/nav:bg-clip-text group-focus-visible/nav:text-transparent group-focus-visible/nav:animate-[nav-text-shimmer_750ms_ease-out_forwards] motion-reduce:group-hover/nav:animate-none motion-reduce:group-hover/nav:bg-none motion-reduce:group-hover/nav:text-foreground motion-reduce:group-focus-visible/nav:animate-none motion-reduce:group-focus-visible/nav:bg-none motion-reduce:group-focus-visible/nav:text-foreground'
+
 function Navbar() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -80,13 +83,13 @@ function Navbar() {
                   <Link
                     href={item.href}
                     aria-current={isActive ? 'page' : undefined}
-                    className={`block rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`group/nav block rounded-full px-3 py-2 text-sm font-medium transition-colors ${
                       isActive
                         ? 'text-foreground'
                         : 'text-muted hover:text-foreground'
                     }`}
                   >
-                    <span className="nav-link-label">{item.label}</span>
+                    <span className={NAV_LINK_LABEL_CLASS}>{item.label}</span>
                   </Link>
                 </motion.li>
               )
@@ -143,7 +146,7 @@ function Navbar() {
             <motion.ul
               ref={menuRef}
               id="mobile-navigation"
-              className="mobile-nav-panel bg-background/95 absolute top-full left-1/2 z-50 mt-2 flex w-[min(20rem,calc(100vw-2rem))] -translate-x-1/2 flex-col gap-1 rounded-xl border p-2 shadow-xl backdrop-blur-md sm:hidden"
+              className="mobile-nav-panel bg-background/95 absolute top-full left-1/2 isolate z-50 mt-2 flex w-[min(20rem,calc(100vw-2rem))] -translate-x-1/2 flex-col gap-1 rounded-xl border border-transparent p-2 shadow-xl backdrop-blur-md sm:hidden"
               initial={{ opacity: 0, y: -7, scale: 0.985 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -5, scale: 0.99 }}
@@ -164,13 +167,13 @@ function Navbar() {
                       href={item.href}
                       aria-current={isActive ? 'page' : undefined}
                       onClick={() => setMenuOpen(false)}
-                      className={`block rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+                      className={`group/nav block rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors ${
                         isActive
                           ? 'text-foreground'
                           : 'text-muted hover:text-foreground'
                       }`}
                     >
-                      <span className="nav-link-label">{item.label}</span>
+                      <span className={NAV_LINK_LABEL_CLASS}>{item.label}</span>
                     </Link>
                   </motion.li>
                 )

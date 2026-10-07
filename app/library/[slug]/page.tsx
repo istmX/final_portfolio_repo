@@ -5,6 +5,7 @@ import { IconArrowLeft } from '@tabler/icons-react'
 import Contanier from '@/app/portfolio-components/Contanier'
 import Navbar from '@/app/portfolio-components/Navbar'
 import PortfolioFooter from '@/app/portfolio-components/PortfolioFooter'
+import ScrollBlur from '@/app/portfolio-components/ScrollBlur'
 import { getLibraryItem } from '@/app/portfolio-components/library/library-items'
 import LibraryItemDocumentation from '@/app/portfolio-components/library/LibraryItemDocumentation'
 
@@ -33,19 +34,20 @@ export default async function LibraryItemPage({ params }: LibraryDetailProps) {
       <main className="min-h-dvh">
         <Contanier>
           <Navbar />
-          <div className="px-8 pt-6 sm:px-10">
+          <div className="px-8 pt-8 sm:px-8 sm:pt-10">
             <Link
               href="/library"
-              className="text-muted hover:text-foreground text-xs transition-colors"
+              className="text-muted hover:text-foreground focus-visible:outline-foreground inline-flex min-h-8 cursor-pointer items-center gap-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <IconArrowLeft size={14} stroke={1.7} aria-hidden="true" />
-              All components
+              <span>All components</span>
             </Link>
           </div>
           <LibraryItemDocumentation item={item} />
         </Contanier>
       </main>
       <PortfolioFooter />
+      <ScrollBlur />
     </>
   )
 }

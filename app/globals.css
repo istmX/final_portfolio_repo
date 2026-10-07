@@ -7,6 +7,7 @@
   --surface: #e5e5e5; /* neutral-200 */
   --muted: #525252; /* neutral-600 */
   --border: #d4d4d4; /* neutral-300 */
+  --button-glow: rgb(23 23 23 / 0.32);
   --contribution-level-0: #e5e5e5;
   --contribution-level-1: #d4d4d4;
   --contribution-level-2: #a3a3a3;
@@ -22,6 +23,7 @@
     --surface: #171717; /* neutral-900 */
     --muted: #a3a3a3; /* neutral-400 */
     --border: #262626; /* neutral-800 */
+    --button-glow: rgb(245 245 245 / 0.12);
     --contribution-level-0: #262626;
     --contribution-level-1: #404040;
     --contribution-level-2: #525252;
@@ -38,6 +40,7 @@
   --surface: #e5e5e5; /* neutral-200 */
   --muted: #525252; /* neutral-600 */
   --border: #d4d4d4; /* neutral-300 */
+  --button-glow: rgb(23 23 23 / 0.32);
   --contribution-level-0: #e5e5e5;
   --contribution-level-1: #d4d4d4;
   --contribution-level-2: #a3a3a3;
@@ -52,6 +55,7 @@
   --surface: #171717; /* neutral-900 */
   --muted: #a3a3a3; /* neutral-400 */
   --border: #262626; /* neutral-800 */
+  --button-glow: rgb(245 245 245 / 0.12);
   --contribution-level-0: #262626;
   --contribution-level-1: #404040;
   --contribution-level-2: #525252;
@@ -67,23 +71,8 @@
   --color-border: var(--border);
   --font-display: var(--font-schibsted-grotesk);
   --font-secondary: var(--font-inter);
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
-  overflow-x: clip;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-.mobile-nav-panel {
-  position: absolute;
-  isolation: isolate;
-  border-color: transparent;
+  --font-code: var(--font-geist-mono);
+  --font-mono: var(--font-geist-mono);
 }
 
 .mobile-nav-panel::before {
@@ -122,16 +111,9 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   .mobile-nav-panel::before {
     animation: none;
   }
-}
-
-.nav-link-label {
-  display: inline-block;
 }
 
 .interactive-dot-field {
@@ -184,147 +166,8 @@ html {
   mask-composite: intersect;
 }
 
-.text-shimmer {
-  color: transparent;
-  background-image: linear-gradient(
-    100deg,
-    var(--muted) 35%,
-    var(--foreground) 50%,
-    var(--muted) 65%
-  );
-  background-position: 100% 0;
-  background-size: 220% 100%;
-  background-clip: text;
-  animation: text-shimmer 2.6s ease-in-out infinite;
-}
-
-.text-shimmer:hover {
-  animation-duration: 700ms;
-}
-
-@keyframes text-shimmer {
-  to {
-    background-position: -120% 0;
-  }
-}
-
-.page-divider {
-  width: 4px;
-  background-image: radial-gradient(
-    circle,
-    var(--muted) 1.5px,
-    transparent 1.7px
-  );
-  background-position: center top;
-  background-size: 5px 8px;
-  opacity: 0.7;
-}
-
-.contribution-level-0 {
-  background-color: var(--contribution-level-0);
-}
-.contribution-level-1 {
-  background-color: var(--contribution-level-1);
-}
-.contribution-level-2 {
-  background-color: var(--contribution-level-2);
-}
-.contribution-level-3 {
-  background-color: var(--contribution-level-3);
-}
-.contribution-level-4 {
-  background-color: var(--contribution-level-4);
-}
-
-.project-image-glow {
-  position: absolute;
-  z-index: 0;
-  inset: 8%;
-  border-radius: 9999px;
-  opacity: 0;
-  filter: blur(24px);
-  transform: scale(0.88);
-  transition:
-    opacity 350ms ease,
-    transform 450ms ease;
-  pointer-events: none;
-}
-
-.project-glow-crew {
-  background:
-    radial-gradient(ellipse at 32% 42%, rgb(249 115 22 / 34%), transparent 55%),
-    radial-gradient(ellipse at 72% 58%, rgb(99 102 241 / 27%), transparent 58%),
-    radial-gradient(ellipse at center, rgb(56 189 248 / 12%), transparent 72%);
-}
-
-.project-glow-skills {
-  background:
-    radial-gradient(ellipse at 34% 48%, rgb(56 189 248 / 32%), transparent 54%),
-    radial-gradient(ellipse at 70% 52%, rgb(99 102 241 / 27%), transparent 58%),
-    radial-gradient(ellipse at center, rgb(45 212 191 / 12%), transparent 72%);
-}
-
-.project-glow-codecat {
-  background:
-    radial-gradient(ellipse at 34% 44%, rgb(139 92 246 / 34%), transparent 55%),
-    radial-gradient(ellipse at 70% 56%, rgb(59 130 246 / 28%), transparent 58%),
-    radial-gradient(ellipse at center, rgb(236 72 153 / 12%), transparent 72%);
-}
-
-.project-glow-noiseless {
-  background:
-    radial-gradient(ellipse at 32% 46%, rgb(16 185 129 / 30%), transparent 54%),
-    radial-gradient(ellipse at 70% 56%, rgb(56 189 248 / 27%), transparent 58%),
-    radial-gradient(ellipse at center, rgb(163 230 53 / 10%), transparent 72%);
-}
-
-.project-card:hover .project-image-glow,
-.project-card:focus-within .project-image-glow {
-  opacity: 1;
-  transform: scale(1.08);
-}
-
-.nav-link-label:hover,
-a:hover .nav-link-label,
-a:focus-visible .nav-link-label {
-  color: transparent;
-  background-image: linear-gradient(
-    110deg,
-    var(--muted) 38%,
-    var(--foreground) 50%,
-    var(--muted) 62%
-  );
-  background-position: 100% 0;
-  background-size: 220% 100%;
-  background-clip: text;
-  animation: nav-text-shimmer 750ms ease-out forwards;
-}
-
 @keyframes nav-text-shimmer {
   to {
     background-position: 0 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .text-shimmer {
-    color: var(--foreground);
-    background: none;
-    animation: none;
-  }
-
-  a:hover .nav-link-label,
-  a:focus-visible .nav-link-label {
-    color: inherit;
-    background: none;
-    animation: none;
-  }
-
-  .project-card,
-  .project-image,
-  .project-image-glow,
-  .project-tech {
-    transition: none;
-    animation: none;
   }
 }

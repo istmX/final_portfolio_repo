@@ -11,8 +11,8 @@ export default function PortfolioFooter() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0"
       >
-        <span className="page-divider absolute inset-y-0 left-4 hidden sm:left-6 sm:block lg:left-0" />
-        <span className="page-divider absolute inset-y-0 right-4 hidden sm:right-6 sm:block lg:right-0" />
+        <span className="absolute inset-y-0 left-4 hidden w-1 bg-[radial-gradient(circle,var(--muted)_1.5px,transparent_1.7px)] bg-[size:5px_8px] bg-[position:center_top] opacity-70 sm:left-6 sm:block lg:left-0" />
+        <span className="absolute inset-y-0 right-4 hidden w-1 bg-[radial-gradient(circle,var(--muted)_1.5px,transparent_1.7px)] bg-[size:5px_8px] bg-[position:center_top] opacity-70 sm:right-6 sm:block lg:right-0" />
       </div>
       <div className="border-border/60 relative z-10 flex h-48 items-center justify-center overflow-hidden border-t border-dotted sm:h-60">
         <InteractiveDotField className="pointer-events-none absolute inset-x-8 top-[36%] bottom-0 z-0" />
