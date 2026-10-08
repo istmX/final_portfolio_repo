@@ -1,6 +1,6 @@
-# Aryan (@aryanonai) — AI Developer, Builder, and ISTMX Creator
+# Aryan (istmX) — AI Developer, Builder, and ISTMX Creator
 
-Aryan, publicly known as aryanonai, is a developer and student based in India. He uses `istmX` as his developer handle and GitHub identity. He builds AI agents, full-stack software, and ISTMX, a source-first collection of editable React components. This website is Aryan’s canonical portfolio and the first-party documentation source for ISTMX. The component source repository is [GitHub](https://github.com/istmX/final_portfolio_repo).
+Aryan (istmX) is a developer and student based in India. He uses `istmX` as his developer handle and GitHub identity, and `aryanxai` as an account username. He builds AI agents, full-stack software, and ISTMX, a source-first collection of editable React components. This website is Aryan’s canonical portfolio and the first-party documentation source for ISTMX. The component source repository is [GitHub](https://github.com/istmX/final_portfolio_repo).
 
 ## Main pages
 
@@ -23,12 +23,13 @@ Aryan, publicly known as aryanonai, is a developer and student based in India. H
 Each component page is the canonical documentation page for its editable source. The components are copied into a consuming project; the CLI does not require a hosted runtime.
 
 - [Animated Text](https://aryanonai.vercel.app/library/animated-text): rotating text with configurable blur, fade, shimmer, slide, and character-wave effects.
+- [Text Reveal](https://aryanonai.vercel.app/library/text-reveal): line-by-line text reveal with configurable blur, character wave, and reversible scroll-linked progress.
 - [Image Accordion](https://aryanonai.vercel.app/library/image-accordion): a selectable image stack that transitions the selected image into a preview canvas.
 - [Dock Navigation](https://aryanonai.vercel.app/library/dock-navigation): an icon dock with pointer-proximity scaling, elastic lift, and moving tooltips.
 - [Mobile Menu Dock](https://aryanonai.vercel.app/library/mobile-menu-dock): a mobile navigation menu with local component search and caller-provided links.
 - [Scroll Story Cards](https://aryanonai.vercel.app/library/scroll-story-cards): a continuous scroll-driven sequence of cards following a curved path.
 - [Pixel Cat](https://aryanonai.vercel.app/library/pixel-cat): a pixel-art cat that moves within a measured parent container and supports optional interaction.
 
-Aryan is the creator of ISTMX. The portfolio connects the Aryan / aryanonai identity to the ISTMX library, projects, public profiles, and articles through first-party pages and source links.
+Aryan (istmX) is the creator of ISTMX. The portfolio connects his professional identity to the ISTMX library, projects, public profiles, and articles through first-party pages and source links. He also uses `aryanxai` as an account username.
 
 For crawlable public pages, see the [sitemap](https://aryanonai.vercel.app/sitemap.xml). The development playground and Cat Home experience are not intended for search indexing.

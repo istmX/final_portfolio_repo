@@ -1,17 +1,17 @@
 # Aryan’s Portfolio & ISTMX
 
-This repository contains the personal portfolio of **Aryan**, also known online as **aryanonai**. Aryan uses **istmX** as his developer handle and GitHub identity. The portfolio presents his work, writing, projects, and the ISTMX ecosystem.
+This repository contains the personal portfolio of **Aryan**. He uses **istmX** as his developer handle and GitHub identity, and **aryanxai** as an account username. The portfolio presents his work, writing, projects, and the ISTMX ecosystem.
 
-|                   |                                                                                        |
-| ----------------- | -------------------------------------------------------------------------------------- |
-| Website           | [aryanonai.vercel.app](https://aryanonai.vercel.app/)                                  |
-| GitHub profile    | [github.com/istmX](https://github.com/istmX)                                           |
+|                   |                                                                                  |
+| ----------------- | -------------------------------------------------------------------------------- |
+| Website           | [aryanonai.vercel.app](https://aryanonai.vercel.app/)                            |
+| GitHub profile    | [github.com/istmX](https://github.com/istmX)                                     |
 | This repository   | [https://github.com/istmX/istmx-library](https://github.com/istmX/istmx-library) |
-| Component library | [ISTMX Library](https://aryanonai.vercel.app/library)                                  |
+| Component library | [ISTMX Library](https://aryanonai.vercel.app/library)                            |
 
 ## Identity and projects
 
-Aryan is the person behind the online identity `aryanonai` and the developer handle `istmX`. **ISTMX** is his project ecosystem, not a separate person or company. Its current projects include:
+Aryan is the person behind the developer identity `istmX` and also uses `aryanxai` as an account username. **ISTMX** is his project ecosystem, not a separate person or company. Its current projects include:
 
 - **[ISTMX Skills](https://istmx.dpdns.org/)** — reusable skills and structured workflows for AI coding agents. [Source on GitHub](https://github.com/istmX/skills).
 - **[ISTMX UI](https://www.npmjs.com/package/@istmx/ui)** — a CLI that adds editable component source to a developer’s project.
@@ -23,14 +23,15 @@ The portfolio also features Crew, CodeCat, and Noiseless. Their current descript
 
 ISTMX components are intended to be copied into a project and edited there. The CLI provides the source files; the consuming app owns the implementation and does not depend on a hosted ISTMX runtime.
 
-| Component              | What it does                                                                                                       | Documentation                                                        |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| **Animated Text**      | Rotates through text with configurable blur, fade, shimmer, slide, and per-character wave effects.                 | [Read docs](https://aryanonai.vercel.app/library/animated-text)      |
-| **Image Accordion**    | Presents images as a selectable stack and transitions the selected image into a preview canvas.                    | [Read docs](https://aryanonai.vercel.app/library/image-accordion)    |
-| **Dock Navigation**    | A navigation dock with pointer-proximity magnification, elastic lift, and moving tooltips.                         | [Read docs](https://aryanonai.vercel.app/library/dock-navigation)    |
-| **Mobile Menu Dock**   | A mobile navigation dock with a section menu and component search.                                                 | [Read docs](https://aryanonai.vercel.app/library/mobile-menu-dock)   |
-| **Scroll Story Cards** | A scroll-scrubbed story sequence where cards travel upward on a curved path and drive image and color transitions. | [Read docs](https://aryanonai.vercel.app/library/scroll-story-cards) |
-| **Pixel Cat**          | A configurable pixel-art cat that moves within its parent container and supports optional interaction.             | [Read docs](https://aryanonai.vercel.app/library/pixel-cat)          |
+| Component                | What it does                                                                                                       | Documentation                                                          |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| **Animated Text**        | Rotates through text with configurable blur, fade, shimmer, slide, and per-character wave effects.                 | [Read docs](https://aryanonai.vercel.app/library/animated-text)        |
+| **Text Reveal**          | Reveals text line by line with configurable blur, opacity, and reversible scroll-linked character motion.          | [Read docs](https://aryanonai.vercel.app/library/text-reveal)          |
+| **Image Accordion**      | Presents images as a selectable stack and transitions the selected image into a preview canvas.                    | [Read docs](https://aryanonai.vercel.app/library/image-accordion)      |
+| **Dock Navigation**      | A navigation dock with pointer-proximity magnification, elastic lift, and moving tooltips.                         | [Read docs](https://aryanonai.vercel.app/library/dock-navigation)      |
+| **Mobile Menu Dock**     | A mobile navigation dock with a section menu and component search.                                                 | [Read docs](https://aryanonai.vercel.app/library/mobile-menu-dock)     |
+| **Scroll Story Cards**   | A scroll-scrubbed story sequence where cards travel upward on a curved path and drive image and color transitions. | [Read docs](https://aryanonai.vercel.app/library/scroll-story-cards)   |
+| **Pixel Cat**            | A configurable pixel-art cat that moves within its parent container and supports optional interaction.             | [Read docs](https://aryanonai.vercel.app/library/pixel-cat)            |
 
 Each page documents installation, usage, props, accessibility behavior, interaction details, and implementation limitations. The Library source files live in [`components/ui/`](components/ui); the CLI’s packaged copies live in [`packages/cli/registry/`](packages/cli/registry).
 
@@ -40,6 +41,7 @@ From the root of a React project configured with Tailwind CSS, run:
 
 ```sh
 npx @istmx/ui add image-accordion
+npx @istmx/ui add text-reveal
 ```
 
 The CLI also supports pnpm, Yarn, and Bun:
@@ -68,7 +70,7 @@ The CLI package is [`@istmx/ui`](https://www.npmjs.com/package/@istmx/ui). Its p
 
 ## Portfolio features
 
-- Personal introduction identifying Aryan, `aryanonai`, and the `istmX` GitHub identity.
+- Personal introduction identifying Aryan, `istmX` as his developer handle, and `aryanxai` as an account username.
 - Social profile links, technology stack, and GitHub contribution activity.
 - Project index with descriptions, technologies, images, status, and relevant external links.
 - Homepage component index linking directly to Library documentation.
@@ -160,7 +162,7 @@ When adding or changing a component, keep its implementation, documentation sour
 
 ## Search and structured data
 
-The site uses Next.js metadata APIs for page-specific titles, descriptions, canonical URLs, Open Graph, and X/Twitter cards. Structured data connects Aryan to the online identities `aryanonai` and `istmX`, then connects the ISTMX ecosystem and its projects to the same creator. Component and article pages include their own page metadata and structured information.
+The site uses Next.js metadata APIs for page-specific titles, descriptions, canonical URLs, Open Graph, and X/Twitter cards. Structured data identifies Aryan primarily through `istmX` and records `aryanxai` as an account username, then connects the ISTMX ecosystem and its projects to the same creator. Component and article pages include their own page metadata and structured information.
 
 Related files:
 

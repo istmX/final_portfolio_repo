@@ -3,13 +3,12 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { AnimatedText } from '@/components/ui/animated-text'
 import ImageAccordion from '@/components/ui/image-accordion'
-import ImageEffectsCard from '@/components/ui/image-effects-card'
 import ImageTrail from '@/components/ui/image-trail'
+import ScrollParallaxHero from '@/components/ui/scroll-parallax-hero'
 import InfiniteImageCanvas from '@/components/ui/infinite-image-canvas'
 import MobileMenuDock from '@/components/ui/mobile-menu-dock'
 import ScrollStoryCards from '@/components/ui/scroll-story-cards'
 import { IMAGE_ACCORDION_IMAGES } from '@/app/portfolio-components/library/image-accordion-data'
-import { IMAGE_EFFECTS_PORTRAIT } from '@/app/portfolio-components/library/image-effects-card-data'
 import { IMAGE_TRAIL_IMAGES } from '@/app/portfolio-components/library/image-trail-data'
 import { INFINITE_IMAGE_CANVAS_IMAGES } from '@/app/portfolio-components/library/infinite-image-canvas-data'
 import { SCROLL_STORY_CARDS } from '@/app/portfolio-components/library/scroll-story-cards-data'
@@ -17,6 +16,7 @@ import { COMPONENT_SEARCH_ITEMS } from '@/app/portfolio-components/library/compo
 import StateButtonShowcase from '@/app/portfolio-components/StateButtonShowcase'
 import DockNavigationDemo from './DockNavigationDemo'
 import CatPlayground from './CatPlayground'
+import TextRevealDemo from './TextRevealDemo'
 
 export const metadata: Metadata = {
   title: 'Component playground | Aryan',
@@ -27,9 +27,10 @@ export const metadata: Metadata = {
 const DEMOS = [
   { id: 'action-buttons', label: 'Action buttons' },
   { id: 'animated-text', label: 'Animated text' },
+  { id: 'text-reveal', label: 'Text reveal' },
   { id: 'image-accordion', label: 'Image accordion' },
   { id: 'image-trail', label: 'Image trail' },
-  { id: 'image-hover-effects', label: 'Image hover effects' },
+  { id: 'scroll-parallax', label: 'Scroll parallax' },
   { id: 'infinite-image-canvas', label: 'Infinite canvas' },
   { id: 'dock-navigation', label: 'Dock navigation' },
   { id: 'mobile-menu-dock', label: 'Mobile menu dock' },
@@ -39,13 +40,11 @@ const DEMOS = [
 
 function DemoSection({
   id,
-  number,
   title,
   description,
   children,
 }: {
   id: string
-  number: string
   title: string
   description: string
   children: ReactNode
@@ -57,9 +56,6 @@ function DemoSection({
       className="border-border/70 bg-surface/10 scroll-mt-6 rounded-2xl border p-4 sm:p-6"
     >
       <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
-        <span className="text-muted pt-1 font-mono text-[10px] tracking-[0.14em]">
-          {number.padStart(2, '0')}
-        </span>
         <div className="min-w-0 flex-1">
           <h2
             id={`${id}-title`}
@@ -81,7 +77,10 @@ function DemoSection({
 
 export default function TestPage() {
   return (
-    <main id="test-top" className="mx-auto w-full max-w-7xl px-4 pt-8 pb-24 sm:px-8 sm:pt-12 lg:px-12">
+    <main
+      id="test-top"
+      className="mx-auto w-full max-w-7xl px-4 pt-8 pb-24 sm:px-8 sm:pt-12 lg:px-12"
+    >
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4 sm:mb-10">
         <div>
           <p className="text-muted text-[10px] font-medium tracking-[0.2em] uppercase">
@@ -95,27 +94,29 @@ export default function TestPage() {
             what each one does before you use it.
           </p>
         </div>
-        <Link
-          href="/library"
-          className="border-border/70 text-muted hover:border-foreground/30 hover:text-foreground inline-flex min-h-9 items-center rounded-lg border px-3 text-xs font-medium transition-colors"
-        >
-          Browse the library <span aria-hidden="true" className="ml-2">↗</span>
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/library"
+            className="border-border/70 text-muted hover:border-foreground/30 hover:text-foreground inline-flex min-h-9 items-center rounded-lg border px-3 text-xs font-medium transition-colors"
+          >
+            Browse the library
+            <span aria-hidden="true" className="ml-2">
+              ↗
+            </span>
+          </Link>
+        </div>
       </header>
 
       <nav
         aria-label="Component previews"
-        className="border-border/60 mb-8 flex gap-2 overflow-x-auto border-y py-3 sm:mb-10"
+        className="border-border/60 mb-8 flex flex-wrap gap-2 border-y py-3 sm:mb-10"
       >
-        {DEMOS.map((demo, index) => (
+        {DEMOS.map((demo) => (
           <a
             key={demo.id}
             href={`#${demo.id}`}
-            className="border-border/60 text-muted hover:border-foreground/30 hover:text-foreground inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] transition-colors"
+            className="border-border/60 bg-surface/20 text-muted hover:border-foreground/30 hover:bg-surface/60 hover:text-foreground focus-visible:outline-foreground inline-flex items-center rounded-full border px-3.5 py-2 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <span className="font-mono text-[9px] opacity-60">
-              {String(index + 1).padStart(2, '0')}
-            </span>
             {demo.label}
           </a>
         ))}
@@ -124,7 +125,6 @@ export default function TestPage() {
       <div className="grid gap-5 sm:gap-6">
         <DemoSection
           id="action-buttons"
-          number="01"
           title="Action state buttons"
           description="Each action has a distinct intent color. Click to see the temporary confirmation, then watch it return to its original label."
         >
@@ -133,7 +133,6 @@ export default function TestPage() {
 
         <DemoSection
           id="animated-text"
-          number="02"
           title="Animated text"
           description="Rotating words with a mix of blur, fade, and slide transitions."
         >
@@ -153,8 +152,15 @@ export default function TestPage() {
         </DemoSection>
 
         <DemoSection
+          id="text-reveal"
+          title="Text reveal"
+          description="Scroll through the pinned preview to reveal the quote line by line. Scroll back up to reverse the subtle, blurred character wave."
+        >
+          <TextRevealDemo />
+        </DemoSection>
+
+        <DemoSection
           id="image-accordion"
-          number="03"
           title="Image accordion"
           description="Select an image to expand it and explore the rest of the collection."
         >
@@ -172,7 +178,6 @@ export default function TestPage() {
 
         <DemoSection
           id="image-trail"
-          number="04"
           title="Image trail"
           description="Move your pointer through the area to create a throttled trail of image cards."
         >
@@ -185,53 +190,18 @@ export default function TestPage() {
         </DemoSection>
 
         <DemoSection
-          id="image-hover-effects"
-          number="05"
-          title="Image hover effects"
-          description="Move across each portrait to reveal a small, feathered effect lens that fades in and out with the pointer."
+          id="scroll-parallax"
+          title="Scroll parallax"
+          description="A centered text hero gives way to a contrasting pinned section. Scroll to expand the image from a 60vw frame to the full viewport while its contents move at a different pace."
         >
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            <ImageEffectsCard
-              {...IMAGE_EFFECTS_PORTRAIT}
-              effect="pixelate"
-              title="Pixel lens"
-              detail="Local pixelation"
-            />
-            <ImageEffectsCard
-              {...IMAGE_EFFECTS_PORTRAIT}
-              effect="rgb-split"
-              title="RGB split"
-              detail="Local color separation"
-            />
-            <ImageEffectsCard
-              {...IMAGE_EFFECTS_PORTRAIT}
-              effect="glitch"
-              title="Glitch warp"
-              detail="One distorted lens"
-            />
-            <ImageEffectsCard
-              {...IMAGE_EFFECTS_PORTRAIT}
-              effect="ascii"
-              title="ASCII trace"
-              detail="Image turns to characters"
-            />
-          </div>
-          <p className="text-muted mt-3 text-[10px]">
-            Portrait photo by{' '}
-            <a
-              href="https://unsplash.com/pt-br/fotografias/mulher-no-blazer-branco-sentado-na-cadeira-LKDtUWq_92Q"
-              target="_blank"
-              rel="noreferrer"
-              className="underline underline-offset-2"
-            >
-              Junior Reis on Unsplash
-            </a>
-          </p>
+          <ScrollParallaxHero
+            image={IMAGE_ACCORDION_IMAGES[4].src}
+            imageAlt={IMAGE_ACCORDION_IMAGES[4].alt}
+          />
         </DemoSection>
 
         <DemoSection
           id="infinite-image-canvas"
-          number="06"
           title="Infinite image canvas"
           description="Pan around the canvas and explore the repeating image field."
         >
@@ -244,7 +214,6 @@ export default function TestPage() {
 
         <DemoSection
           id="dock-navigation"
-          number="07"
           title="Dock navigation"
           description="Move across the dock to lift and magnify nearby icons."
         >
@@ -253,7 +222,6 @@ export default function TestPage() {
 
         <DemoSection
           id="mobile-menu-dock"
-          number="08"
           title="Mobile menu dock"
           description="Open the compact menu, search the component catalog, or follow one of the sample links."
         >
@@ -273,7 +241,6 @@ export default function TestPage() {
 
         <DemoSection
           id="scroll-story-cards"
-          number="09"
           title="Scroll story cards"
           description="Scroll through the sequence to scrub each story card into view."
         >
@@ -288,7 +255,6 @@ export default function TestPage() {
 
         <DemoSection
           id="pixel-cat"
-          number="10"
           title="Pixel cat"
           description="Choose a breed, pose, and movement style, then interact with the cat in its bounded playground."
         >

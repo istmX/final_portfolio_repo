@@ -23,11 +23,11 @@ const GeistMonoFont = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
+    default: 'Aryan (istmX) | AI Developer & ISTMX Creator',
     template: '%s',
   },
   description:
-    'Aryan, also known as istmX, is a developer and student in India building AI agents, full-stack products, and ISTMX, a source-first React component library.',
+    'Aryan (istmX) is a developer and student in India building AI agents, full-stack products, and ISTMX, a source-first React component library.',
   applicationName: 'Aryan’s portfolio and ISTMX component library',
   authors: [{ name: 'Aryan', url: SITE_URL }],
   creator: 'Aryan',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: SITE_URL,
     siteName: 'Aryan’s Portfolio',
-    title: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
+    title: 'Aryan (istmX) | AI Developer & ISTMX Creator',
     description:
       'Aryan builds AI agents, full-stack products, and ISTMX, a source-first React component library.',
     locale: 'en_IN',
@@ -45,13 +45,13 @@ export const metadata: Metadata = {
         url: '/hero.png',
         width: 1536,
         height: 1536,
-        alt: 'Illustrated portrait of Aryan, also known as aryanonai',
+        alt: 'Illustrated portrait of Aryan (istmX)',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
+    title: 'Aryan (istmX) | AI Developer & ISTMX Creator',
     description:
       'Aryan builds AI agents, full-stack products, and ISTMX, a source-first React component library.',
     images: ['/hero.png'],

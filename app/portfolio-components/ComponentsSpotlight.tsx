@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import {
   IconArrowCurveRight,
-  IconArrowUpRight,
   IconArrowsMoveVertical,
   IconArrowRight,
   IconCat,
@@ -13,11 +12,11 @@ import {
   IconWorld,
 } from '@tabler/icons-react'
 import { COMPONENT_SEARCH_ITEMS } from './library/component-search-data'
-import StateButtonShowcase from './StateButtonShowcase'
 
 export const COMPONENT_ICONS = {
   button: IconHandClick,
   'animated-text': IconLetterT,
+  'text-reveal': IconLetterT,
   'infinite-image-canvas': IconWorld,
   'image-trail': IconPhoto,
   'image-accordion': IconPhoto,
@@ -77,24 +76,7 @@ export default function ComponentsSpotlight() {
         })}
       </ul>
 
-      <div className="border-border/60 bg-surface/15 mt-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border p-3 sm:px-4">
-        <div className="min-w-32">
-          <p className="font-display text-sm font-medium">Action feedback</p>
-          <p className="text-muted mt-0.5 text-[11px]">Click to preview each state</p>
-        </div>
-        <StateButtonShowcase />
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-3">
-        <a
-          href="https://chanhdai.com"
-          target="_blank"
-          rel="noreferrer"
-          className="text-muted hover:text-foreground inline-flex items-center gap-1 text-[10px] transition-colors"
-        >
-          Mobile menu inspired by Chánh Đại
-          <IconArrowUpRight aria-hidden="true" size={12} stroke={1.7} />
-        </a>
+      <div className="flex flex-wrap items-center justify-end gap-2 pt-3">
         <Link
           href="/library"
           className="text-muted hover:text-foreground focus-visible:outline-foreground inline-flex items-center gap-1.5 px-1 py-1 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"

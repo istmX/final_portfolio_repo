@@ -6,6 +6,7 @@ import { infiniteImageCanvasSourceCode } from './infinite-image-canvas-source'
 import { mobileMenuDockSourceCode } from './mobile-menu-dock-source'
 import { pixelCatSourceCode } from './pixel-cat-source'
 import { scrollStoryCardsSourceCode } from './scroll-story-cards-source'
+import { textRevealSourceCode } from './text-reveal-source'
 
 export type LibraryProp = {
   name: string
@@ -44,7 +45,12 @@ export const LIBRARY_ITEMS: LibraryItem[] = [
     seoTitle: 'Button — Motion-Ready React Button | ISTMX',
     seoDescription:
       'A reusable React button with primary, secondary, outline, ghost, and soft variants, multiple sizes, link support, and reduced-motion-aware interaction.',
-    keywords: ['react button', 'motion button', 'tailwind button', 'button component'],
+    keywords: [
+      'react button',
+      'motion button',
+      'tailwind button',
+      'button component',
+    ],
     accessibility:
       'Uses native button or anchor semantics, an announced polite feedback label, visible keyboard focus, disabled link handling, and reduced-motion-aware transitions.',
     interaction:
@@ -64,7 +70,11 @@ export const LIBRARY_ITEMS: LibraryItem[] = [
     ],
     composition: ['Button', '├── Surface and sheen', '└── Action content'],
     props: [
-      { name: 'children', type: 'ReactNode', description: 'Button label or content.' },
+      {
+        name: 'children',
+        type: 'ReactNode',
+        description: 'Button label or content.',
+      },
       {
         name: 'href?',
         type: 'string',
@@ -73,12 +83,14 @@ export const LIBRARY_ITEMS: LibraryItem[] = [
       {
         name: 'variant?',
         type: 'ButtonVariant',
-        description: 'primary, secondary, outline, ghost, or soft. Defaults to primary.',
+        description:
+          'primary, secondary, outline, ghost, or soft. Defaults to primary.',
       },
       {
         name: 'intent?',
         type: 'ButtonIntent',
-        description: 'Sets the primary action color: save (emerald), share (sky), or delete (rose). Defaults to save.',
+        description:
+          'Sets the primary action color: save (emerald), share (sky), or delete (rose). Defaults to save.',
       },
       {
         name: 'size?',
@@ -98,7 +110,8 @@ export const LIBRARY_ITEMS: LibraryItem[] = [
       {
         name: 'feedback?',
         type: '{ label: string; icon?: ReactNode; duration?: number }',
-        description: 'After activation, briefly swaps to a confirmation label and optional icon. Defaults to a check mark and 1800 ms.',
+        description:
+          'After activation, briefly swaps to a confirmation label and optional icon. Defaults to a check mark and 1800 ms.',
       },
       {
         name: 'className?',
@@ -489,6 +502,164 @@ export default AnimatedText`,
 />`,
     example:
       'Use for a portfolio role, status, or short list of rotating labels.',
+  },
+  {
+    slug: 'text-reveal',
+    name: 'Text Reveal',
+    description:
+      'Reveal text line by line with blur, opacity, and a character wave. Scroll through the pinned preview to control its progress.',
+    seoTitle: 'Text Reveal — Scroll-Driven React Text Animation | ISTMX',
+    seoDescription:
+      'Reveal text line by line with configurable character timing, blur, vertical wave, and reversible scroll-linked progress.',
+    keywords: [
+      'react text reveal component',
+      'scroll text animation react',
+      'character reveal animation',
+      'react blur text animation',
+    ],
+    accessibility:
+      'The complete text is available as one screen-reader string while the animated glyphs are hidden from assistive technology. Reduced-motion preferences show the text without the entrance animation or scroll pinning.',
+    interaction:
+      'Text reveals one line and character at a time with opacity, blur, and a small vertical wave. By default the sequence begins when it enters the viewport. Pass a Motion scroll progress value to pin a preview, scrub the reveal forward and backward, and release the page when it completes.',
+    limitations:
+      'Pass plain text and use newline characters to define line breaks. Scroll-linked mode requires a MotionValue from useScroll and a parent with enough scroll distance to complete the reveal.',
+    category: 'Text / Scroll',
+    commandName: 'text-reveal',
+    dependencies: ['React', 'Motion', 'Tailwind CSS', 'clsx', 'tailwind-merge'],
+    features: [
+      'Reveals plain text line by line and character by character.',
+      'Keeps words together when lines wrap naturally.',
+      'Configure character stagger, line spacing, duration, blur, opacity, scale, vertical wave, and horizontal drift.',
+      'Use viewport-triggered animation by default, or supply Motion scroll progress for reversible scroll-linked control.',
+      'Tune the viewport trigger threshold and whether it runs once or again on re-entry.',
+      'Provides a single accessible text string and respects reduced-motion preferences.',
+    ],
+    composition: [
+      'TextReveal',
+      '├── Screen-reader text',
+      '└── Line wrappers',
+      '    └── Word-safe animated characters',
+    ],
+    props: [
+      {
+        name: 'text',
+        type: 'string',
+        description:
+          'Plain text to reveal. Use newline characters to set explicit line breaks.',
+      },
+      {
+        name: 'characterStagger?',
+        type: 'number',
+        description:
+          'In viewport mode, seconds between character starts. In scroll mode, relative scroll weight per character. Defaults to 0.024.',
+      },
+      {
+        name: 'lineStagger?',
+        type: 'number',
+        description:
+          'In viewport mode, seconds between lines. In scroll mode, relative scroll weight between lines. Defaults to 0.24.',
+      },
+      {
+        name: 'duration?',
+        type: 'number',
+        description:
+          'Character transition duration in seconds for viewport mode. Defaults to 0.7.',
+      },
+      {
+        name: 'waveDistance?',
+        type: 'number',
+        description:
+          'Vertical travel distance in pixels for the character wave. Defaults to 5.',
+      },
+      {
+        name: 'waveOvershoot?',
+        type: 'number',
+        description:
+          'Distance in pixels each character rises above its resting baseline before settling. Defaults to 75% of waveDistance.',
+      },
+      {
+        name: 'sidewaysDistance?',
+        type: 'number',
+        description:
+          'Horizontal drift in pixels during the character wave. Defaults to 12% of waveDistance.',
+      },
+      {
+        name: 'blurAmount?',
+        type: 'number',
+        description:
+          'Starting blur in pixels, which resolves as each character settles. Defaults to 7.',
+      },
+      {
+        name: 'opacityFrom?',
+        type: 'number',
+        description:
+          'Starting character opacity from 0 to 1. Defaults to 0.08.',
+      },
+      {
+        name: 'opacityPeak?',
+        type: 'number',
+        description:
+          'Intermediate character opacity from 0 to 1 during the wave. Defaults to 0.72.',
+      },
+      {
+        name: 'scaleFrom?',
+        type: 'number',
+        description: 'Starting character scale. Defaults to 0.96.',
+      },
+      {
+        name: 'scalePeak?',
+        type: 'number',
+        description:
+          'Intermediate character scale during the wave. Defaults to 1.025.',
+      },
+      {
+        name: 'scrollProgress?',
+        type: 'MotionValue<number>',
+        description:
+          'Optional 0–1 Motion value, usually from useScroll. When provided, scroll controls the reveal and scrolling backward reverses it.',
+      },
+      {
+        name: 'once?',
+        type: 'boolean',
+        description:
+          'In viewport mode, reveal once or replay after leaving and re-entering. Defaults to true.',
+      },
+      {
+        name: 'viewportAmount?',
+        type: 'number',
+        description:
+          'Fraction of the component that must enter the viewport before revealing, from 0 to 1. Defaults to 0.4.',
+      },
+      {
+        name: 'className?',
+        type: 'string',
+        description: 'Additional classes for the paragraph wrapper.',
+      },
+    ],
+    sourceCode: textRevealSourceCode,
+    usage: `import TextReveal from '@/components/ui/text-reveal'
+
+<TextReveal
+  text={'Every word arrives softly,\\none character at a time.'}
+  characterStagger={0.028}
+  lineStagger={0.2}
+  duration={0.65}
+  waveDistance={8}
+  waveOvershoot={6}
+  sidewaysDistance={1.5}
+  blurAmount={6}
+  opacityFrom={0.08}
+  opacityPeak={0.72}
+  scaleFrom={0.96}
+  scalePeak={1.025}
+  once
+/>`,
+    example:
+      'Use scrollProgress from Motion useScroll to make a pinned story reveal scrub forward and backward with the page. Without it, the component starts when it enters the viewport.',
+    migrationExample: `+ import TextReveal from '@/components/ui/text-reveal'
+
+- <p className="opacity-0">A sentence revealed with custom scroll handlers.</p>
++ <TextReveal text="A sentence revealed one character at a time." />`,
   },
   {
     slug: 'image-accordion',
@@ -1025,7 +1196,8 @@ const components = [
     name: 'Scroll Story Cards',
     description:
       'A scroll-scrubbed image story where cards travel along a shallow arc and continuously shape the scene around the centered frame.',
-    seoTitle: 'Scroll Story Cards — Scroll-Driven React Story Component | ISTMX',
+    seoTitle:
+      'Scroll Story Cards — Scroll-Driven React Story Component | ISTMX',
     seoDescription:
       'A scroll-driven React story component where portrait cards rise along a curved path and continuously update the centered image and color.',
     keywords: [

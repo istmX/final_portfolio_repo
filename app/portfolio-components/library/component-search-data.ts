@@ -4,7 +4,8 @@ export const COMPONENT_SEARCH_ITEMS = [
     slug: 'button',
     href: '/library/button',
     category: 'Controls',
-    description: 'A motion-ready button with practical variants, sizes, and link support.',
+    description:
+      'A motion-ready button with practical variants, sizes, and link support.',
   },
   {
     name: 'Animated Text',
@@ -15,18 +16,28 @@ export const COMPONENT_SEARCH_ITEMS = [
       'Combine configurable blur, fade, shimmer, slide, and wave effects.',
   },
   {
+    name: 'Text Reveal',
+    slug: 'text-reveal',
+    href: '/library/text-reveal',
+    category: 'Text',
+    description:
+      'Reveal text line by line with a soft blur, character wave, and scroll-linked control.',
+  },
+  {
     name: 'Infinite Image Canvas',
     slug: 'infinite-image-canvas',
     href: '/library/infinite-image-canvas',
     category: 'Media',
-    description: 'A pannable, endless image grid with spring motion and image labels.',
+    description:
+      'A pannable, endless image grid with spring motion and image labels.',
   },
   {
     name: 'Image Trail',
     slug: 'image-trail',
     href: '/library/image-trail',
     category: 'Media',
-    description: 'A throttled trail of animated image cards that follows pointer movement.',
+    description:
+      'A throttled trail of animated image cards that follows pointer movement.',
   },
   {
     name: 'Image Accordion',

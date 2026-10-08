@@ -16,22 +16,22 @@ import { SITE_URL } from '@/app/portfolio-components/site'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
+  title: 'Aryan (istmX) | AI Developer & ISTMX Creator',
   description:
-    'Aryan, also known as aryanonai, is a developer and student in India building AI agents, full-stack products, and ISTMX, a source-first React component library.',
+    'Aryan (istmX) is a developer and student in India building AI agents, full-stack products, and ISTMX, a source-first React component library. He also uses aryanxai as an account username.',
   alternates: { canonical: '/' },
   openGraph: {
     type: 'profile',
     url: SITE_URL,
     siteName: 'Aryan’s Portfolio',
-    title: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
+    title: 'Aryan (istmX) | AI Developer & ISTMX Creator',
     description:
-      'Meet Aryan, also known as aryanonai: a developer and student building AI agents, software products, and the ISTMX component library.',
+      'Meet Aryan (istmX), a developer and student building AI agents, software products, and the ISTMX component library.',
     locale: 'en_IN',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aryan (@aryanonai) | AI Developer & ISTMX Creator',
+    title: 'Aryan (istmX) | AI Developer & ISTMX Creator',
     description:
       'Aryan builds AI agents, full-stack products, and the source-first ISTMX component library.',
   },
@@ -47,7 +47,7 @@ const homeSchema = {
       '@type': 'ProfilePage',
       '@id': `${SITE_URL}/#profile`,
       url: SITE_URL,
-      name: 'Aryan (@aryanonai) — AI developer and ISTMX creator',
+      name: 'Aryan (istmX) — AI developer and ISTMX creator',
       mainEntity: { '@id': personId },
       isPartOf: { '@id': websiteId },
     },
@@ -55,7 +55,7 @@ const homeSchema = {
       '@type': 'Person',
       '@id': personId,
       name: 'Aryan',
-      alternateName: ['aryanonai', 'istmX'],
+      alternateName: ['istmX', 'aryanxai'],
       identifier: {
         '@type': 'PropertyValue',
         name: 'Developer handle',
@@ -65,7 +65,7 @@ const homeSchema = {
       image: `${SITE_URL}/hero.png`,
       jobTitle: 'AI Engineer and Developer',
       description:
-        'Aryan, also known as aryanonai, is a developer and student in India building AI agents, full-stack products, and open-source software.',
+        'Aryan (istmX) is a developer and student in India building AI agents, full-stack products, and open-source software. He also uses aryanxai as an account username.',
       sameAs: [
         'https://github.com/istmX',
         'https://www.linkedin.com/in/aryan-xf/',
@@ -88,7 +88,7 @@ const homeSchema = {
       '@id': websiteId,
       url: SITE_URL,
       name: 'Aryan’s Portfolio and ISTMX',
-      alternateName: 'aryanonai portfolio',
+      alternateName: 'istmX portfolio',
       inLanguage: 'en',
       about: { '@id': personId },
       publisher: { '@id': personId },
@@ -98,7 +98,7 @@ const homeSchema = {
       '@id': istmxId,
       name: 'ISTMX',
       description:
-        'ISTMX is a developer ecosystem created by Aryan, known online as aryanonai and using the developer handle istmX. Its projects include ISTMX Skills, ISTMX UI, and the ISTMX component library.',
+        'ISTMX is a developer ecosystem created by Aryan (istmX). Aryan also uses aryanxai as an account username. Its projects include ISTMX Skills, ISTMX UI, and the ISTMX component library.',
       url: `${SITE_URL}/library`,
       author: { '@id': personId },
       isPartOf: { '@id': websiteId },

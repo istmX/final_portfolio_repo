@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
+import { useReducedMotion, useScroll, useSpring } from 'motion/react'
 import PillTabs from '@/app/portfolio-components/PillTabs'
 import CodeBlock from '@/app/portfolio-components/CodeBlock'
 import DoubleBorderCard from '@/app/portfolio-components/DoubleBorderCard'
@@ -25,6 +26,7 @@ import DockNavigation from '@/components/ui/dock-navigation'
 import Button from '@/components/ui/button'
 import MobileMenuDock from '@/components/ui/mobile-menu-dock'
 import { AnimatedText } from '@/components/ui/animated-text'
+import TextReveal from '@/components/ui/text-reveal'
 import ImageAccordion from '@/components/ui/image-accordion'
 import ImageTrail from '@/components/ui/image-trail'
 import InfiniteImageCanvas from '@/components/ui/infinite-image-canvas'
@@ -41,6 +43,7 @@ import { IMAGE_ACCORDION_IMAGES } from './image-accordion-data'
 import { IMAGE_TRAIL_IMAGES } from './image-trail-data'
 import { INFINITE_IMAGE_CANVAS_IMAGES } from './infinite-image-canvas-data'
 import { SCROLL_STORY_CARDS } from './scroll-story-cards-data'
+import { TEXT_REVEAL_QUOTE } from './text-reveal-data'
 
 const DIFF_EXAMPLE = `+ import { AnimatedText } from "@/components/ui/animated-text"
 
@@ -49,6 +52,57 @@ const DIFF_EXAMPLE = `+ import { AnimatedText } from "@/components/ui/animated-t
 +   prefix="I am"
 +   items={["an AI Engineer", "a Full-Stack Developer", "a Builder"]}
 + />`
+
+function TextRevealPinnedPreview({
+  scrollContainerRef,
+}: {
+  scrollContainerRef?: RefObject<HTMLElement | null>
+}) {
+  const sectionRef = useRef<HTMLElement>(null)
+  const shouldReduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({
+    container: scrollContainerRef,
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  })
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+    skipInitialAnimation: true,
+  })
+
+  return (
+    <section
+      ref={sectionRef}
+      aria-label="Text reveal scroll preview"
+      className={shouldReduceMotion ? 'relative' : 'relative min-h-[260svh]'}
+    >
+      <div
+        className={
+          shouldReduceMotion
+            ? 'flex min-h-64 items-center'
+            : 'sticky top-20 flex min-h-[calc(100svh-5rem)] items-center'
+        }
+      >
+        <DoubleBorderCard
+          className="w-full"
+          innerClassName="bg-background/70 flex min-h-[min(32rem,75svh)] items-center justify-center p-4 sm:p-6"
+        >
+          <TextReveal
+            text={TEXT_REVEAL_QUOTE}
+            scrollProgress={shouldReduceMotion ? undefined : smoothProgress}
+            characterStagger={0.024}
+            lineStagger={0.24}
+            waveDistance={12}
+            blurAmount={8}
+            className="font-display max-w-3xl text-center text-xl leading-relaxed font-medium tracking-tight sm:text-3xl"
+          />
+        </DoubleBorderCard>
+      </div>
+    </section>
+  )
+}
 
 function PixelCatPreview() {
   const [breed, setBreed] = useState<PixelCatBreed>('orange')
@@ -160,10 +214,18 @@ function Preview({
         <Button intent="save" feedback={{ label: 'Saved' }} onClick={() => {}}>
           Save
         </Button>
-        <Button intent="share" feedback={{ label: 'Link copied' }} onClick={() => {}}>
+        <Button
+          intent="share"
+          feedback={{ label: 'Link copied' }}
+          onClick={() => {}}
+        >
           Share
         </Button>
-        <Button intent="delete" feedback={{ label: 'Deleted' }} onClick={() => {}}>
+        <Button
+          intent="delete"
+          feedback={{ label: 'Deleted' }}
+          onClick={() => {}}
+        >
           Delete
         </Button>
       </div>
@@ -316,6 +378,10 @@ function Preview({
         />
       </div>
     )
+  }
+
+  if (item.slug === 'text-reveal') {
+    return <TextRevealPinnedPreview scrollContainerRef={scrollContainerRef} />
   }
 
   if (item.slug === 'scroll-story-cards') {
@@ -491,6 +557,10 @@ export default function LibraryItemDocumentation({
         </div>
 
         {view === 'preview' && item.slug === 'scroll-story-cards' ? (
+          <div className="mt-3">
+            <Preview item={item} />
+          </div>
+        ) : view === 'preview' && item.slug === 'text-reveal' ? (
           <div className="mt-3">
             <Preview item={item} />
           </div>

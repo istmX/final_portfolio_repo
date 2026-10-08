@@ -131,11 +131,52 @@ Other options include `direction`, `interval`, `speed`, `scale`, and effect
 settings for blur, fade, slide, and wave. The full component implementation is
 in your `components/ui/animated-text.tsx` file.
 
+## Text Reveal
+
+Install the editable source with:
+
+```sh
+npx @istmx/ui add text-reveal
+```
+
+`TextReveal` reveals plain text line by line and character by character. It
+supports a viewport-triggered entrance by default, or reversible scroll-linked
+animation by passing a Motion value from `useScroll`.
+
+```tsx
+import TextReveal from '@/components/ui/text-reveal'
+
+export function Quote() {
+  return (
+    <TextReveal
+      text={'Every word arrives softly,\none character at a time.'}
+      characterStagger={0.028}
+      lineStagger={0.2}
+      duration={0.65}
+      waveDistance={8}
+      waveOvershoot={6}
+      sidewaysDistance={1.5}
+      blurAmount={6}
+      opacityFrom={0.08}
+      opacityPeak={0.72}
+      scaleFrom={0.96}
+      scalePeak={1.025}
+    />
+  )
+}
+```
+
+Tune `characterStagger`, `lineStagger`, `duration`, `waveDistance`,
+`waveOvershoot`, `sidewaysDistance`, `blurAmount`, opacity, and scale props to
+shape the reveal. The component keeps words together across natural line wraps
+and provides a single screen-reader text string.
+
 ## CLI options
 
 ```sh
 npx @istmx/ui add animated-text --no-install
 npx @istmx/ui add animated-text --overwrite
+npx @istmx/ui add text-reveal
 npx @istmx/ui add image-accordion
 npx @istmx/ui add image-trail
 npx @istmx/ui add infinite-image-canvas

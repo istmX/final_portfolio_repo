@@ -6,10 +6,11 @@ import { access, mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const VERSION = '0.1.8'
+const VERSION = '0.1.9'
 const COMPONENTS = {
   button: { fileName: 'button.tsx' },
   'animated-text': { fileName: 'animated-text.tsx' },
+  'text-reveal': { fileName: 'text-reveal.tsx' },
   'infinite-image-canvas': { fileName: 'infinite-image-canvas.tsx' },
   'image-trail': { fileName: 'image-trail.tsx' },
   'image-accordion': { fileName: 'image-accordion.tsx' },

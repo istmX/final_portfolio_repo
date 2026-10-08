@@ -110,9 +110,9 @@ export default function IntroHero() {
           className="text-muted mt-6 max-w-2xl scroll-mt-6 text-sm leading-6 sm:mt-7 sm:text-[15px]"
         >
           <p>
-            I&apos;m Aryan, also known as aryanonai, a developer and student
-            building AI-powered applications, autonomous AI agents, and
-            full-stack platforms for web and mobile. I build across{' '}
+            I&apos;m an 18-year-old developer and student building AI-powered
+            applications, autonomous AI agents, and full-stack platforms for web
+            and mobile. I build across{' '}
             <InlineTechCapsules technologies={FULL_STACK_TECH} />, and use{' '}
             <InlineTechCapsules technologies={AI_TECH} /> to build AI agents and
             intelligent systems. I&apos;m interested in taking ideas from simple
