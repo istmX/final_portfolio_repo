@@ -1,12 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import type {
-  AnchorHTMLAttributes,
-  ButtonHTMLAttributes,
-  ReactNode,
-} from 'react'
+import type { ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import type { HTMLMotionProps } from 'motion/react'
 import { cn } from '@/lib/utils'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'soft'
@@ -29,12 +26,12 @@ type SharedButtonProps = {
 }
 
 type NativeButtonProps = SharedButtonProps &
-  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof SharedButtonProps> & {
+  Omit<HTMLMotionProps<'button'>, keyof SharedButtonProps> & {
     href?: never
   }
 
 type ButtonAnchorProps = SharedButtonProps &
-  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof SharedButtonProps | 'href'> & {
+  Omit<HTMLMotionProps<'a'>, keyof SharedButtonProps | 'href'> & {
     href: string
   }
 

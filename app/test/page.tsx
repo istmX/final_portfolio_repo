@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import type { Metadata, ReactNode } from 'next'
+import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 import { AnimatedText } from '@/components/ui/animated-text'
 import ImageAccordion from '@/components/ui/image-accordion'
 import ImageEffectsCard from '@/components/ui/image-effects-card'
