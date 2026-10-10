@@ -16,6 +16,7 @@ Aryan is the person behind the developer identity `istmX` and also uses `aryanxa
 - **[ISTMX Skills](https://istmx.dpdns.org/)** — reusable skills and structured workflows for AI coding agents. [Source on GitHub](https://github.com/istmX/skills).
 - **[ISTMX UI](https://www.npmjs.com/package/@istmx/ui)** — a CLI that adds editable component source to a developer’s project.
 - **[ISTMX Library](https://aryanonai.vercel.app/library)** — documentation, previews, installation instructions, usage examples, and API references for the components.
+- **ISTMX Blocks** — ready-to-preview interface patterns composed from editable components.
 
 The portfolio also features Crew, CodeCat, and Noiseless. Their current descriptions and links are maintained in [`projectData.ts`](app/portfolio-components/projectData.ts).
 
@@ -23,15 +24,15 @@ The portfolio also features Crew, CodeCat, and Noiseless. Their current descript
 
 ISTMX components are intended to be copied into a project and edited there. The CLI provides the source files; the consuming app owns the implementation and does not depend on a hosted ISTMX runtime.
 
-| Component                | What it does                                                                                                       | Documentation                                                          |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| **Animated Text**        | Rotates through text with configurable blur, fade, shimmer, slide, and per-character wave effects.                 | [Read docs](https://aryanonai.vercel.app/library/animated-text)        |
-| **Text Reveal**          | Reveals text line by line with configurable blur, opacity, and reversible scroll-linked character motion.          | [Read docs](https://aryanonai.vercel.app/library/text-reveal)          |
-| **Image Accordion**      | Presents images as a selectable stack and transitions the selected image into a preview canvas.                    | [Read docs](https://aryanonai.vercel.app/library/image-accordion)      |
-| **Dock Navigation**      | A navigation dock with pointer-proximity magnification, elastic lift, and moving tooltips.                         | [Read docs](https://aryanonai.vercel.app/library/dock-navigation)      |
-| **Mobile Menu Dock**     | A mobile navigation dock with a section menu and component search.                                                 | [Read docs](https://aryanonai.vercel.app/library/mobile-menu-dock)     |
-| **Scroll Story Cards**   | A scroll-scrubbed story sequence where cards travel upward on a curved path and drive image and color transitions. | [Read docs](https://aryanonai.vercel.app/library/scroll-story-cards)   |
-| **Pixel Cat**            | A configurable pixel-art cat that moves within its parent container and supports optional interaction.             | [Read docs](https://aryanonai.vercel.app/library/pixel-cat)            |
+| Component              | What it does                                                                                                       | Documentation                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| **Animated Text**      | Rotates through text with configurable blur, fade, shimmer, slide, and per-character wave effects.                 | [Read docs](https://aryanonai.vercel.app/library/animated-text)      |
+| **Text Reveal**        | Reveals text line by line with configurable blur, opacity, and reversible scroll-linked character motion.          | [Read docs](https://aryanonai.vercel.app/library/text-reveal)        |
+| **Image Accordion**    | Presents images as a selectable stack and transitions the selected image into a preview canvas.                    | [Read docs](https://aryanonai.vercel.app/library/image-accordion)    |
+| **Dock Navigation**    | A navigation dock with pointer-proximity magnification, elastic lift, and moving tooltips.                         | [Read docs](https://aryanonai.vercel.app/library/dock-navigation)    |
+| **Mobile Menu Dock**   | A mobile navigation dock with a section menu and component search.                                                 | [Read docs](https://aryanonai.vercel.app/library/mobile-menu-dock)   |
+| **Scroll Story Cards** | A scroll-scrubbed story sequence where cards travel upward on a curved path and drive image and color transitions. | [Read docs](https://aryanonai.vercel.app/library/scroll-story-cards) |
+| **Pixel Cat**          | A configurable pixel-art cat that moves within its parent container and supports optional interaction.             | [Read docs](https://aryanonai.vercel.app/library/pixel-cat)          |
 
 Each page documents installation, usage, props, accessibility behavior, interaction details, and implementation limitations. The Library source files live in [`components/ui/`](components/ui); the CLI’s packaged copies live in [`packages/cli/registry/`](packages/cli/registry).
 
@@ -74,6 +75,7 @@ The CLI package is [`@istmx/ui`](https://www.npmjs.com/package/@istmx/ui). Its p
 - Social profile links, technology stack, and GitHub contribution activity.
 - Project index with descriptions, technologies, images, status, and relevant external links.
 - Homepage component index linking directly to Library documentation.
+- Blocks catalog with interactive previews of composed interface patterns.
 - Writing index and individual article pages.
 - Responsive navigation with searchable component links and a mobile bottom dock.
 - Light and dark themes, subtle motion, and reduced-motion support.
@@ -86,6 +88,7 @@ The CLI package is [`@istmx/ui`](https://www.npmjs.com/package/@istmx/ui). Its p
 | ----------------- | ----------------------------------------- | ----------------- |
 | `/`               | Aryan’s portfolio homepage                | Indexable         |
 | `/library`        | ISTMX component catalog                   | Indexable         |
+| `/blocks`         | Interactive ISTMX interface blocks        | Indexable         |
 | `/library/[slug]` | Documentation for an individual component | Indexable         |
 | `/blogs`          | Writing index                             | Indexable         |
 | `/blogs/[slug]`   | Individual article                        | Indexable         |
@@ -118,6 +121,7 @@ app/
   blogs/                            Writing index, articles, and article data
   portfolio-components/            Portfolio sections and shared UI
     library/                        Library registry, previews, and source data
+    blocks/                         Composed interface pattern previews
   cat-home/                         Optional interactive cat experience
   test/                              Noindex component playground
 components/ui/                      Editable source components

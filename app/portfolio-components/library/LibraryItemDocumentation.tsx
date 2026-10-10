@@ -26,6 +26,7 @@ import DockNavigation from '@/components/ui/dock-navigation'
 import Button from '@/components/ui/button'
 import MobileMenuDock from '@/components/ui/mobile-menu-dock'
 import { AnimatedText } from '@/components/ui/animated-text'
+import StreamingText from '@/components/ui/streaming-text'
 import TextReveal from '@/components/ui/text-reveal'
 import ImageAccordion from '@/components/ui/image-accordion'
 import ImageTrail from '@/components/ui/image-trail'
@@ -39,11 +40,14 @@ import {
 import { TechIcon, type TechIconName } from '../icons'
 import InstallCommand from './InstallCommand'
 import type { LibraryItem } from './library-items'
+import { cn } from '@/lib/utils'
 import { IMAGE_ACCORDION_IMAGES } from './image-accordion-data'
 import { IMAGE_TRAIL_IMAGES } from './image-trail-data'
 import { INFINITE_IMAGE_CANVAS_IMAGES } from './infinite-image-canvas-data'
 import { SCROLL_STORY_CARDS } from './scroll-story-cards-data'
 import { TEXT_REVEAL_QUOTE } from './text-reveal-data'
+import AiChatInput from '@/components/ai-chat/ai-chat-input'
+import { DEFAULT_ATTACHMENT_OPTIONS } from '@/components/ai-chat/default-attachments'
 
 const DIFF_EXAMPLE = `+ import { AnimatedText } from "@/components/ui/animated-text"
 
@@ -55,8 +59,10 @@ const DIFF_EXAMPLE = `+ import { AnimatedText } from "@/components/ui/animated-t
 
 function TextRevealPinnedPreview({
   scrollContainerRef,
+  fullScreen = false,
 }: {
   scrollContainerRef?: RefObject<HTMLElement | null>
+  fullScreen?: boolean
 }) {
   const sectionRef = useRef<HTMLElement>(null)
   const shouldReduceMotion = useReducedMotion()
@@ -87,7 +93,11 @@ function TextRevealPinnedPreview({
       >
         <DoubleBorderCard
           className="w-full"
-          innerClassName="bg-background/70 flex min-h-[min(32rem,75svh)] items-center justify-center p-4 sm:p-6"
+          innerClassName={
+            fullScreen
+              ? 'bg-background/70 flex min-h-[calc(100svh-5rem)] items-center justify-center p-5 sm:p-10'
+              : 'bg-background/70 flex min-h-[min(32rem,75svh)] items-center justify-center p-4 sm:p-6'
+          }
         >
           <TextReveal
             text={TEXT_REVEAL_QUOTE}
@@ -96,7 +106,11 @@ function TextRevealPinnedPreview({
             lineStagger={0.24}
             waveDistance={12}
             blurAmount={8}
-            className="font-display max-w-3xl text-center text-xl leading-relaxed font-medium tracking-tight sm:text-3xl"
+            className={cn(
+              'font-display max-w-3xl text-center text-xl leading-relaxed font-medium tracking-tight sm:text-3xl',
+              fullScreen &&
+                'max-w-6xl text-[clamp(1.5rem,4vw,4rem)] leading-tight',
+            )}
           />
         </DoubleBorderCard>
       </div>
@@ -104,7 +118,7 @@ function TextRevealPinnedPreview({
   )
 }
 
-function PixelCatPreview() {
+function PixelCatPreview({ fullScreen = false }: { fullScreen?: boolean }) {
   const [breed, setBreed] = useState<PixelCatBreed>('orange')
   const [wandering, setWandering] = useState(true)
   const [selectedPose, setSelectedPose] = useState<PixelCatPose | 'auto'>(
@@ -112,8 +126,19 @@ function PixelCatPreview() {
   )
 
   return (
-    <div className="w-full space-y-4 px-2 py-4 sm:px-4">
-      <div className="border-border/80 relative h-64 w-full overflow-hidden rounded-xl border bg-zinc-950/40 p-4 shadow-inner">
+    <div
+      className={cn(
+        'w-full space-y-4 px-2 py-4 sm:px-4',
+        fullScreen &&
+          'flex min-h-svh flex-col justify-center px-5 py-16 sm:px-8',
+      )}
+    >
+      <div
+        className={cn(
+          'border-border/80 relative h-64 w-full overflow-hidden rounded-xl border bg-zinc-950/40 p-4 shadow-inner',
+          fullScreen && 'h-[min(calc(100svh-7rem),56rem)]',
+        )}
+      >
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.05]"
           style={{
@@ -127,7 +152,7 @@ function PixelCatPreview() {
         </div>
         <PixelCat
           breed={breed}
-          size={40}
+          size={fullScreen ? 88 : 40}
           wandering={wandering}
           pose={selectedPose === 'auto' ? undefined : selectedPose}
           interactive={true}
@@ -204,18 +229,51 @@ function PixelCatPreview() {
 function Preview({
   item,
   scrollContainerRef,
+  fullScreen = false,
 }: {
   item: LibraryItem
   scrollContainerRef?: RefObject<HTMLElement | null>
+  fullScreen?: boolean
 }) {
+  if (item.slug === 'ai-chat-input') {
+    return (
+      <div
+        className={cn(
+          'mx-auto flex min-h-56 w-full max-w-3xl items-center px-4 py-8 sm:px-8',
+          fullScreen && 'min-h-svh max-w-5xl',
+        )}
+      >
+        <AiChatInput
+          actions={DEFAULT_ATTACHMENT_OPTIONS}
+          showVoice
+          maxAttachments={5}
+          maxFileSizeBytes={10 * 1024 * 1024}
+          onSubmit={() => {}}
+          className="w-full"
+        />
+      </div>
+    )
+  }
+
   if (item.slug === 'button') {
     return (
-      <div className="flex w-full flex-wrap items-center justify-center gap-3 px-4 py-8">
-        <Button intent="save" feedback={{ label: 'Saved' }} onClick={() => {}}>
+      <div
+        className={cn(
+          'flex w-full flex-wrap items-center justify-center gap-3 px-4 py-8',
+          fullScreen && 'min-h-svh content-center gap-5 px-8 py-8',
+        )}
+      >
+        <Button
+          className={fullScreen ? 'min-h-20 min-w-52 px-8 text-xl' : undefined}
+          intent="save"
+          feedback={{ label: 'Saved' }}
+          onClick={() => {}}
+        >
           Save
         </Button>
         <Button
           intent="share"
+          className={fullScreen ? 'min-h-20 min-w-52 px-8 text-xl' : undefined}
           feedback={{ label: 'Link copied' }}
           onClick={() => {}}
         >
@@ -223,6 +281,7 @@ function Preview({
         </Button>
         <Button
           intent="delete"
+          className={fullScreen ? 'min-h-20 min-w-52 px-8 text-xl' : undefined}
           feedback={{ label: 'Deleted' }}
           onClick={() => {}}
         >
@@ -234,11 +293,21 @@ function Preview({
 
   if (item.slug === 'mobile-menu-dock') {
     return (
-      <div className="relative flex min-h-72 w-full items-center justify-center overflow-hidden px-4 py-6">
-        <div className="border-border/60 bg-surface/15 relative flex w-full max-w-sm items-end justify-center border border-dotted px-4 pt-4 pb-5">
+      <div
+        className={cn(
+          'relative flex min-h-72 w-full items-center justify-center overflow-hidden px-4 py-6',
+          fullScreen && 'min-h-svh px-8',
+        )}
+      >
+        <div
+          className={cn(
+            'border-border/60 bg-surface/15 relative flex w-full max-w-sm items-end justify-center border border-dotted px-4 pt-4 pb-5',
+            fullScreen && 'max-w-3xl px-10 pt-10 pb-12',
+          )}
+        >
           <MobileMenuDock
             placement="inline"
-            className="w-full"
+            className={cn('w-full', fullScreen && 'scale-125 sm:scale-150')}
             items={[
               { label: 'About', href: '#about' },
               { label: 'Projects', href: '#projects' },
@@ -282,7 +351,12 @@ function Preview({
 
   if (item.slug === 'dock-navigation') {
     return (
-      <div className="flex min-h-52 w-full items-center justify-center px-4 py-14">
+      <div
+        className={cn(
+          'flex min-h-52 w-full items-center justify-center px-4 py-14',
+          fullScreen && 'min-h-svh',
+        )}
+      >
         <DockNavigation
           label="Dock navigation preview"
           items={[
@@ -314,6 +388,7 @@ function Preview({
             },
           ]}
           glow={{ opacity: 0.2, blur: 12 }}
+          className={fullScreen ? 'scale-[1.7] sm:scale-[2]' : undefined}
         />
       </div>
     )
@@ -321,14 +396,27 @@ function Preview({
 
   if (item.slug === 'image-accordion') {
     return (
-      <div className="w-full px-2 py-5 sm:px-4">
+      <div
+        className={cn('w-full px-2 py-5 sm:px-4', fullScreen && 'p-2 sm:p-6')}
+      >
         <ImageAccordion
           images={IMAGE_ACCORDION_IMAGES}
-          className="mx-auto w-full max-w-3xl gap-3 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] md:gap-4"
-          stackClassName="min-w-0"
+          className={cn(
+            'mx-auto w-full gap-3 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] md:gap-4',
+            fullScreen
+              ? 'h-[calc(100svh-2rem)] max-w-none grid-cols-[minmax(5rem,0.32fr)_minmax(0,1fr)] sm:h-[calc(100svh-3rem)]'
+              : 'max-w-3xl',
+          )}
+          stackClassName={cn(
+            'min-w-0',
+            fullScreen && 'flex items-center justify-center',
+          )}
           cardClassName="rounded-lg"
           imageClassName="object-cover"
-          previewClassName="min-h-48 rounded-lg sm:min-h-64"
+          previewClassName={cn(
+            'min-h-48 rounded-lg sm:min-h-64',
+            fullScreen && 'h-full min-h-0 aspect-auto',
+          )}
           glow={{ opacity: 0.18, blur: 14 }}
         />
       </div>
@@ -337,10 +425,13 @@ function Preview({
 
   if (item.slug === 'image-trail') {
     return (
-      <div className="w-full py-3">
+      <div className={cn('w-full py-3', fullScreen && 'py-0')}>
         <ImageTrail
           images={IMAGE_TRAIL_IMAGES}
-          className="mx-auto h-[20rem] max-w-3xl sm:h-[25rem]"
+          className={cn(
+            'mx-auto h-[20rem] max-w-3xl sm:h-[25rem]',
+            fullScreen && 'h-svh max-w-none',
+          )}
           throttle={160}
           maxTrailItems={5}
         />
@@ -350,12 +441,15 @@ function Preview({
 
   if (item.slug === 'infinite-image-canvas') {
     return (
-      <div className="w-full py-3">
+      <div className={cn('w-full py-3', fullScreen && 'py-0')}>
         <InfiniteImageCanvas
           images={INFINITE_IMAGE_CANVAS_IMAGES}
           heading="Somewhere, Everywhere"
           description="An endless field of images, waiting to be explored."
-          className="mx-auto h-[23rem] max-w-3xl sm:h-[28rem]"
+          className={cn(
+            'mx-auto h-[23rem] max-w-3xl sm:h-[28rem]',
+            fullScreen && 'h-svh max-w-none rounded-none',
+          )}
         />
       </div>
     )
@@ -363,7 +457,12 @@ function Preview({
 
   if (item.slug === 'animated-text') {
     return (
-      <div className="flex min-h-52 items-center justify-center text-lg font-medium">
+      <div
+        className={cn(
+          'flex min-h-52 items-center justify-center text-lg font-medium',
+          fullScreen && 'min-h-svh text-3xl sm:text-5xl',
+        )}
+      >
         <AnimatedText
           prefix="I am"
           items={['an AI Engineer', 'a Full-Stack Developer', 'a Builder']}
@@ -374,14 +473,57 @@ function Preview({
             shimmer: { duration: 2.2 },
           }}
           scale={0.96}
-          className="text-lg"
+          className={cn('text-lg', fullScreen && 'text-4xl sm:text-7xl')}
         />
       </div>
     )
   }
 
   if (item.slug === 'text-reveal') {
-    return <TextRevealPinnedPreview scrollContainerRef={scrollContainerRef} />
+    return (
+      <TextRevealPinnedPreview
+        scrollContainerRef={scrollContainerRef}
+        fullScreen={fullScreen}
+      />
+    )
+  }
+
+  if (item.slug === 'streaming-text') {
+    return (
+      <div
+        className={cn(
+          'flex w-full items-center justify-center px-3 py-9',
+          fullScreen && 'min-h-svh px-8',
+        )}
+      >
+        <div
+          className={cn(
+            'border-border/60 bg-surface/20 w-full max-w-xl rounded-xl border px-5 py-4',
+            fullScreen && 'max-w-3xl px-8 py-7',
+          )}
+        >
+          <div className="text-muted mb-2.5 flex items-center gap-2 text-[10px] font-medium tracking-[0.16em] uppercase">
+            <span className="relative flex size-1.5">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-70" />
+              <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
+            </span>
+            Streaming response
+          </div>
+          <StreamingText
+            key={fullScreen ? 'fullscreen' : 'inline'}
+            text="Here is a first pass. I will keep the layout calm, use one accent color, and let the details carry the rest."
+            speed={30}
+            effect="blur"
+            loop
+            loopDelay={1600}
+            textClassName={cn(
+              'text-sm leading-7 text-foreground',
+              fullScreen && 'text-base leading-9 sm:text-lg',
+            )}
+          />
+        </div>
+      </div>
+    )
   }
 
   if (item.slug === 'scroll-story-cards') {
@@ -391,16 +533,16 @@ function Preview({
         eyebrow="Portraits / visual story"
         heading="One scroll. Five changing frames."
         description="The frame at the center shapes the image, color, and story."
-        scrollDistance={400}
-        cardWidth={156}
-        cardHeight={156}
+        scrollDistance={fullScreen ? 500 : 400}
+        cardWidth={fullScreen ? 260 : 156}
+        cardHeight={fullScreen ? 220 : 156}
         scrollContainerRef={scrollContainerRef}
       />
     )
   }
 
   if (item.slug === 'pixel-cat') {
-    return <PixelCatPreview />
+    return <PixelCatPreview fullScreen={fullScreen} />
   }
 
   return null
@@ -495,21 +637,49 @@ export default function LibraryItemDocumentation({
     'command',
   )
   const fullscreenRef = useRef<HTMLDivElement>(null)
+  const fullscreenCloseButtonRef = useRef<HTMLButtonElement>(null)
+  const openPreviewButtonRef = useRef<HTMLButtonElement>(null)
   const sourcePath = `components/ui/${item.slug}.tsx`
 
   useEffect(() => {
     if (!isPreviewFullscreen) return
 
+    const openPreviewButton = openPreviewButtonRef.current
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsPreviewFullscreen(false)
+    fullscreenCloseButtonRef.current?.focus()
+
+    const handleDialogKeys = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsPreviewFullscreen(false)
+        return
+      }
+
+      if (event.key !== 'Tab') return
+      const focusable = Array.from(
+        fullscreenRef.current?.querySelectorAll<HTMLElement>(
+          'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((element) => element.offsetParent !== null)
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (!first || !last) {
+        event.preventDefault()
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
     }
 
-    window.addEventListener('keydown', closeOnEscape)
+    window.addEventListener('keydown', handleDialogKeys)
     return () => {
       document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', closeOnEscape)
+      window.removeEventListener('keydown', handleDialogKeys)
+      openPreviewButton?.focus()
     }
   }, [isPreviewFullscreen])
 
@@ -544,13 +714,15 @@ export default function LibraryItemDocumentation({
             </span>
             {view === 'preview' ? (
               <button
+                ref={openPreviewButtonRef}
                 type="button"
                 onClick={() => setIsPreviewFullscreen(true)}
                 aria-label={`Open ${item.name} preview in fullscreen`}
-                title="Fullscreen preview"
-                className="border-border text-muted hover:border-foreground/30 hover:text-foreground focus-visible:outline-foreground inline-flex size-8 items-center justify-center border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+                title="Open fullscreen preview"
+                className="border-border bg-surface/30 text-muted hover:border-foreground/40 hover:bg-surface/70 hover:text-foreground focus-visible:outline-foreground inline-flex h-9 items-center gap-2 rounded-lg border px-3 text-xs font-medium shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 <IconArrowsMaximize aria-hidden="true" size={15} stroke={1.7} />
+                <span>Expand</span>
               </button>
             ) : null}
           </div>
@@ -759,6 +931,50 @@ export default function LibraryItemDocumentation({
         </div>
       </PortfolioSectionFrame>
 
+      {item.files?.length ? (
+        <PortfolioSectionFrame className="mt-8" ariaLabelledby="files-title">
+          <h2
+            id="files-title"
+            className="font-display text-lg font-semibold sm:text-xl"
+          >
+            Files and connections
+          </h2>
+          <p className="text-muted mt-2 text-sm leading-6">
+            The installer copies these files together. Their internal imports
+            are already connected, so you only need to import the public input
+            and provide your actions and submit handler.
+          </p>
+          <div className="border-border/70 mt-4 divide-y divide-dotted border-y border-dotted">
+            {item.files.map((file) => (
+              <div
+                key={file.path}
+                className="grid gap-1 py-3 sm:grid-cols-[minmax(10rem,0.8fr)_2fr] sm:gap-4"
+              >
+                <code className="text-foreground font-mono text-[11px]">
+                  {file.path}
+                </code>
+                <p className="text-muted text-xs leading-5">{file.role}</p>
+              </div>
+            ))}
+          </div>
+          {item.wiring?.length ? (
+            <ol className="text-muted mt-4 grid gap-2 text-sm leading-6">
+              {item.wiring.map((step) => (
+                <li key={step} className="flex gap-2">
+                  <IconPoint
+                    aria-hidden="true"
+                    className="text-foreground mt-0.5 shrink-0"
+                    size={15}
+                    stroke={2}
+                  />
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          ) : null}
+        </PortfolioSectionFrame>
+      ) : null}
+
       <PortfolioSectionFrame className="mt-8" ariaLabelledby="api-title">
         <h2
           id="api-title"
@@ -860,18 +1076,33 @@ export default function LibraryItemDocumentation({
           ref={fullscreenRef}
           role="dialog"
           aria-modal="true"
-          aria-label={`${item.name} fullscreen preview`}
-          className="bg-background fixed inset-0 z-[100] overflow-y-auto overscroll-contain"
+          aria-labelledby={`${item.slug}-fullscreen-title`}
+          className="bg-background fixed inset-0 z-[100] w-full overflow-x-hidden overflow-y-auto overscroll-contain"
         >
-          <button
-            type="button"
-            onClick={() => setIsPreviewFullscreen(false)}
-            aria-label="Close fullscreen preview"
-            className="bg-background/90 border-border text-foreground hover:bg-surface fixed top-3 right-3 z-[110] inline-flex size-10 items-center justify-center border shadow-sm backdrop-blur-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
-          >
-            <IconX aria-hidden="true" size={18} stroke={1.8} />
-          </button>
-          <Preview item={item} scrollContainerRef={fullscreenRef} />
+          <div className="bg-background/90 border-border/70 fixed inset-x-0 top-0 z-[110] flex h-14 items-center justify-between border-b px-4 shadow-sm backdrop-blur-xl sm:px-7">
+            <div className="min-w-0">
+              <span className="text-muted block text-[9px] font-medium tracking-[0.16em] uppercase">
+                Live preview
+              </span>
+              <h2
+                id={`${item.slug}-fullscreen-title`}
+                className="truncate text-sm font-medium"
+              >
+                {item.name}
+              </h2>
+            </div>
+            <button
+              ref={fullscreenCloseButtonRef}
+              type="button"
+              onClick={() => setIsPreviewFullscreen(false)}
+              aria-label="Close fullscreen preview"
+              className="border-border bg-surface/35 text-muted hover:bg-surface hover:text-foreground focus-visible:outline-foreground inline-flex h-9 shrink-0 items-center gap-2 rounded-lg border px-3 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <IconX aria-hidden="true" size={16} stroke={1.8} />
+              <span>Close</span>
+            </button>
+          </div>
+          <Preview item={item} scrollContainerRef={fullscreenRef} fullScreen />
         </div>
       ) : null}
     </div>

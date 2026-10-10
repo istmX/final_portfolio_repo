@@ -136,7 +136,7 @@ export default function MobileMenuDock({
                   ))
                 ) : (
                   <li className="text-muted px-3.5 py-4 text-center text-sm">
-                    No components match “{query}”.
+                    No items match “{query}”.
                   </li>
                 )
               ) : (
@@ -186,8 +186,8 @@ export default function MobileMenuDock({
             setOpen(true)
           }}
           onFocus={() => setOpen(true)}
-          placeholder="Search components..."
-          aria-label="Search components by name, category, or description"
+          placeholder="Search..."
+          aria-label="Search by name, category, or description"
           aria-controls="mobile-menu-dock-panel"
           className="text-foreground placeholder:text-muted/70 min-w-0 flex-1 bg-transparent text-sm outline-none"
         />

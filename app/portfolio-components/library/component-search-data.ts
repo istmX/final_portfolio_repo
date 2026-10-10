@@ -24,6 +24,22 @@ export const COMPONENT_SEARCH_ITEMS = [
       'Reveal text line by line with a soft blur, character wave, and scroll-linked control.',
   },
   {
+    name: 'Streaming Text',
+    slug: 'streaming-text',
+    href: '/library/streaming-text',
+    category: 'AI',
+    description:
+      'Stream an AI response character by character with blur, wave, and a blinking caret.',
+  },
+  {
+    name: 'AI Chat Input',
+    slug: 'ai-chat-input',
+    href: '/library/ai-chat-input',
+    category: 'AI',
+    description:
+      'A configurable composer with file previews, attachment options, voice input, and send or stop controls.',
+  },
+  {
     name: 'Infinite Image Canvas',
     slug: 'infinite-image-canvas',
     href: '/library/infinite-image-canvas',
@@ -74,5 +90,17 @@ export const COMPONENT_SEARCH_ITEMS = [
     href: '/library/pixel-cat',
     category: 'Interactive',
     description: 'A customizable pixel cat that explores its container.',
+  },
+] as const
+
+export const SITE_SEARCH_ITEMS = [
+  ...COMPONENT_SEARCH_ITEMS,
+  {
+    name: 'AI Chat',
+    slug: 'ai-chat',
+    href: '/blocks/ai-chat',
+    category: 'AI block',
+    description:
+      'A complete assistant chat with streaming replies, file attachments, and conversation controls.',
   },
 ] as const

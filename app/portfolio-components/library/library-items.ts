@@ -6,12 +6,19 @@ import { infiniteImageCanvasSourceCode } from './infinite-image-canvas-source'
 import { mobileMenuDockSourceCode } from './mobile-menu-dock-source'
 import { pixelCatSourceCode } from './pixel-cat-source'
 import { scrollStoryCardsSourceCode } from './scroll-story-cards-source'
+import { streamingTextSourceCode } from './streaming-text-source'
 import { textRevealSourceCode } from './text-reveal-source'
+import { aiChatInputSourceCode } from './ai-chat-input-source'
 
 export type LibraryProp = {
   name: string
   type: string
   description: string
+}
+
+export type LibraryFile = {
+  path: string
+  role: string
 }
 
 export type LibraryItem = {
@@ -29,6 +36,8 @@ export type LibraryItem = {
   dependencies: string[]
   features: string[]
   composition: string[]
+  files?: LibraryFile[]
+  wiring?: string[]
   props: LibraryProp[]
   sourceCode: string
   usage: string
@@ -37,6 +46,101 @@ export type LibraryItem = {
 }
 
 export const LIBRARY_ITEMS: LibraryItem[] = [
+  {
+    slug: 'ai-chat-input',
+    name: 'AI Chat Input',
+    description:
+      'A configurable chat composer with animated attachment options, file previews, voice input, and send or stop controls.',
+    seoTitle: 'AI Chat Input — React Chat Composer | ISTMX',
+    seoDescription:
+      'An installable, Tailwind-styled React chat input with attachment previews, optional voice input, file limits, and busy-state controls.',
+    keywords: ['ai chat input', 'chat composer', 'react chat input', 'file attachments'],
+    accessibility:
+      'Includes a labelled message field, keyboard-operable attachment menu, labelled action buttons, focus restoration, and reduced-motion-aware transitions.',
+    interaction:
+      'The attachment control opens a compact animated menu. Selected files appear as removable previews above the composer. Submit calls onSubmit with the message and attachments; busy mode changes the send action to a stop action.',
+    limitations:
+      'The component only collects files and emits submit events. Your application must validate uploads again on the server and connect onSubmit to its own model or API handler. Voice capture depends on browser speech recognition support.',
+    category: 'AI',
+    commandName: 'ai-chat-input',
+    dependencies: ['React', 'Motion', 'Tailwind CSS', 'clsx', 'tailwind-merge', '@tabler/icons-react'],
+    features: [
+      'Animated file type menu with configurable accepted types and selection behavior.',
+      'Image, video, audio, and document previews with remove controls.',
+      'Optional voice input with listening feedback.',
+      'Growing textarea with configurable row, file count, and file size limits.',
+      'Busy state swaps send for stop and supports cancellation callbacks.',
+      'Keeps a full accent-colored outline visible while a brighter highlight with a soft, irregular blur travels around the rounded border.',
+      'Tailwind classes only; no standalone stylesheet is required.',
+    ],
+    composition: ['AiChatInput', '├── AttachmentDialog', '├── AttachmentPreview', '├── VoiceButton', '└── SendButton'],
+    files: [
+      { path: 'ai-chat-input.tsx', role: 'Public component. Owns message state, attachment state, submit behavior, textarea sizing, and its local irregular accent glow.' },
+      { path: 'attachment.tsx', role: 'Renders the attachment chooser dialog, selected-file preview cards, and its local accent glow.' },
+      { path: 'send-button.tsx', role: 'Renders the send, sending, stop, and sent-feedback control.' },
+      { path: 'voice-button.tsx', role: 'Renders the optional browser speech input control and listening state.' },
+      { path: 'types.ts', role: 'Defines attachment options, attachment data, and shared chat types used by the input helpers.' },
+      { path: 'utils.ts', role: 'Provides the local cn helper using clsx and tailwind-merge.' },
+    ],
+    wiring: [
+      'The CLI copies all six files into components/ai-chat and the imports between them are already connected. No manual relinking is needed.',
+      'Your screen imports AiChatInput from components/ai-chat/ai-chat-input and passes actions plus onSubmit. The component sends the message and selected attachments to your callback.',
+      'ai-chat-input.tsx contains its own accent-border animation and imports AttachmentDialog and AttachmentPreview, SendButton, VoiceButton, shared types, and the local cn helper. attachment.tsx contains the same border effect locally, so neither component needs another effect file installed.',
+      'The standalone input does not include default attachment choices. Define actions in your app, or use DEFAULT_ATTACHMENT_OPTIONS when the complete AI chat block is installed.',
+      'For the complete block, chat-composer.tsx is already connected to AiChatInput, and ai-chat-block.tsx connects that composer to the message list and chat state.',
+    ],
+    props: [
+      { name: 'actions?', type: 'readonly AiChatInputAction[]', description: 'Attachment menu options, including label, description, accepted file types, and multiple selection.' },
+      { name: 'onSubmit?', type: '(value: string, attachments: AiChatInputAttachment[]) => void', description: 'Receives the message text and selected File objects.' },
+      { name: 'onAttachmentsChange?', type: '(attachments: AiChatInputAttachment[]) => void', description: 'Receives the current attachment list when it changes.' },
+      { name: 'busy?', type: 'boolean', description: 'Shows the stop action while a response is in progress.' },
+      { name: 'onStop?', type: '() => void', description: 'Called when the user activates the stop control.' },
+      { name: 'showVoice?', type: 'boolean', description: 'Shows browser voice input when supported.' },
+      { name: 'maxLength? / maxRows?', type: 'number', description: 'Limits message length and textarea growth.' },
+      { name: 'maxAttachments? / maxFileSizeBytes?', type: 'number', description: 'Limits the number and individual size of selected files.' },
+      { name: 'glow?', type: 'false | AiChatInputGlow', description: 'Configures the full outline and traveling highlight color, duration, and intensity. Defaults to the sky accent; false disables both.' },
+      { name: 'className? / textareaClassName?', type: 'string', description: 'Adds Tailwind classes to the composer and message field.' },
+    ],
+    sourceCode: aiChatInputSourceCode,
+    usage: `import AiChatInput, { type AiChatInputAction } from '@/components/ai-chat/ai-chat-input'
+
+const actions: AiChatInputAction[] = [
+  {
+    id: 'image',
+    label: 'Add images',
+    description: 'PNG, JPG, or WebP',
+    accept: 'image/png,image/jpeg,image/webp',
+    multiple: true,
+  },
+  {
+    id: 'file',
+    label: 'Add files',
+    description: 'Documents and text files',
+    accept: '.pdf,.txt,.md,.doc,.docx',
+    multiple: true,
+  },
+]
+
+async function sendMessage({ message, files }: { message: string; files: File[] }) {
+  const body = new FormData()
+  body.set('message', message)
+  files.forEach((file) => body.append('files', file))
+
+  const response = await fetch('/api/chat', { method: 'POST', body })
+  if (!response.ok) throw new Error('The message could not be sent.')
+}
+
+<AiChatInput
+  actions={actions}
+  maxAttachments={5}
+  maxFileSizeBytes={10 * 1024 * 1024}
+  onSubmit={(message, attachments) => {
+    void sendMessage({ message, files: attachments.map(({ file }) => file) })
+  }}
+/>`,
+    example:
+      'Install the component, connect onSubmit to your application handler, and pass only the attachment options your product supports. The included helper files are installed alongside the input under components/ai-chat.',
+  },
   {
     slug: 'button',
     name: 'Button',
@@ -660,6 +764,158 @@ export default AnimatedText`,
 
 - <p className="opacity-0">A sentence revealed with custom scroll handlers.</p>
 + <TextReveal text="A sentence revealed one character at a time." />`,
+  },
+  {
+    slug: 'streaming-text',
+    name: 'Streaming Text',
+    description:
+      'A generating-text effect where characters settle in one by one with a soft blur, fade, or wave and a blinking caret while the response is still being written.',
+    seoTitle: 'Streaming Text — React AI Response Text Component | ISTMX',
+    seoDescription:
+      'A Motion-powered React component that streams a string character by character with blur, fade, slide, and wave micro-interactions, an optional caret, and reduced-motion support.',
+    keywords: [
+      'react streaming text',
+      'ai response text react',
+      'generating text animation',
+      'typewriter text react',
+      'react streaming ai response',
+    ],
+    accessibility:
+      'The animated characters are hidden from assistive technology while an sr-only copy of the full string sits in a polite status region, so screen readers hear the message once instead of every keystroke. Reduced-motion preferences render the finished string immediately.',
+    interaction:
+      'Each newly revealed character enters with a short micro-interaction chosen by effect: blur, fade, slide, or a spring wave. The reveal speed, delay, glyph timing, and caret behavior are configurable, and the whole stream can loop or call onComplete.',
+    limitations:
+      'It animates plain strings only, so pass a single text value rather than rich markup. The visible text streams at a steady character rate; use a real streaming source for token-level timing.',
+    category: 'AI',
+    commandName: 'streaming-text',
+    dependencies: ['React', 'Motion', 'Tailwind CSS', 'clsx', 'tailwind-merge'],
+    features: [
+      'Streams a string character by character at a configurable speed.',
+      'Choose how each character settles: blur, fade, slide, or a spring wave.',
+      'Optional blinking caret, with an option to keep it after the string ends.',
+      'Tune blur amount, rise distance, and per-character duration.',
+      'Delay the start and optionally loop the stream between cycles.',
+      'Fire onComplete when the full string has been revealed.',
+      'Groups characters by word so long responses still wrap correctly.',
+      'Announces the finished message once and respects reduced motion.',
+    ],
+    composition: [
+      'StreamingText',
+      '├── Animated glyphs',
+      '├── Blinking caret',
+      '└── Screen-reader text',
+    ],
+    props: [
+      {
+        name: 'text',
+        type: 'string',
+        description: 'The string to reveal as if it is still being written.',
+      },
+      {
+        name: 'speed?',
+        type: 'number',
+        description: 'Characters revealed per second. Defaults to 34.',
+      },
+      {
+        name: 'startDelay?',
+        type: 'number',
+        description:
+          'Delay in milliseconds before streaming begins. Defaults to 0.',
+      },
+      {
+        name: 'effect?',
+        type: "'fade' | 'blur' | 'slide' | 'wave'",
+        description: 'How each new character enters. Defaults to blur.',
+      },
+      {
+        name: 'glyphDuration?',
+        type: 'number',
+        description:
+          'Seconds for a single character to settle. Defaults to 0.34.',
+      },
+      {
+        name: 'blurAmount?',
+        type: 'number',
+        description:
+          'Blur radius in pixels used by the blur effect. Defaults to 6.',
+      },
+      {
+        name: 'slideDistance?',
+        type: 'number',
+        description:
+          'Rise distance in pixels used by the slide, blur, and wave effects. Defaults to 6.',
+      },
+      {
+        name: 'cursor?',
+        type: 'boolean',
+        description:
+          'Shows the blinking caret while streaming. Defaults to true.',
+      },
+      {
+        name: 'cursorAfterComplete?',
+        type: 'boolean',
+        description:
+          'Keeps the caret blinking after the string finishes. Defaults to false.',
+      },
+      {
+        name: 'loop?',
+        type: 'boolean',
+        description:
+          'Restarts the stream after the string finishes. Defaults to false.',
+      },
+      {
+        name: 'loopDelay?',
+        type: 'number',
+        description:
+          'Pause in milliseconds between loop cycles. Defaults to 1200.',
+      },
+      {
+        name: 'onComplete?',
+        type: '() => void',
+        description: 'Called once the full string has been revealed.',
+      },
+      {
+        name: 'className?',
+        type: 'string',
+        description: 'Additional classes for the outer wrapper.',
+      },
+      {
+        name: 'textClassName?',
+        type: 'string',
+        description: 'Classes applied to the animated text.',
+      },
+      {
+        name: 'cursorClassName?',
+        type: 'string',
+        description: 'Classes applied to the caret.',
+      },
+    ],
+    sourceCode: streamingTextSourceCode,
+    usage: `import StreamingText from '@/components/ui/streaming-text'
+
+<StreamingText text="Streaming means the answer arrives while it is written." />
+
+<StreamingText
+  text={answer}
+  speed={46}
+  effect="blur"
+  startDelay={200}
+  onComplete={() => setDone(true)}
+/>
+
+<StreamingText
+  text="Thinking out loud…"
+  effect="wave"
+  glyphDuration={0.5}
+  cursorAfterComplete
+  loop
+/>`,
+    example:
+      'Feed StreamingText the same string your model returns and let it animate the arrival. It is display-only, so keep the real text in state and pass it in; the component never mutates your data.',
+    migrationExample: `+ import StreamingText from '@/components/ui/streaming-text'
+
+- <p>{answer}</p>
++ <StreamingText text={answer} speed={42} />`,
   },
   {
     slug: 'image-accordion',

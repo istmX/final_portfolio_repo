@@ -2,15 +2,16 @@
 
 import { spawnSync } from 'node:child_process'
 import { constants, existsSync } from 'node:fs'
-import { access, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { access, mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const VERSION = '0.1.9'
+const VERSION = '0.1.10'
 const COMPONENTS = {
   button: { fileName: 'button.tsx' },
   'animated-text': { fileName: 'animated-text.tsx' },
   'text-reveal': { fileName: 'text-reveal.tsx' },
+  'streaming-text': { fileName: 'streaming-text.tsx' },
   'infinite-image-canvas': { fileName: 'infinite-image-canvas.tsx' },
   'image-trail': { fileName: 'image-trail.tsx' },
   'image-accordion': { fileName: 'image-accordion.tsx' },
@@ -27,6 +28,18 @@ const COMPONENTS = {
     dependencies: ['@tabler/icons-react'],
   },
   'pixel-cat': { fileName: 'pixel-cat.tsx' },
+  'ai-chat-block': {
+    directory: 'ai-chat-block',
+    dependencies: ['@tabler/icons-react'],
+    utility: false,
+  },
+  'ai-chat-input': {
+    directory: 'ai-chat-input',
+    targetDirectory: 'ai-chat',
+    importPath: '@/components/ai-chat/ai-chat-input',
+    dependencies: ['@tabler/icons-react'],
+    utility: false,
+  },
 }
 const DEPENDENCIES = ['motion', 'clsx', 'tailwind-merge']
 const COMMANDS = {
@@ -159,6 +172,19 @@ async function writeRegistryFile(sourceName, targetPath, overwrite) {
   return true
 }
 
+async function writeRegistryDirectory(sourceName, targetPath, overwrite) {
+  const sourcePath = path.join(REGISTRY_DIRECTORY, sourceName)
+  const files = await readdir(sourcePath, { withFileTypes: true })
+  for (const entry of files) {
+    if (!entry.isFile()) continue
+    await writeRegistryFile(
+      path.join(sourceName, entry.name),
+      path.join(targetPath, entry.name),
+      overwrite,
+    )
+  }
+}
+
 function installDependencies(manager, dependencies) {
   if (dependencies.length === 0) {
     printSuccess('Dependencies are already present.')
@@ -200,16 +226,31 @@ async function addComponent(component, options) {
     `${muted('Adding')} ${cyan(component)} ${muted('to your project')}\n`,
   )
   printStep('Writing editable source files')
-  const componentPath = path.join(
-    CURRENT_DIRECTORY,
-    'components',
-    'ui',
-    definition.fileName,
-  )
+  const componentPath = definition.directory
+    ? path.join(
+        CURRENT_DIRECTORY,
+        'components',
+        definition.targetDirectory ?? component,
+      )
+    : path.join(CURRENT_DIRECTORY, 'components', 'ui', definition.fileName)
   const utilityPath = path.join(CURRENT_DIRECTORY, 'lib', 'utils.ts')
 
-  await writeRegistryFile('utils.ts', utilityPath, options.overwrite)
-  await writeRegistryFile(definition.fileName, componentPath, options.overwrite)
+  if (definition.utility !== false) {
+    await writeRegistryFile('utils.ts', utilityPath, options.overwrite)
+  }
+  if (definition.directory) {
+    await writeRegistryDirectory(
+      definition.directory,
+      componentPath,
+      options.overwrite,
+    )
+  } else {
+    await writeRegistryFile(
+      definition.fileName,
+      componentPath,
+      options.overwrite,
+    )
+  }
 
   if (options.noInstall) {
     const missing = componentDependencies.filter(
@@ -236,7 +277,7 @@ async function addComponent(component, options) {
 
   console.log(`\n${green('Done!')} ${component} is ready to edit.`)
   console.log(
-    `  ${muted('Import from')} ${cyan(`@/components/ui/${component}`)}`,
+    `  ${muted('Import from')} ${cyan(definition.importPath ?? (definition.directory ? `@/components/${definition.targetDirectory ?? component}` : `@/components/ui/${component}`))}`,
   )
   console.log(
     `  ${muted('Dependencies')} ${cyan(componentDependencies.join(', '))}\n`,

@@ -69,6 +69,33 @@ Add the interactive pixel cat with:
 npx @istmx/ui add pixel-cat
 ```
 
+Add the streaming AI response text with:
+
+```sh
+npx @istmx/ui add streaming-text
+```
+
+Add the complete AI chat block with:
+
+```sh
+npx @istmx/ui add ai-chat-block
+```
+
+Add only the reusable chat input with:
+
+```sh
+npx @istmx/ui add ai-chat-input
+```
+
+This command copies the input and its attachment, voice, send, type, and class
+helper files into `components/ai-chat/`. The composer and upload menu each
+contain their own accent-border effect, so there is no extra effect file to
+install. Import the input from
+`@/components/ai-chat/ai-chat-input`. It installs Motion, Tabler Icons, clsx,
+and tailwind-merge when they are missing. React and Tailwind CSS are expected
+to be configured by your app. The input uses Tailwind utility classes and does
+not need a stylesheet.
+
 The CLI detects your package manager, copies the editable component to
 `components/ui/animated-text.tsx`, adds the shared `cn` helper at
 `lib/utils.ts` if it is missing, and installs any missing dependencies:
@@ -80,6 +107,12 @@ The CLI detects your package manager, copies the editable component to
 Your project should already use React and have Tailwind CSS configured. After
 installation, the component is yours to edit; your app does not need to import
 runtime code from `@istmx/ui`.
+
+The `ai-chat-block` command is a multi-file install. It creates
+`components/ai-chat-block/`, including the block, input, sidebar, message,
+attachment, streaming, and local utility files. Its helper stays inside that
+folder, and the CLI installs any missing Motion, Tabler Icons, clsx, and
+tailwind-merge dependencies.
 
 ## Animated Text
 
@@ -171,17 +204,58 @@ Tune `characterStagger`, `lineStagger`, `duration`, `waveDistance`,
 shape the reveal. The component keeps words together across natural line wraps
 and provides a single screen-reader text string.
 
+## Streaming Text
+
+Install the editable source with:
+
+```sh
+npx @istmx/ui add streaming-text
+```
+
+`StreamingText` reveals a string character by character, like a model still
+writing its answer. Each new character settles in with a soft micro-interaction
+and an optional blinking caret marks the live cursor.
+
+```tsx
+import StreamingText from '@/components/ui/streaming-text'
+
+export function Answer({ answer }) {
+  return (
+    <StreamingText
+      text={answer}
+      speed={42}
+      effect="blur"
+      cursor
+      onComplete={() => console.log('streamed')}
+    />
+  )
+}
+```
+
+Choose how characters enter with `effect`: `blur`, `fade`, `slide`, or a
+springy `wave`. Tune `speed` (characters per second), `startDelay`,
+`glyphDuration`, `blurAmount`, and `slideDistance`. Set `cursorAfterComplete`
+to keep the caret, or `loop` to re-stream with a `loopDelay` pause. The
+component announces the finished message once through a polite live region and
+renders the full string immediately under reduced motion.
+
 ## CLI options
 
 ```sh
 npx @istmx/ui add animated-text --no-install
 npx @istmx/ui add animated-text --overwrite
+npx @istmx/ui add button
 npx @istmx/ui add text-reveal
+npx @istmx/ui add streaming-text
 npx @istmx/ui add image-accordion
 npx @istmx/ui add image-trail
 npx @istmx/ui add infinite-image-canvas
 npx @istmx/ui add dock-navigation
 npx @istmx/ui add mobile-menu-dock
+npx @istmx/ui add pixel-cat
+npx @istmx/ui add ai-chat-input
+npx @istmx/ui add ai-chat-block
+npx @istmx/ui add scroll-story-cards
 ```
 
 - `--no-install` copies the source and prints the dependency command instead

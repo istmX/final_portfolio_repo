@@ -14,8 +14,10 @@ import { INFINITE_IMAGE_CANVAS_IMAGES } from '@/app/portfolio-components/library
 import { SCROLL_STORY_CARDS } from '@/app/portfolio-components/library/scroll-story-cards-data'
 import { COMPONENT_SEARCH_ITEMS } from '@/app/portfolio-components/library/component-search-data'
 import StateButtonShowcase from '@/app/portfolio-components/StateButtonShowcase'
+import AiChatInputDemo from './AiChatInputDemo'
 import DockNavigationDemo from './DockNavigationDemo'
 import CatPlayground from './CatPlayground'
+import StreamingTextDemo from './StreamingTextDemo'
 import TextRevealDemo from './TextRevealDemo'
 
 export const metadata: Metadata = {
@@ -25,8 +27,10 @@ export const metadata: Metadata = {
 }
 
 const DEMOS = [
+  { id: 'ai-chat-input', label: 'AI chat input' },
   { id: 'action-buttons', label: 'Action buttons' },
   { id: 'animated-text', label: 'Animated text' },
+  { id: 'streaming-text', label: 'Streaming text' },
   { id: 'text-reveal', label: 'Text reveal' },
   { id: 'image-accordion', label: 'Image accordion' },
   { id: 'image-trail', label: 'Image trail' },
@@ -79,7 +83,7 @@ export default function TestPage() {
   return (
     <main
       id="test-top"
-      className="mx-auto w-full max-w-7xl px-4 pt-8 pb-24 sm:px-8 sm:pt-12 lg:px-12"
+      className="mx-auto w-full max-w-screen-2xl px-4 pt-8 pb-24 sm:px-6 sm:pt-12 lg:px-8"
     >
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4 sm:mb-10">
         <div>
@@ -124,6 +128,14 @@ export default function TestPage() {
 
       <div className="grid gap-5 sm:gap-6">
         <DemoSection
+          id="ai-chat-input"
+          title="AI chat input"
+          description="A composer for AI apps: an add menu for photos and files, voice input, and send — all with Motion micro-interactions."
+        >
+          <AiChatInputDemo />
+        </DemoSection>
+
+        <DemoSection
           id="action-buttons"
           title="Action state buttons"
           description="Each action has a distinct intent color. Click to see the temporary confirmation, then watch it return to its original label."
@@ -149,6 +161,14 @@ export default function TestPage() {
               textClassName="font-display font-semibold tracking-tight"
             />
           </div>
+        </DemoSection>
+
+        <DemoSection
+          id="streaming-text"
+          title="Streaming text"
+          description="A generating-text effect for AI responses. Switch the entrance effect, then replay to watch the characters settle in one by one with a blinking caret."
+        >
+          <StreamingTextDemo />
         </DemoSection>
 
         <DemoSection

@@ -4,17 +4,18 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { IconBrandGithub, IconSearch, IconX } from '@tabler/icons-react'
+import { IconBrandGithub, IconComponents, IconSearch, IconX } from '@tabler/icons-react'
 import MobileMenuDock from '@/components/ui/mobile-menu-dock'
 import ThemeToggle from './ThemeToggle'
 import { IstmxLogo } from './LogoSvg'
+import ShimmerText from './ShimmerText'
 import { COMPONENT_ICONS } from './ComponentsSpotlight'
-import { COMPONENT_SEARCH_ITEMS } from './library/component-search-data'
+import { SITE_SEARCH_ITEMS } from './library/component-search-data'
 
 const NAV_ITEMS = [
-  { label: 'About', href: '/#about' },
   { label: 'Projects', href: '/#projects' },
   { label: 'Components', href: '/library' },
+  { label: 'Blocks', href: '/blocks' },
   { label: 'Blogs', href: '/blogs' },
 ]
 
@@ -24,7 +25,7 @@ function Navbar() {
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchTriggerRef = useRef<HTMLButtonElement>(null)
-  const filteredComponents = COMPONENT_SEARCH_ITEMS.filter((item) =>
+  const filteredComponents = SITE_SEARCH_ITEMS.filter((item) =>
     `${item.name} ${item.category} ${item.description}`
       .toLowerCase()
       .includes(searchQuery.trim().toLowerCase()),
@@ -125,7 +126,7 @@ function Navbar() {
                         : 'text-muted hover:text-foreground'
                     }`}
                   >
-                    {item.label}
+                    <ShimmerText>{item.label}</ShimmerText>
                   </Link>
                 </motion.li>
               )
@@ -197,10 +198,10 @@ function Navbar() {
                       id="component-search-title"
                       className="font-display text-sm font-semibold"
                     >
-                      Find a component
+                      Find a component or block
                     </p>
                     <p className="text-muted mt-0.5 text-[10px]">
-                      Search the istmX source library
+                      Search the istmX component library and blocks
                     </p>
                   </div>
                   <button
@@ -225,7 +226,7 @@ function Navbar() {
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     placeholder="Name, category, or effect..."
-                    aria-label="Search components by name, category, or description"
+                    aria-label="Search components and blocks by name, category, or description"
                     className="text-foreground placeholder:text-muted/65 min-w-0 flex-1 bg-transparent text-sm outline-none"
                   />
                   {searchQuery ? (
@@ -246,12 +247,14 @@ function Navbar() {
                 <ul className="mt-3 max-h-[min(55vh,24rem)] overflow-y-auto">
                   {filteredComponents.length ? (
                     filteredComponents.map((item) => {
-                      const ComponentIcon = COMPONENT_ICONS[item.slug]
+                      const ComponentIcon =
+                        COMPONENT_ICONS[item.slug as keyof typeof COMPONENT_ICONS] ??
+                        IconComponents
 
                       return (
                         <li key={item.slug}>
                           <Link
-                            href={`/library/${item.slug}`}
+                            href={item.href}
                             onClick={closeSearch}
                             className="group hover:bg-surface/35 focus-visible:bg-surface/35 focus-visible:outline-foreground border-border/40 flex items-center gap-3 border-b px-3 py-3 transition-colors focus-visible:outline focus-visible:outline-1"
                           >
@@ -281,12 +284,12 @@ function Navbar() {
                     })
                   ) : (
                     <li className="text-muted px-3 py-6 text-center text-sm">
-                      No components match “{searchQuery}”.
+                      No components or blocks match “{searchQuery}”.
                     </li>
                   )}
                 </ul>
                 <div className="border-border/60 text-muted mt-2 flex items-center justify-between border-t border-dotted px-2 pt-3 text-[10px]">
-                  <span>{filteredComponents.length} components</span>
+                  <span>{filteredComponents.length} results</span>
                   <span>
                     Press <kbd className="font-mono">Esc</kbd> to close
                   </span>
@@ -297,7 +300,7 @@ function Navbar() {
         </AnimatePresence>
       </nav>
       <MobileMenuDock
-        searchItems={COMPONENT_SEARCH_ITEMS}
+        searchItems={SITE_SEARCH_ITEMS}
         items={NAV_ITEMS.map((item) => ({
           ...item,
           active:
